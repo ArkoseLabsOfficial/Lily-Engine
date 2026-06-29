@@ -1,0 +1,26 @@
+{
+  "buttons": [
+    {
+      "name": "ACCEPT",
+      "id": "ACCEPT",
+      "graphic": "button_circle",
+      "position": [1730, 890],
+      "scale": 1.5,
+      "color": null,
+      "subgraphic": {
+        "texture": "icon_button_a"
+      }
+    },
+    {
+      "name": "CANCEL",
+      "id": "CANCEL",
+      "graphic": "button_circle",
+      "position": [1550, 890],
+      "scale": 1.5,
+      "color": null,
+      "subgraphic": {
+        "texture": "icon_button_b"
+      }
+    }
+  ]
+}

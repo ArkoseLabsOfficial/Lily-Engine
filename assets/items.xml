@@ -1,0 +1,11 @@
+<!DOCTYPE lily-engine-item>
+<data>
+    <items>
+        <item 
+            id="iron_sword" 
+            name="Iron Sword" 
+            desc="A sharp steel blade, standard issue for guards." 
+            sprite="sprite/common/item/screwdriver" 
+            script="use_sword" 
+        />
+</data>

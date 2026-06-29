@@ -1,0 +1,73 @@
+{
+  "name": "Türkçe",
+  "translator": "Official",
+  "captions": {
+    "system.settings.game.language.select": "Dil Seç",
+    "system.settings.game.language.more": "Dahası...",
+    "system.settings.game.language.unofficial": "Resmi Olmayan Çeviriler",
+    "system.menu.translator.credit": "Resmi Çeviri",
+
+    "system.settings.game.controls.move_up": "Yukarı Hareket",
+    "system.settings.game.controls.move_down": "Aşağı Hareket",
+    "system.settings.game.controls.move_left": "Sola Hareket",
+    "system.settings.game.controls.move_right": "Sağa Hareket",
+    "system.settings.game.controls.accept": "Kabul",
+    "system.settings.game.controls.cancel": "Reddet",
+    "system.settings.game.controls.run": "Koş",
+    "system.settings.game.controls.menu": "Menü",
+    
+    "system.settings.game.graphics.fpscap": "FPS Sınırı",
+    "system.settings.game.graphics.renderscale": "Render Boyutu",
+    "system.settings.game.graphics.uiopacity": "Arayüz Opaklığı",
+
+    "system.settings.game.gameplay.autosave": "Oto-Kayıt",
+    "system.settings.game.gameplay.difficulty": "Zorluk",
+
+    "system.settings.game.language": "Dil",
+    "system.settings.game.gameplay": "Oynanış",
+    "system.settings.game.graphics": "Grafik",
+    "system.settings.game.controls": "Kontroller",
+    "system.settings.game.back": "Geri",
+
+    "system.game.item.jar_paint_red": "Kırmızı Renkli Jar",
+    "system.game.item.jar_paint_green": "Yeşil Renkli Jar",
+    "system.game.item.jar_paint_blue": "Mavi Renkli Jar",
+    "system.game.item.jar_paint_yellow": "Sarı Renkli Jar",
+    "system.game.item.jar_paint_purple": "Pembe Renkli Jar", 
+
+    "system.menu.inventory": "Envanter",
+    "system.menu.objectives": "Hedefler",
+    "system.menu.objectives.empty": "Hiçbir Hedef Yok",
+    "system.menu.settings": "Ayarlar",
+    "system.menu.load": "Yükle",
+    "system.menu.save": "Kaydet",
+    "system.menu.newgame": "Yeni Oyun",
+    "system.menu.debugroom": "Debug Odası",
+    "system.menu.website.translator": "Itch.io Sayfası",
+    "system.menu.quit": "Çıkış",
+    "system.menu.loadgame": "Oyun Yükle ",
+    "system.menu.savegame": "Oyun Kaydet",
+    "system.menu.file": "Dosya",
+    "system.menu.tip": "[Z] Seç/[X] Geri",
+    "system.menu.items": "Eşyalar"
+  },
+  "storyCaptions": {
+    "bathroom": {
+      "dialogs.intro": "Pekala, bu bir test. Mantık motoru öalışıyor mu?",
+      "dialogs.selection.variables": "[Mantık: Öğe var ve yorgun değil]",
+      "dialogs.selection.weather": "[Mantık: Yağmur ya da Kar Yağıyor]",
+      "dialogs.selection.chat": "Sohbete katıl",
+      "dialogs.selection.leave": "Hadi burdan tüyelim.",
+      "dialogs.variables.success": "Değişkenler doğru okundu! Eşyaya sahibim ve yorgun değilim.",
+      "dialogs.return": "Seni ana menüye döndürüyor...",
+      "dialogs.weather": "Hava koşulları uygun!",
+      "dialogs.chat.1": "Sadece bir test malıyım.",
+      "dialogs.chat.2": "Öylemi bak hiç bilmiyordum ya, şaka lan sadece herşey çalışıyormu diye test ediyorum.",
+      "dialogs.leave": "Lo siento wilson."
+    },
+    "test_room": {
+      "dummy_look": "It's a bright blue cube. I shouldn't stare too long.",
+      "secret_note": "A hidden message!"
+    }
+  }
+}
