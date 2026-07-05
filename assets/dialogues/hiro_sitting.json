@@ -1,0 +1,51 @@
+{
+  "start": [
+    {
+      "name": "Lacie",
+      "text": "ch1.dialog.outside.hiro.1",
+      "function": "openImageBoard"
+    },
+    {
+      "name": "Lacie",
+      "text": "ch1.dialog.outside.hiro.2"
+    },
+    {
+      "name": "Lacie",
+      "text": "ch1.dialog.outside.hiro.3"
+    },
+    {
+      "name": "Lacie",
+      "text": "ch1.dialog.outside.hiro.4"
+    },
+    {
+      "name": "Hiro",
+      "text": "ch1.dialog.outside.hiro.5",
+      "function": "hiroLook"
+    },
+    {
+      "name": "Hiro",
+      "text": "ch1.dialog.outside.hiro.6",
+      "function": "hiroTalk"
+    },
+    {
+      "leftChar": "lacie/blank8",
+      "name": "Lacie",
+      "text": "ch1.dialog.outside.hiro.7",
+      "function": "closeImageBoard"
+    },
+    {
+      "name": "Hiro",
+      "text": "ch1.dialog.outside.hiro.8"
+    },
+    {
+      "name": "Lacie",
+      "text": "ch1.dialog.outside.hiro.9",
+      "function": "lacieSit"
+    },
+    {
+      "name": "Hiro",
+      "text": "ch1.dialog.outside.hiro.10",
+      "function": "allow"
+    }
+  ]
+}

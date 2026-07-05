@@ -447,7 +447,7 @@ class SimpleTestMenu extends FlxSubState implements IMenuEntryContainer {
         _frame.clearFrame();
     }
 
-    public function addToFrame(child:flixel.group.FlxSpriteGroup):Void {
+    public function addToFrame(child:FlxSpriteGroup):Void {
         _frame.addToFrame(child);
     }
 }

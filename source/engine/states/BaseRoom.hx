@@ -30,7 +30,7 @@ class BaseRoom extends StateBackend {
 		#end
 	}
 
-	override function openSubState(SubState:flixel.FlxSubState) {
+	override function openSubState(SubState:FlxSubState) {
 		#if FEATURE_TOUCH_CONTROLS
 		Game.mobileC.removeJoyStick();
 		Game.mobileC.removeButton();
@@ -58,20 +58,21 @@ class BaseRoom extends StateBackend {
 
 		room = new RoomManager(this);
 		room.loadRoom(roomName, spawnId);
+
+		room.initPlayerState(camGame, isFromLoad);
+
 		add(room);
 		add(room.solids);
 
 		#if FEATURE_HSCRIPT
-		room.scripts.setParentForAll(this);
-		room.scripts.call("onRoomLoaded");
+		room.scripts.setParent(this);
+		room.scripts.call("onRoomLoaded", [roomName]);
 		#end
-		Game.instance.save.room = roomName;
-
-		room.initPlayerState(camGame, isFromLoad);
+		Game.saveData.room = roomName;
 	}
 
 	public function followTheObject(obj:Dynamic, type:String = "NO_DEAD_ZONE", smoothness:Float = 1):Void {
-		var realType:flixel.FlxCameraFollowStyle = NO_DEAD_ZONE;
+		var realType:FlxCameraFollowStyle = NO_DEAD_ZONE;
 		if (type == "LOCKON")
 			realType = LOCKON;
 		if (type == "PLATFORMER")
@@ -91,9 +92,13 @@ class BaseRoom extends StateBackend {
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		Game.instance.save.playtime += elapsed;
+		Game.saveData.playtime += elapsed;
 
-		if (room.player != null) {
+		var currentTarget = camGame.target;
+		if (currentTarget != null && Std.isOfType(currentTarget, CharacterEntity)) {
+			var charTarget:CharacterEntity = cast currentTarget;
+			camGame.targetOffset.set(charTarget.cameraOffset.x, charTarget.cameraOffset.y);
+		} else if (room.player != null) {
 			camGame.targetOffset.set(room.player.cameraOffset.x, room.player.cameraOffset.y);
 		}
 

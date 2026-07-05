@@ -74,7 +74,7 @@ class ObjectiveManager {
 
 	public function add(objectiveId:String):Void {
 		if (!isObjectiveValid(objectiveId)) {
-			flixel.FlxG.log.error("Attempting to add an invalid objective: " + objectiveId);
+			FlxG.log.error("Attempting to add an invalid objective: " + objectiveId);
 			return;
 		}
 		addObj(objectives.get(objectiveId));
@@ -96,7 +96,7 @@ class ObjectiveManager {
 
 	public function remove(objectiveId:String):Void {
 		if (!isObjectiveValid(objectiveId)) {
-			flixel.FlxG.log.error("Attempting to remove an invalid objective: " + objectiveId);
+			FlxG.log.error("Attempting to remove an invalid objective: " + objectiveId);
 			return;
 		}
 		removeObj(objectives.get(objectiveId));
@@ -117,7 +117,7 @@ class ObjectiveManager {
 
 	public function complete(objectiveId:String):Void {
 		if (!isObjectiveValid(objectiveId)) {
-			flixel.FlxG.log.error("Attempting to complete an invalid objective: " + objectiveId);
+			FlxG.log.error("Attempting to complete an invalid objective: " + objectiveId);
 			return;
 		}
 		completeObj(objectives.get(objectiveId));
@@ -146,7 +146,7 @@ class ObjectiveManager {
 
 	public function fail(objectiveId:String):Void {
 		if (!isObjectiveValid(objectiveId)) {
-			flixel.FlxG.log.error("Attempting to fail an invalid objective: " + objectiveId);
+			FlxG.log.error("Attempting to fail an invalid objective: " + objectiveId);
 			return;
 		}
 		failObj(objectives.get(objectiveId));
@@ -202,7 +202,7 @@ class ObjectiveManager {
 
 	public function showNotification():Void {
 		if (GamePrefs.getOption("objectiveNotifications") && _objectivesUpdated) {
-			flixel.FlxG.log.notice("Objectives Updated!");
+			FlxG.log.notice("Objectives Updated!");
 			// this can be replaced with a generic UI flyout later!
 		}
 		_objectivesUpdated = false;

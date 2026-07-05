@@ -75,7 +75,7 @@ class SimpleVerticalMenu extends FlxSpriteGroup {
     
     public var itemWidth:Float = 492;
     public var itemFontSize:Int = 48;
-    public var itemAlignment:flixel.text.FlxText.FlxTextAlign = CENTER;
+    public var itemAlignment:FlxTextAlign = CENTER;
 
     private var entries:Array<{caption:String, action:Void->Void}> = [];
     private var visualItems:Array<MenuVisualEntry> = [];
@@ -140,7 +140,7 @@ class MenuVisualEntry extends FlxSpriteGroup {
 
     private static inline var SELECT_COLOR:FlxColor = 0x33EDDEDE;
 
-    public function new(X:Float, Y:Float, text:String, width:Float, height:Float, fontSize:Int = 48, align:flixel.text.FlxText.FlxTextAlign = CENTER) {
+    public function new(X:Float, Y:Float, text:String, width:Float, height:Float, fontSize:Int = 48, align:FlxTextAlign = CENTER) {
         super(X, Y);
         
         bg = new FlxSprite(0, 0);

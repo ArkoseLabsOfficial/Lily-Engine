@@ -1,21 +1,21 @@
 {
   "Objectives": [
     {
-      "Id": "tutorial_start",
-      "Name": "welcomegame",
-      "Description": "welcomegame",
+      "Id": "sitPC",
+      "Name": "Sit Both PC",
+      "Description": "Sit Both PC to Complete",
       "Hidden": false,
       "OnComplete": ["collect_key"],
       "Children": [
         {
-          "Id": "move_character",
-          "Name": "welcomemove",
-          "Description": "welcomemove"
+          "Id": "sitUP",
+          "Name": "Up",
+          "Description": "sit the chair that placed upper in the room"
         },
         {
-          "Id": "jump_platform",
-          "Name": "welcomejump",
-          "Description": "welcomejump"
+          "Id": "sitDOWN",
+          "Name": "Down",
+          "Description": "sit the chair that placed down in the room"
         }
       ]
     },

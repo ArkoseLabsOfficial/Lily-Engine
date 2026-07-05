@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="53" height="21" tilewidth="32" tileheight="32" infinite="0" nextlayerid="12" nextobjectid="254">
+ <properties>
+  <property name="location" value="Sweet Home"/>
+  <property name="script" value="room"/>
+  <property name="spawnPlayer" type="bool" value="true"/>
+  <property name="zoom" type="float" value="3"/>
+ </properties>
+ <tileset firstgid="1" name="Layer" tilewidth="96" tileheight="64" tilecount="13" columns="0">
+  <grid orientation="orthogonal" width="1" height="1"/>
+  <transformations hflip="0" vflip="0" rotate="0" preferuntransformed="1"/>
+  <tile id="0">
+   <image source="rooms/home/exterior/tiles_floor_grass.png" width="32" height="32"/>
+  </tile>
+  <tile id="2">
+   <image source="rooms/home/exterior/tiles_floor_deck.png" width="32" height="32"/>
+  </tile>
+  <tile id="3">
+   <image source="rooms/home/exterior/tiles_floor_deck_2.png" width="32" height="32"/>
+  </tile>
+  <tile id="4">
+   <image source="rooms/home/exterior/tiles_wall.png" width="32" height="32"/>
+  </tile>
+  <tile id="5">
+   <image source="rooms/home/exterior/tiles_wall_3.png" width="32" height="32"/>
+  </tile>
+  <tile id="6">
+   <image source="rooms/home/exterior/tiles_wall_2.png" width="32" height="32"/>
+  </tile>
+  <tile id="8">
+   <image source="rooms/home/exterior/tiles_roof.png" width="32" height="32"/>
+  </tile>
+  <tile id="9">
+   <image source="rooms/home/exterior/tiles_roof_5.png" width="32" height="64"/>
+  </tile>
+  <tile id="10">
+   <image source="rooms/home/exterior/tiles_roof_4.png" width="32" height="64"/>
+  </tile>
+  <tile id="11">
+   <image source="rooms/home/exterior/tiles_roof_3.png" width="32" height="32"/>
+  </tile>
+  <tile id="12">
+   <image source="rooms/home/exterior/tiles_roof_2.png" width="32" height="32"/>
+  </tile>
+  <tile id="13">
+   <image source="rooms/home/exterior/tiles_crosswalk.png" width="96" height="32"/>
+  </tile>
+  <tile id="14">
+   <image source="rooms/home/exterior/tiles_roof_6.png" width="32" height="32"/>
+  </tile>
+ </tileset>
+ <tileset firstgid="16" name="tiles_street" tilewidth="32" tileheight="32" tilecount="4" columns="2">
+  <image source="rooms/home/exterior/tiles_street.png" width="64" height="64"/>
+ </tileset>
+ <tileset firstgid="20" name="Objects" tilewidth="288" tileheight="342" tilecount="42" columns="0">
+  <grid orientation="orthogonal" width="1" height="1"/>
+  <tile id="0">
+   <image source="rooms/home/exterior/floor_carpet.png" width="56" height="32"/>
+  </tile>
+  <tile id="1">
+   <image source="rooms/home/exterior/floor_edge_2.png" width="288" height="20"/>
+  </tile>
+  <tile id="2">
+   <image source="rooms/home/exterior/floor_edge.png" width="64" height="20"/>
+  </tile>
+  <tile id="3">
+   <image source="rooms/home/exterior/floor_stairs.png" width="48" height="32"/>
+  </tile>
+  <tile id="4">
+   <image source="rooms/home/exterior/floor_stonepath_2.png" width="56" height="50"/>
+  </tile>
+  <tile id="5">
+   <image source="rooms/home/exterior/foliage_bush.png" width="37" height="77"/>
+  </tile>
+  <tile id="6">
+   <image source="rooms/home/exterior/floor_stonepath.png" width="47" height="106"/>
+  </tile>
+  <tile id="7">
+   <image source="rooms/home/exterior/foliage_flowers_2.png" width="58" height="37"/>
+  </tile>
+  <tile id="8">
+   <image source="rooms/home/exterior/foliage_flowers.png" width="33" height="204"/>
+  </tile>
+  <tile id="9">
+   <image source="rooms/home/exterior/foliage_flowers_4.png" width="63" height="117"/>
+  </tile>
+  <tile id="10">
+   <image source="rooms/home/exterior/foliage_flowers_3.png" width="63" height="111"/>
+  </tile>
+  <tile id="11">
+   <image source="rooms/home/exterior/foliage_grass.png" width="32" height="32"/>
+  </tile>
+  <tile id="12">
+   <image source="rooms/home/exterior/foliage_pond_2.png" width="168" height="54"/>
+  </tile>
+  <tile id="13">
+   <image source="rooms/home/exterior/foliage_tree_2.png" width="68" height="127"/>
+  </tile>
+  <tile id="14">
+   <image source="rooms/home/exterior/foliage_pond.png" width="179" height="101"/>
+  </tile>
+  <tile id="15">
+   <image source="rooms/home/exterior/foliage_tree.png" width="106" height="149"/>
+  </tile>
+  <tile id="16">
+   <image source="rooms/home/exterior/furniture_bench.png" width="76" height="36"/>
+  </tile>
+  <tile id="17">
+   <image source="rooms/home/exterior/furniture_table.png" width="82" height="41"/>
+  </tile>
+  <tile id="18">
+   <image source="rooms/home/exterior/misc_birdhouse.png" width="32" height="63"/>
+  </tile>
+  <tile id="19">
+   <image source="rooms/home/exterior/misc_plant.png" width="32" height="60"/>
+  </tile>
+  <tile id="20">
+   <image source="rooms/home/exterior/misc_pottedplant.png" width="45" height="54"/>
+  </tile>
+  <tile id="21">
+   <image source="rooms/home/exterior/struct_brickcorner.png" width="16" height="48"/>
+  </tile>
+  <tile id="22">
+   <image source="rooms/home/exterior/misc_pottedplant_2.png" width="32" height="36"/>
+  </tile>
+  <tile id="23">
+   <image source="rooms/home/exterior/misc_markings.png" width="72" height="32"/>
+  </tile>
+  <tile id="24">
+   <image source="rooms/home/exterior/misc_lamp.png" width="32" height="48"/>
+  </tile>
+  <tile id="25">
+   <image source="rooms/home/exterior/struct_fence_2.png" width="48" height="56"/>
+  </tile>
+  <tile id="26">
+   <image source="rooms/home/exterior/struct_gate_2.png" width="128" height="48"/>
+  </tile>
+  <tile id="27">
+   <image source="rooms/home/exterior/struct_gate.png" width="224" height="74"/>
+  </tile>
+  <tile id="28">
+   <image source="rooms/home/exterior/struct_house_2.png" width="240" height="260"/>
+  </tile>
+  <tile id="29">
+   <image source="rooms/home/exterior/struct_house.png" width="160" height="342"/>
+  </tile>
+  <tile id="30">
+   <image source="rooms/home/exterior/struct_lamp.png" width="29" height="64"/>
+  </tile>
+  <tile id="31">
+   <image source="rooms/home/exterior/struct_house_3.png" width="224" height="260"/>
+  </tile>
+  <tile id="32">
+   <image source="rooms/home/exterior/struct_fence.png" width="192" height="66"/>
+  </tile>
+  <tile id="33">
+   <image source="rooms/home/exterior/struct_fence_3.png" width="48" height="56"/>
+  </tile>
+  <tile id="34">
+   <image source="rooms/home/exterior/struct_lamppost_2.png" width="47" height="113"/>
+  </tile>
+  <tile id="35">
+   <image source="rooms/home/exterior/struct_lamppost.png" width="20" height="113"/>
+  </tile>
+  <tile id="36">
+   <image source="rooms/home/exterior/struct_roofthingy.png" width="112" height="128"/>
+  </tile>
+  <tile id="37">
+   <image source="rooms/home/exterior/wall_window.png" width="77" height="61"/>
+  </tile>
+  <tile id="38">
+   <image source="rooms/home/exterior/wall_light.png" width="32" height="32"/>
+  </tile>
+  <tile id="39">
+   <image source="rooms/home/exterior/wall_door.png" width="70" height="67"/>
+  </tile>
+  <tile id="40">
+   <image source="rooms/home/exterior/wall_brickfence_crack.png" width="32" height="32"/>
+  </tile>
+  <tile id="41">
+   <image source="rooms/home/exterior/wall_brickfence_crack_2.png" width="32" height="32"/>
+  </tile>
+ </tileset>
+ <tileset firstgid="62" name="tiles_brickfence" tilewidth="32" tileheight="32" tilecount="15" columns="3">
+  <image source="rooms/home/exterior/tiles_brickfence.png" width="96" height="160"/>
+ </tileset>
+ <tileset firstgid="77" name="struct_gate" tilewidth="112" tileheight="74" tilecount="2" columns="2">
+  <image source="rooms/home/exterior/struct_gate.png" width="224" height="74"/>
+  <tile id="0">
+   <animation>
+    <frame tileid="0" duration="500"/>
+    <frame tileid="1" duration="500"/>
+   </animation>
+  </tile>
+ </tileset>
+ <tileset firstgid="79" name="crow" tilewidth="32" tileheight="32" tilecount="2" columns="2">
+  <image source="rooms/cutscene/crow_blink.png" width="64" height="32"/>
+ </tileset>
+ <tileset firstgid="81" name="Hiro" tilewidth="32" tileheight="64" tilecount="36" columns="9">
+  <image source="characters/hiro/hiro.png" width="288" height="256"/>
+ </tileset>
+ <tileset firstgid="117" name="hiro_sit" tilewidth="32" tileheight="56" tilecount="4" columns="4">
+  <image source="characters/hiro/hiro_sit.png" width="128" height="56"/>
+ </tileset>
+ <layer id="1" name="Tiles" width="53" height="21">
+  <data encoding="csv">
+1,1,1,1,1,1,1,1,1,13,13,13,13,13,13,13,13,13,13,13,13,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,1,1,1,1,1,1,1,1,5,5,5,5,5,5,5,5,5,5,5,5,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,4,3,3,3,3,2147483652,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,4,3,3,3,3,2147483652,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,4,3,3,3,3,2147483652,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,4,3,3,3,3,2147483652,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,13,13,13,13,13,13,13,13,13,13,13,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,4,3,3,3,3,2147483652,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,13,13,13,13,13,13,13,13,13,13,13,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,4,3,3,3,3,2147483652,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5,5,5,5,5,5,5,5,5,5,5,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,4,3,3,3,3,2147483652,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,4,3,3,3,3,2147483652,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,4,3,3,3,3,2147483652,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,4,3,3,3,3,2147483652,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,0,0,0,0,0,0,
+16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,
+18,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,19,
+16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,
+16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,
+16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,
+18,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,19,
+16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16
+</data>
+ </layer>
+ <layer id="2" name="TileObjects" width="53" height="21">
+  <data encoding="csv">
+62,63,63,63,63,63,63,63,63,0,0,0,0,0,0,0,0,0,0,0,0,62,63,63,63,63,63,63,63,64,62,63,63,63,63,63,63,63,63,63,63,63,63,63,63,63,63,63,63,63,63,63,64,
+65,66,66,66,66,66,66,66,66,0,0,0,0,0,0,0,0,0,0,0,0,65,66,66,66,66,66,66,66,67,65,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,67,
+68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,68,0,0,0,0,0,0,0,70,68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,70,
+68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,41,0,0,0,0,0,0,0,70,68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,70,
+68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,70,68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,70,
+68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,70,68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,70,
+68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,70,68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,70,
+68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,70,62,63,63,63,63,64,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,70,
+68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,70,65,66,66,66,66,67,0,0,0,0,0,0,0,0,0,0,0,62,0,0,0,0,64,
+68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,70,68,0,0,0,0,70,0,0,0,0,0,0,0,0,0,0,0,65,0,0,0,0,67,
+68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,70,68,0,0,0,0,70,0,0,0,0,0,0,0,0,0,0,0,68,0,0,0,0,70,
+68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,70,68,0,0,0,0,70,0,0,0,0,0,0,0,0,0,0,0,68,0,0,0,0,70,
+71,72,72,72,72,72,72,72,72,72,72,72,0,0,0,0,0,0,72,72,72,72,72,72,72,72,72,72,72,73,71,72,72,72,72,73,0,0,0,0,0,0,0,0,0,0,0,71,72,72,72,72,73,
+74,75,75,75,75,75,75,75,75,75,75,76,0,0,0,0,0,0,75,75,75,75,75,75,75,75,75,75,75,76,74,75,75,75,75,75,0,0,0,0,0,0,0,0,0,0,0,74,75,75,75,75,76,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,14,0,0,0,14,0,0,0,14,0,0,0,14,0,0,0,14,0,0,0,14,0,0,0,14,0,0,0,14,0,0,0,14,0,0,0,14,0,0,0,14,0,0,0,14,0,0,0,14,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="10" name="Objects" class="Objects">
+  <object id="83" name="wall_door" type="Object" gid="59" x="448" y="128" width="70" height="67"/>
+  <object id="80" name="wall_window" type="Object" gid="57" x="564" y="120" width="77" height="61"/>
+  <object id="118" name="wall_window" type="Object" gid="57" x="1185" y="425" width="77" height="61"/>
+  <object id="119" name="wall_window" type="Object" gid="57" x="1391" y="425" width="77" height="61"/>
+  <object id="82" name="wall_window" type="Object" gid="57" x="322" y="120" width="77" height="61"/>
+  <object id="101" name="crow" type="Object" gid="79" x="32" y="416" width="32" height="32">
+   <properties>
+    <property name="script" value="save"/>
+   </properties>
+  </object>
+  <object id="117" name="wall_door" type="Object" gid="59" x="1294" y="447.5" width="70" height="67"/>
+  <object id="130" gid="33" x="1598" y="105.333" width="68" height="127"/>
+  <object id="131" gid="33" x="1376" y="124.667" width="68" height="127"/>
+  <object id="132" gid="33" x="1491.33" y="188" width="68" height="127"/>
+  <object id="133" gid="33" x="1170.67" y="176" width="68" height="127"/>
+  <object id="135" gid="33" x="1030.67" y="116.667" width="68" height="127"/>
+  <object id="136" gid="33" x="1010" y="336.667" width="68" height="127"/>
+  <object id="171" gid="30" x="15" y="147" width="63" height="111"/>
+  <object id="173" gid="26" x="128" y="160" width="47" height="106"/>
+  <object id="174" gid="26" x="129.5" y="268.5" width="47" height="106"/>
+  <object id="176" gid="26" x="129.5" y="375.5" width="47" height="106"/>
+  <object id="185" gid="31" x="768" y="128" width="32" height="32"/>
+  <object id="186" gid="31" x="768" y="96" width="32" height="32"/>
+  <object id="187" gid="31" x="736" y="96" width="32" height="32"/>
+  <object id="188" gid="31" x="704" y="96" width="32" height="32"/>
+  <object id="189" gid="31" x="704" y="128" width="32" height="32"/>
+  <object id="190" gid="31" x="686.5" y="87.5" width="32" height="32"/>
+  <object id="191" gid="31" x="688.5" y="122" width="32" height="32"/>
+  <object id="192" gid="31" x="692.5" y="154" width="32" height="32"/>
+  <object id="193" gid="31" x="759" y="147.5" width="32" height="32"/>
+  <object id="194" gid="31" x="791" y="100.5" width="32" height="32"/>
+  <object id="195" gid="31" x="799" y="131" width="32" height="32"/>
+  <object id="196" gid="31" x="813" y="141.5" width="32" height="32"/>
+  <object id="197" gid="31" x="834.5" y="88" width="32" height="32"/>
+  <object id="198" gid="31" x="847" y="134.5" width="32" height="32"/>
+  <object id="199" gid="31" x="868" y="157.5" width="32" height="32"/>
+  <object id="200" gid="31" x="882" y="125.75" width="32" height="32"/>
+  <object id="201" gid="31" x="892" y="102" width="32" height="32"/>
+  <object id="202" gid="31" x="913.5" y="137" width="32" height="32"/>
+  <object id="203" gid="31" x="897.5" y="162.5" width="32" height="32"/>
+  <object id="204" gid="31" x="842.5" y="109" width="32" height="32"/>
+  <object id="205" gid="31" x="218.5" y="141" width="32" height="32"/>
+  <object id="209" gid="31" x="219" y="117" width="32" height="32"/>
+  <object id="210" gid="31" x="221.5" y="96.5" width="32" height="32"/>
+  <object id="211" gid="31" x="196" y="100.5" width="32" height="32"/>
+  <object id="212" gid="31" x="175" y="118" width="32" height="32"/>
+  <object id="213" gid="31" x="187" y="141" width="32" height="32"/>
+  <object id="214" gid="31" x="227.5" y="141.5" width="32" height="32"/>
+  <object id="215" gid="31" x="244.5" y="114" width="32" height="32"/>
+  <object id="216" gid="31" x="253" y="101.5" width="32" height="32"/>
+  <object id="217" gid="31" x="258" y="142.5" width="32" height="32"/>
+  <object id="218" gid="31" x="257.5" y="76.5" width="32" height="32"/>
+  <object id="219" gid="31" x="228.5" y="75.5" width="32" height="32"/>
+  <object id="220" gid="31" x="193" y="76" width="32" height="32"/>
+  <object id="221" gid="31" x="168.5" y="89" width="32" height="32"/>
+  <object id="224" gid="31" x="95" y="74" width="32" height="32"/>
+  <object id="225" gid="31" x="94.5" y="90.5" width="32" height="32"/>
+  <object id="226" gid="31" x="86" y="119.5" width="32" height="32"/>
+  <object id="227" gid="31" x="83" y="141.5" width="32" height="32"/>
+  <object id="228" gid="31" x="89" y="107.5" width="32" height="32"/>
+  <object id="229" gid="31" x="54.5" y="133" width="32" height="32"/>
+  <object id="230" gid="31" x="53" y="83.5" width="32" height="32"/>
+  <object id="232" gid="29" x="882" y="149" width="63" height="117"/>
+ </objectgroup>
+ <objectgroup id="9" name="Player" class="Player">
+  <object id="114" name="furniture_table" type="Object" gid="37" x="24.5" y="184.5" width="82" height="41">
+   <properties>
+    <property name="interactable" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="94" name="bush_1" type="Object" gid="25" x="352" y="192" width="37" height="77"/>
+  <object id="160" name="bush_1" type="Object" gid="2147483673" x="352" y="256" width="37" height="77"/>
+  <object id="93" name="bush_2" type="Object" gid="25" x="576" y="192" width="37" height="77"/>
+  <object id="163" name="bush_2" type="Object" gid="2147483673" x="576" y="256" width="37" height="77"/>
+  <object id="164" name="bush_2" type="Object" gid="2147483673" x="576" y="400" width="37" height="77"/>
+  <object id="166" name="bush_2" type="Object" gid="2147483673" x="352" y="400" width="37" height="77"/>
+  <object id="92" name="tree_1" type="Object" gid="35" x="32" y="128" width="106" height="149">
+   <properties>
+    <property name="autocollision" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="91" name="tree_2" type="Object" gid="35" x="160" y="128" width="106" height="149">
+   <properties>
+    <property name="autocollision" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="89" name="tree_3" type="Object" gid="35" x="704" y="128" width="106" height="149">
+   <properties>
+    <property name="autocollision" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="90" name="tree_4" type="Object" gid="35" x="832" y="128" width="106" height="149">
+   <properties>
+    <property name="autocollision" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="123" name="doorthing3" type="Object" gid="76" x="1648" y="304" width="32" height="32"/>
+  <object id="124" name="doorthing2" type="Object" gid="72" x="1648" y="272" width="32" height="32"/>
+  <object id="122" name="doorthing1" type="Object" gid="77" x="1536" y="304" width="112" height="74"/>
+  <object id="141" gid="35" x="1552.33" y="367" width="106" height="149"/>
+  <object id="116" name="struct_fence" type="Object" gid="52" x="384" y="448" width="192" height="66">
+   <properties>
+    <property name="autocollision" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="168" gid="36" x="276" y="148.5" width="76" height="36"/>
+  <object id="169" gid="2147483686" x="32" y="384" width="32" height="63"/>
+  <object id="243" gid="117" x="321.5" y="151" width="32" height="56">
+   <properties>
+    <property name="dialog" value="hiro_sitting"/>
+    <property name="interactable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="247" gid="39" x="508.5" y="138.5" width="32" height="60"/>
+  <object id="248" gid="39" x="424" y="139.5" width="32" height="60"/>
+ </objectgroup>
+ <objectgroup id="7" name="UpperObjects" class="Object">
+  <properties>
+   <property name="interactable" type="bool" value="true"/>
+  </properties>
+  <object id="147" gid="61" x="1599.33" y="431" width="32" height="32"/>
+  <object id="148" gid="60" x="1635.64" y="432" width="32" height="32"/>
+  <object id="149" gid="60" x="989.636" y="432" width="32" height="32"/>
+  <object id="152" gid="60" x="994.636" y="432" width="32" height="32"/>
+  <object id="153" gid="60" x="999.636" y="432" width="32" height="32"/>
+  <object id="154" gid="60" x="1004.64" y="432" width="32" height="32"/>
+  <object id="155" gid="61" x="1015.31" y="432" width="32" height="32"/>
+  <object id="157" gid="61" x="977.375" y="431" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup id="11" name="Entities" class="Entity">
+  <properties>
+   <property name="autocollision" type="bool" value="true"/>
+   <property name="interactable" type="bool" value="true"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="5" name="Triggers">
+  <object id="39" name="Enter_Door (Exit Class)" type="Exit" x="447.913" y="61.0072" width="70.1147" height="67.0605">
+   <properties>
+    <property name="exit" type="int" value="1"/>
+    <property name="room" value="room"/>
+   </properties>
+  </object>
+  <object id="44" name="Exit_From_Home" type="Exit" x="456.182" y="385.455" width="36" height="32">
+   <properties>
+    <property name="exit" type="int" value="2"/>
+    <property name="room" value="outside"/>
+   </properties>
+  </object>
+  <object id="48" name="Spawn" type="SpawnPoint" x="488.333" y="143.667">
+   <properties>
+    <property name="id" type="int" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="50" name="Spawn_Outside" type="SpawnPoint" x="472.5" y="484.349">
+   <properties>
+    <property name="id" type="int" value="2"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="52" name="Spawn_Random1" type="SpawnPoint" x="474" y="392">
+   <properties>
+    <property name="id" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="104" name="Enter_Home" type="Exit" x="456.182" y="445.636" width="36" height="32">
+   <properties>
+    <property name="exit" type="int" value="1"/>
+    <property name="room" value="outside"/>
+   </properties>
+  </object>
+  <object id="115" name="enter_inside" type="Exit" x="448" y="123.455" width="70.004" height="16">
+   <properties>
+    <property name="exit" type="int" value="1"/>
+    <property name="room" value="lilyRoom"/>
+   </properties>
+  </object>
+  <object id="120" name="enter_inside_cafe" type="Exit" x="1294" y="448" width="70.004" height="16">
+   <properties>
+    <property name="exit" type="int" value="0"/>
+    <property name="room" value="cafe"/>
+   </properties>
+  </object>
+  <object id="158" name="Soawn_Cafe" type="SpawnPoint" x="1325" y="473">
+   <properties>
+    <property name="id" type="int" value="3"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="253" name="Hiro_Talk" type="Trigger" x="329" y="121" width="17" height="29">
+   <properties>
+    <property name="needsPress" type="bool" value="true"/>
+    <property name="script" value="dialogs"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="6" name="Collisions" class="Collision" visible="0">
+  <object id="57" type="Collision" x="383.938" y="417.609" width="191.976" height="30.6413"/>
+  <object id="64" type="Collision" x="0" y="399.989" width="384" height="48"/>
+  <object id="68" type="Collision" x="576" y="399.967" width="1120.13" height="48"/>
+  <object id="71" type="Collision" x="288" y="0" width="400" height="128"/>
+  <object id="72" type="Collision" x="0" y="0" width="16" height="416.313"/>
+  <object id="252" type="Collision" x="944" y="0" width="16" height="416.313"/>
+  <object id="113" type="Collision" x="160" y="279" width="82" height="41"/>
+  <object id="125" type="Collision" x="1616" y="255.75" width="64.25" height="48.25"/>
+  <object id="126" name="door_collision" type="Collision" x="1567.63" y="282" width="47.875" height="21.875"/>
+  <object id="127" type="Collision" x="1535.81" y="256.063" width="32.125" height="48"/>
+  <object id="250" x="672" y="0" width="288" height="48"/>
+  <object id="251" x="0" y="0" width="290" height="48"/>
+ </objectgroup>
+</map>

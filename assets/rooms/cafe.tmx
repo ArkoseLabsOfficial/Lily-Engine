@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-up" width="19" height="16" tilewidth="32" tileheight="32" infinite="0" nextlayerid="11" nextobjectid="144">
+ <properties>
+  <property name="location" value="cafe"/>
+  <property name="script" value="cafe/cutscene"/>
+  <property name="zoom" type="float" value="3"/>
+ </properties>
+ <tileset firstgid="1" name="Tiles" tilewidth="32" tileheight="32" tilecount="1" columns="0">
+  <grid orientation="orthogonal" width="1" height="1"/>
+  <tile id="0">
+   <image source="rooms/cafe/tiles_floor.png" width="32" height="32"/>
+  </tile>
+ </tileset>
+ <tileset firstgid="2" name="Wall" tilewidth="32" tileheight="32" tilecount="32" columns="4">
+  <image source="rooms/cafe/tiles_wall.png" width="128" height="256"/>
+ </tileset>
+ <tileset firstgid="34" name="Objects" tilewidth="128" tileheight="106" tilecount="28" columns="0">
+  <grid orientation="orthogonal" width="1" height="1"/>
+  <properties>
+   <property name="autocollision" type="bool" value="false"/>
+  </properties>
+  <tile id="0">
+   <image source="rooms/cafe/furniture_bench.png" width="30" height="76"/>
+  </tile>
+  <tile id="1">
+   <image source="rooms/cafe/furniture_chair_1.png" width="24" height="32"/>
+  </tile>
+  <tile id="2">
+   <image source="rooms/cafe/furniture_chair_2.png" width="20" height="34"/>
+  </tile>
+  <tile id="3">
+   <image source="rooms/cafe/furniture_chair_3.png" width="18" height="22"/>
+  </tile>
+  <tile id="4">
+   <image source="rooms/cafe/furniture_counter_1.png" width="90" height="40"/>
+  </tile>
+  <tile id="5">
+   <image source="rooms/cafe/furniture_counter_2.png" width="92" height="52"/>
+  </tile>
+  <tile id="6">
+   <image source="rooms/cafe/furniture_display.png" width="128" height="60"/>
+  </tile>
+  <tile id="7">
+   <image source="rooms/cafe/furniture_shelves.png" width="126" height="106"/>
+  </tile>
+  <tile id="8">
+   <image source="rooms/cafe/furniture_table_round.png" width="52" height="48"/>
+  </tile>
+  <tile id="9">
+   <image source="rooms/cafe/furniture_table_square.png" width="42" height="66"/>
+  </tile>
+  <tile id="10">
+   <image source="rooms/cafe/misc_bottles.png" width="28" height="26"/>
+  </tile>
+  <tile id="11">
+   <image source="rooms/cafe/misc_candy.png" width="26" height="20"/>
+  </tile>
+  <tile id="12">
+   <image source="rooms/cafe/misc_coffeemachine.png" width="30" height="30"/>
+  </tile>
+  <tile id="13">
+   <image source="rooms/cafe/misc_cup.png" width="20" height="20"/>
+  </tile>
+  <tile id="14">
+   <image source="rooms/cafe/misc_flan.png" width="20" height="20"/>
+  </tile>
+  <tile id="15">
+   <image source="rooms/cafe/misc_leftovers_1.png" width="20" height="20"/>
+  </tile>
+  <tile id="16">
+   <image source="rooms/cafe/misc_leftovers_2.png" width="20" height="20"/>
+  </tile>
+  <tile id="17">
+   <image source="rooms/cafe/misc_leftovers_3.png" width="20" height="20"/>
+  </tile>
+  <tile id="18">
+   <image source="rooms/cafe/misc_light.png" width="20" height="30"/>
+  </tile>
+  <tile id="19">
+   <image source="rooms/cafe/misc_napkins.png" width="20" height="20"/>
+  </tile>
+  <tile id="20">
+   <image source="rooms/cafe/misc_register.png" width="36" height="30"/>
+  </tile>
+  <tile id="21">
+   <image source="rooms/cafe/misc_sign_1.png" width="32" height="48"/>
+  </tile>
+  <tile id="22">
+   <image source="rooms/cafe/misc_sign_2.png" width="30" height="46"/>
+  </tile>
+  <tile id="23">
+   <image source="rooms/cafe/wall_clock.png" width="30" height="30"/>
+  </tile>
+  <tile id="24">
+   <image source="rooms/cafe/wall_menu.png" width="80" height="64"/>
+  </tile>
+  <tile id="25">
+   <image source="rooms/cafe/wall_painting_1.png" width="28" height="34"/>
+  </tile>
+  <tile id="26">
+   <image source="rooms/cafe/wall_painting_2.png" width="28" height="34"/>
+  </tile>
+  <tile id="27">
+   <image source="rooms/cafe/wall_painting_3.png" width="28" height="34"/>
+  </tile>
+ </tileset>
+ <tileset firstgid="62" name="Cashier" tilewidth="48" tileheight="52" tilecount="3" columns="3">
+  <image source="rooms/cutscene/chr_cafe_cashier_drop.png" width="144" height="52"/>
+  <tile id="2">
+   <animation>
+    <frame tileid="0" duration="300"/>
+    <frame tileid="1" duration="300"/>
+    <frame tileid="2" duration="300"/>
+   </animation>
+  </tile>
+ </tileset>
+ <tileset firstgid="65" name="light_fadeout" tilewidth="32" tileheight="32" tilecount="16" columns="4">
+  <image source="rooms/common/light_fadeout.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="81" name="light_fadeout_2" tilewidth="32" tileheight="32" tilecount="16" columns="4">
+  <image source="rooms/common/light_fadeout_2.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="97" name="ch1_cashier" tilewidth="48" tileheight="50" tilecount="36" columns="9">
+  <image source="rooms/cutscene/ch1_cashier.png" width="432" height="200"/>
+  <tile id="2">
+   <animation>
+    <frame tileid="0" duration="300"/>
+    <frame tileid="1" duration="300"/>
+    <frame tileid="2" duration="300"/>
+   </animation>
+  </tile>
+  <tile id="11">
+   <animation>
+    <frame tileid="9" duration="300"/>
+    <frame tileid="10" duration="300"/>
+    <frame tileid="11" duration="300"/>
+   </animation>
+  </tile>
+ </tileset>
+ <layer id="1" name="Tile Layer 1" width="19" height="16">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,9,20,20,20,20,20,20,20,8,0,
+0,9,20,20,20,20,20,20,20,21,23,24,24,24,24,24,25,15,0,
+0,17,23,24,24,24,24,24,24,25,27,28,28,28,28,28,29,15,0,
+0,17,27,28,28,28,28,28,28,29,31,32,32,32,32,32,33,15,0,
+0,17,31,32,32,32,32,32,32,33,1,1,1,1,1,1,1,15,0,
+0,17,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,15,0,
+0,17,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,15,0,
+0,17,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,15,0,
+0,17,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,15,0,
+0,17,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,15,0,
+0,17,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,15,0,
+0,5,12,12,12,13,1,1,1,11,12,12,12,12,12,12,12,4,0,
+0,0,0,0,0,17,1,1,1,15,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,17,1,1,1,15,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,17,1,1,1,15,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="3" name="Objects" class="Object">
+  <object id="15" name="FurnitureShelves" type="Object" gid="41" x="64" y="185" width="126" height="106"/>
+  <object id="19" name="furniture_display" type="Object" gid="40" x="64" y="288" width="128" height="60"/>
+  <object id="26" name="furniture_counter_2" type="Object" gid="39" x="192" y="285" width="92" height="52"/>
+  <object id="27" name="furniture_counter_1" type="Object" gid="38" x="193" y="186" width="90" height="40"/>
+  <object id="28" name="furniture_bench" type="Object" gid="34" x="318.75" y="179.25" width="30" height="76"/>
+  <object id="29" name="furniture_table_square" type="Object" gid="43" x="353.25" y="177.75" width="42" height="66"/>
+  <object id="31" name="furniture_bench" type="Object" gid="2147483682" x="400.25" y="179" width="30" height="76"/>
+  <object id="32" name="furniture_bench" type="Object" gid="34" x="431.75" y="179.25" width="30" height="76"/>
+  <object id="33" name="furniture_table_square" type="Object" gid="43" x="466.25" y="177.75" width="42" height="66"/>
+  <object id="34" name="furniture_bench_1" type="Object" gid="2147483682" x="513.25" y="179" width="30" height="76"/>
+  <object id="35" name="furniture_table_round_4" type="Object" gid="42" x="441.5" y="263" width="52" height="48"/>
+  <object id="36" name="furniture_chair_9" type="Object" gid="35" x="418" y="255.5" width="24" height="32"/>
+  <object id="37" name="chair" type="Object" gid="2147483683" x="491.5" y="254.5" width="24" height="32"/>
+  <object id="38" name="furniture_chair_8" type="Object" gid="36" x="457" y="230.667" width="20" height="34"/>
+  <object id="39" name="furniture_chair_7" type="Object" gid="37" x="459.333" y="276.667" width="18" height="22"/>
+  <object id="40" name="furniture_table_round_3" type="Object" gid="42" x="95.3333" y="349.667" width="52" height="48"/>
+  <object id="41" name="furniture_chair_6" type="Object" gid="35" x="74" y="343" width="24" height="32"/>
+  <object id="42" name="furniture_chair_5" type="Object" gid="2147483683" x="144.667" y="343.333" width="24" height="32"/>
+  <object id="43" name="furniture_table_round_2" type="Object" gid="42" x="351" y="344.833" width="52" height="48"/>
+  <object id="44" name="furniture_chair_4" type="Object" gid="35" x="329.667" y="338.166" width="24" height="32"/>
+  <object id="45" name="furniture_chair_3" type="Object" gid="2147483683" x="400.333" y="338.5" width="24" height="32"/>
+  <object id="46" name="furniture_table_round_1" type="Object" gid="42" x="463" y="344.833" width="52" height="48"/>
+  <object id="47" name="furniture_chair_2" type="Object" gid="35" x="441.667" y="338.166" width="24" height="32"/>
+  <object id="48" name="furniture_chair_1" type="Object" gid="2147483683" x="512.333" y="338.5" width="24" height="32"/>
+  <object id="49" name="misc_sign_2" type="Object" gid="56" x="287" y="282.333" width="30" height="46"/>
+  <object id="50" name="misc_sign_1" type="Object" gid="55" x="179" y="349.667" width="32" height="48"/>
+  <object id="52" name="misc_light_1" type="Object" gid="52" x="349.333" y="56" width="20" height="30"/>
+  <object id="53" name="misc_light" type="Object" gid="52" x="487.667" y="56.3333" width="20" height="30"/>
+  <object id="54" name="wall_painting_1" type="Object" gid="59" x="329.667" y="84" width="28" height="34"/>
+  <object id="56" name="wall_painting_2" type="Object" gid="60" x="408" y="88" width="28" height="34"/>
+  <object id="57" name="wall_painting_3" type="Object" gid="61" x="498" y="93" width="28" height="34"/>
+  <object id="74" name="furniture_chair_2" type="Object" gid="36" x="112" y="320.5" width="20" height="34"/>
+  <object id="81" name="wall_clock" type="Object" gid="57" x="281.333" y="113" width="30" height="30"/>
+  <object id="82" name="wall_menu" type="Object" gid="58" x="194" y="131" width="80" height="64"/>
+ </objectgroup>
+ <objectgroup id="5" name="UpperObjects" class="Object">
+  <object id="58" name="misc_cup" type="Object" gid="47" x="444.909" y="231.273" width="20" height="20"/>
+  <object id="59" name="misc_flan" type="Object" gid="48" x="463.636" y="233.273" width="20" height="20"/>
+  <object id="60" name="misc_leftovers_3" type="Object" gid="51" x="465.273" y="247.636" width="20" height="20"/>
+  <object id="61" name="misc_leftovers_2" type="Object" gid="50" x="448.727" y="244.909" width="20" height="20"/>
+  <object id="62" name="misc_leftovers_1" type="Object" gid="49" x="490.364" y="322.727" width="20" height="20"/>
+  <object id="63" name="misc_coffeemachine" type="Object" gid="46" x="201" y="161" width="30" height="30"/>
+  <object id="64" name="misc_bottles" type="Object" gid="44" x="242" y="160.636" width="28" height="26"/>
+  <object id="65" name="misc_candy" type="Object" gid="45" x="256.818" y="248.909" width="26" height="20"/>
+  <object id="66" name="misc_register" type="Object" gid="54" x="197.273" y="267.545" width="36" height="30"/>
+  <object id="67" name="misc_napkins_3" type="Object" gid="53" x="365" y="129" width="20" height="20"/>
+  <object id="68" name="misc_napkins_3" type="Object" gid="53" x="480" y="127.75" width="20" height="20"/>
+  <object id="69" name="misc_napkins_2" type="Object" gid="2147483701" x="469.75" y="327.5" width="20" height="20"/>
+  <object id="71" name="misc_napkins_1" type="Object" gid="53" x="365" y="322.5" width="20" height="20"/>
+  <object id="72" name="misc_napkins" type="Object" gid="53" x="101" y="333.75" width="20" height="20"/>
+  <object id="76" name="misc_cup_1" type="Object" gid="2147483695" x="462.75" y="148.25" width="20" height="20"/>
+  <object id="77" name="misc_cup" type="Object" gid="47" x="489.75" y="154.5" width="20" height="20"/>
+  <object id="79" name="misc_leftovers_2" type="Object" gid="2147483698" x="463.25" y="162.75" width="20" height="20"/>
+  <object id="80" name="misc_leftovers_1" type="Object" gid="49" x="489.5" y="145.25" width="20" height="20"/>
+ </objectgroup>
+ <objectgroup id="6" name="Characters">
+  <object id="134" gid="129" x="218.5" y="236" width="48" height="50"/>
+  <object id="135" gid="129" x="290" y="236.5" width="48" height="50"/>
+  <object id="136" gid="129" x="360.5" y="227.5" width="48" height="50"/>
+  <object id="137" gid="129" x="338.5" y="241.5" width="48" height="50"/>
+  <object id="138" gid="129" x="319.5" y="304.5" width="48" height="50"/>
+  <object id="140" name="cashier" type="Entity" gid="108" x="320" y="224" width="48" height="50"/>
+ </objectgroup>
+ <objectgroup id="4" name="Player"/>
+ <objectgroup id="9" name="Collisions" class="Collision" visible="0">
+  <object id="86" type="Collision" x="541" y="23" width="33" height="361.5"/>
+  <object id="88" type="Collision" x="31" y="23" width="33" height="361.5"/>
+  <object id="89" type="Collision" x="33.25" y="351" width="156" height="128"/>
+  <object id="90" type="Collision" x="288.25" y="351" width="257" height="128"/>
+  <object id="91" type="Collision" x="63.6667" y="145.667" width="220.333" height="35"/>
+  <object id="92" type="Collision" x="282.667" y="133.667" width="36.3333" height="23.6667"/>
+  <object id="93" type="Collision" x="319.667" y="126.333" width="252.667" height="52.3333"/>
+  <object id="96" type="Collision" x="459" y="196.667" width="18" height="81.6667"/>
+  <object id="97" type="Collision" x="419.333" y="222.667" width="95.6667" height="32.3333"/>
+  <object id="98" type="Collision" x="451.273" y="253.273" width="11.0909" height="9.63636"/>
+  <object id="99" type="Collision" x="469.818" y="252.909" width="16.5455" height="10.7273"/>
+  <object id="103" type="Collision" x="476.727" y="215.273" width="11.8182" height="9.63636"/>
+  <object id="104" type="Collision" x="445.455" y="215.636" width="14" height="10.7273"/>
+  <object id="105" type="Collision" x="440.875" y="305.625" width="25.375" height="33"/>
+  <object id="106" type="Collision" x="440.875" y="305.625" width="25.375" height="33"/>
+  <object id="109" type="Collision" x="328.875" y="305.625" width="25.375" height="33"/>
+  <object id="107" type="Collision" x="511.875" y="305.625" width="25.375" height="33"/>
+  <object id="111" type="Collision" x="399.875" y="305.625" width="25.375" height="33"/>
+  <object id="108" type="Collision" x="466.25" y="296.875" width="46.875" height="45.25"/>
+  <object id="110" type="Collision" x="354.25" y="296.875" width="46.875" height="45.25"/>
+  <object id="112" type="Collision" x="73.9091" y="310.182" width="29.6364" height="32.5455"/>
+  <object id="113" type="Collision" x="144.182" y="311.091" width="24.5455" height="32.3636"/>
+  <object id="114" type="Collision" x="113.182" y="286.364" width="17" height="24.0909"/>
+  <object id="115" type="Collision" x="103.636" y="302.818" width="42" height="43.9091"/>
+  <object id="116" type="Collision" x="98.4063" y="302.719" width="5.46875" height="8.25"/>
+  <object id="117" type="Collision" x="64" y="232.727" width="128" height="48.9091"/>
+  <object id="118" type="Collision" x="191.636" y="248" width="82.1818" height="31.8182"/>
+  <object id="119" type="Collision" x="256.273" y="232.636" width="26.8182" height="47.2443"/>
+  <object id="121" type="Collision" x="286.938" y="236.438" width="29" height="44.875"/>
+  <object id="122" type="Collision" x="178.909" y="301.625" width="32.4545" height="46.7386"/>
+ </objectgroup>
+ <objectgroup id="8" name="Triggers">
+  <object id="83" name="Cafe_Enter" type="SpawnPoint" x="239" y="445">
+   <properties>
+    <property name="id" type="int" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="123" name="Cafe_Exit" type="Exit" x="186.5" y="455.75" width="107.25" height="23">
+   <properties>
+    <property name="exit" type="int" value="3"/>
+    <property name="room" value="outside"/>
+   </properties>
+  </object>
+  <object id="143" name="Cashier_Trigger" type="Trigger" x="231.125" y="248.375" width="26.375" height="35.9659">
+   <properties>
+    <property name="needsPress" type="bool" value="true"/>
+    <property name="script" value="buy"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer id="10" name="Tile Fade" width="19" height="16">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,1073741901,1073741902,1073741903,1073741903,1073741904,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,1073741897,1073741898,1073741899,1073741899,1073741900,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,1073741893,1073741894,1073741895,1073741895,1073741896,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,1073741889,1073741890,1073741891,1073741891,1073741892,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+</map>

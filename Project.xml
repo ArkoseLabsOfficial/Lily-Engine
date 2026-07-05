@@ -63,11 +63,18 @@
 	<haxelib name="flixel" />
 	<haxelib name="flixel-addons" />
     <haxelib name="flixel-ui" />
-	<haxelib name="hscript-iris" if="FEATURE_HSCRIPT"/>
+	<haxelib name="ShadowScript" if="FEATURE_HSCRIPT"/>
 	<haxelib name="mobile-controls" />
 	<haxedef name="openflPos" />
 	<haxedef name="hscriptPos" />
 	<assets path="mobile" embed="false" />
+
+	<!-- Comment this out to prevent extending classes in hscript.
+		 Reduces compilation time at the cost of limited HScript flexibility. !-->
+	<define name="CUSTOM_CLASSES" />
+
+	<!-- Comment this out to disable abstract support in hscript. !-->
+	<haxedef name="HSCRIPT_ABSTRACT_SUPPORT" />
 
 	<!-- ______________________________ Haxedefines _____________________________ -->
 

@@ -10,6 +10,26 @@ class Game {
 	public var language:LanguageManager;
 	public var save:SaveManager;
 
+	public static var itemsData(get, never):ItemManager;
+
+	static inline function get_itemsData()
+		return instance.items;
+
+	public static var objectivesData(get, never):ObjectiveManager;
+
+	static inline function get_objectivesData()
+		return instance.objectives;
+
+	public static var languageData(get, never):LanguageManager;
+
+	static inline function get_languageData()
+		return instance.language;
+
+	public static var saveData(get, never):SaveManager;
+
+	static inline function get_saveData()
+		return instance.save;
+
 	public static var mobileC(get, never):MobileControls;
 
 	public static function get_mobileC()
@@ -31,13 +51,13 @@ class Game {
 		FlxG.state.openSubState(dialogue);
 	}
 
-	public function bindToScript(script:Dynamic):Void {
-		script.setGlobal("Game", this);
-		script.setGlobal("Items", this.items);
-		script.setGlobal("Objectives", this.objectives);
-		script.setGlobal("Language", this.language);
-		script.setGlobal("Save", this.save);
-		script.setGlobal("playDialogue", playDialogue);
+	public function bindToScript(script:Script):Void {
+		script.set("Game", this);
+		script.set("Items", this.items);
+		script.set("Objectives", this.objectives);
+		script.set("Language", this.language);
+		script.set("Save", this.save);
+		script.set("playDialogue", playDialogue);
 	}
 
 	public static function resetState():Void {

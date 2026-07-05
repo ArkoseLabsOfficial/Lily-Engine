@@ -2,10 +2,11 @@
 <data>
     <items>
         <item 
-            id="iron_sword" 
-            name="Iron Sword" 
-            desc="A sharp steel blade, standard issue for guards." 
-            sprite="sprite/common/item/screwdriver" 
-            script="use_sword" 
+            id="ch1_knife" 
+            name="Knife" 
+            desc="Very Sharp."
+            sprite="items/ch1_knife"
+            script="items/knife"
         />
+    </items>
 </data>

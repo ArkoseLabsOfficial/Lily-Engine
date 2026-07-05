@@ -33,6 +33,10 @@ enum CharacterState {
 }
 
 class CharacterEntity extends WorldObject {
+	public var isScriptMoving:Bool = false;
+	public var scriptTarget:FlxPoint = FlxPoint.get();
+	public var onScriptMoveComplete:Void->Void = null;
+
 	public var canMove:Bool = true;
 	public var currentFacing:FacingDirection = DOWN;
 	public var currentState:CharacterState = Standing;
@@ -61,6 +65,19 @@ class CharacterEntity extends WorldObject {
 	public function new(x:Float, y:Float, z:Int, name:String) {
 		super(x, y, z, name);
 		moves = false;
+	}
+
+	public function walkTo(targetX:Float, targetY:Float, speed:Float = 100, ?onComplete:Void->Void):Void {
+		scriptTarget.set(targetX, targetY);
+		onScriptMoveComplete = onComplete;
+		isScriptMoving = true;
+		canMove = false;
+
+		var dx = targetX - x;
+		var dy = targetY - y;
+		var angle = Math.atan2(dy, dx);
+
+		velocity.set(Math.cos(angle) * speed, Math.sin(angle) * speed);
 	}
 
 	override public function loadEntity(folder:String, spriteName:String) {
@@ -154,9 +171,9 @@ class CharacterEntity extends WorldObject {
 
 		if (hitboxGraphic == null)
 			hitboxGraphic = new FlxSprite();
-		hitboxGraphic.makeGraphic(Std.int(colWidth), Std.int(colHeight), flixel.util.FlxColor.TRANSPARENT);
-		flixel.util.FlxSpriteUtil.drawRect(hitboxGraphic, 0, 0, colWidth, colHeight, flixel.util.FlxColor.TRANSPARENT,
-			{thickness: 2, color: flixel.util.FlxColor.RED});
+		hitboxGraphic.makeGraphic(Std.int(colWidth), Std.int(colHeight), FlxColor.TRANSPARENT);
+		FlxSpriteUtil.drawRect(hitboxGraphic, 0, 0, colWidth, colHeight, FlxColor.TRANSPARENT,
+			{thickness: 2, color: FlxColor.RED});
 	}
 
 	function setupDefaultAnimations() {
@@ -213,11 +230,11 @@ class CharacterEntity extends WorldObject {
 			var iBox = getInteractionBox();
 			if (interactionGraphic == null) {
 				interactionGraphic = new FlxSprite();
-				interactionGraphic.makeGraphic(1, 1, flixel.util.FlxColor.TRANSPARENT);
+				interactionGraphic.makeGraphic(1, 1, FlxColor.TRANSPARENT);
 			}
-			interactionGraphic.makeGraphic(Std.int(iBox.width), Std.int(iBox.height), flixel.util.FlxColor.TRANSPARENT);
-			flixel.util.FlxSpriteUtil.drawRect(interactionGraphic, 0, 0, iBox.width, iBox.height, flixel.util.FlxColor.TRANSPARENT,
-				{thickness: 2, color: flixel.util.FlxColor.BLUE});
+			interactionGraphic.makeGraphic(Std.int(iBox.width), Std.int(iBox.height), FlxColor.TRANSPARENT);
+			FlxSpriteUtil.drawRect(interactionGraphic, 0, 0, iBox.width, iBox.height, FlxColor.TRANSPARENT,
+				{thickness: 2, color: FlxColor.BLUE});
 			interactionGraphic.x = iBox.x;
 			interactionGraphic.y = iBox.y;
 			interactionGraphic.scrollFactor.set(this.scrollFactor.x, this.scrollFactor.y);
@@ -228,9 +245,34 @@ class CharacterEntity extends WorldObject {
 
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
-		if (canMove) {
-			recordHistory();
-			updateAnimations();
+
+		recordHistory();
+		updateAnimations();
+
+		if (isScriptMoving) {
+			var dxStart = scriptTarget.x - x;
+			var dyStart = scriptTarget.y - y;
+
+			x += velocity.x * elapsed;
+			y += velocity.y * elapsed;
+
+			var dxEnd = scriptTarget.x - x;
+			var dyEnd = scriptTarget.y - y;
+
+			if ((dxStart * dxEnd + dyStart * dyEnd) <= 0) {
+				x = scriptTarget.x;
+				y = scriptTarget.y;
+				velocity.set(0, 0);
+				isScriptMoving = false;
+
+				updateAnimations();
+
+				if (onScriptMoveComplete != null) {
+					var cb = onScriptMoveComplete;
+					onScriptMoveComplete = null;
+					cb();
+				}
+			}
 		}
 	}
 
@@ -258,6 +300,20 @@ class CharacterEntity extends WorldObject {
 		if (lockedAnim != "") {
 			playAnim(lockedAnim);
 			return;
+		}
+
+		if (animation.curAnim != null) {
+			var currentName = animation.curAnim.name.toLowerCase();
+
+			var isStandard = StringTools.startsWith(currentName, "idle")
+				|| StringTools.startsWith(currentName, "walk")
+				|| StringTools.startsWith(currentName, "run");
+
+			if (!isStandard && !animation.curAnim.finished) {
+				if (Math.abs(velocity.x) > 5 || Math.abs(velocity.y) > 5) {} else {
+					return;
+				}
+			}
 		}
 
 		if (Math.abs(velocity.x) > 5 || Math.abs(velocity.y) > 5) {

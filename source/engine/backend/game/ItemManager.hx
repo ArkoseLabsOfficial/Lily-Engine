@@ -70,14 +70,16 @@ class ItemManager {
 		var fullPath = scriptPath + ".hx";
 		trace("scripts/" + fullPath);
 
-		//if (!LilyAssets.fileExists(fullPath))
-			//return;
-
 		#if FEATURE_HSCRIPT
-		trace("scripts/" + fullPath);
-		var itemScript = RoomManager.instance.scripts.loadScript("item", "scripts/" + fullPath);
-		RoomManager.instance.injectScriptVariables();
+		var itemScript = Script.create("scripts/" + fullPath);
+		Game.instance.bindToScript(itemScript);
+		itemScript.set("addItem", addItem);
+		itemScript.set("removeItem", removeItem);
+		itemScript.set("getOwnedAmount", getOwnedAmount);
+
+		itemScript.load();
 		itemScript.call("onUse");
+		itemScript.destroy();
 		#end
 	}
 }

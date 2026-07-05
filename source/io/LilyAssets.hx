@@ -151,7 +151,7 @@ class LilyAssets
             if (retVal != null) return retVal;
         }
 
-        trace('Failed to load image: $file');
+        //trace('Failed to load image: $file');
         
         if (currentTrackedAssets.exists('__flixel_logo'))
         {

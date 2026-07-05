@@ -29,14 +29,17 @@ import engine.ui.LacieUIExperimental.MenuVisualEntry;
 import engine.ui.LacieUIExperimental.SimpleVerticalMenu;
 import engine.ui.SpecialNinePatch;
 
-
-/* Scripted Classes */
 #if FEATURE_HSCRIPT
 import engine.scripting.ScriptedSprite;
 import engine.scripting.ScriptedSpriteGroup;
 import engine.scripting.ScriptedState;
 import engine.scripting.ScriptedSubState;
+
+import engine.scripting.HScript.Script;
+import engine.scripting.HScript.ScriptPack;
+import engine.scripting.events.CancellableEvent;
 #end
+import haxe.io.Path;
 
 /* Assets */
 import io.File;
@@ -72,6 +75,8 @@ import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxDestroyUtil;
 import flixel.text.FlxText;
+import flixel.util.FlxTimer;
+import flixel.text.FlxText.FlxTextAlign;
 import flixel.system.FlxAssets;
 import flixel.util.FlxSave;
 import flixel.graphics.frames.FlxImageFrame;

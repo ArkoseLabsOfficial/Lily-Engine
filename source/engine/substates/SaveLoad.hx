@@ -144,14 +144,14 @@ class SaveLoad extends SubStateBackend {
 		var slideOutOffset = dir * -200;
 		var slideInOffset = dir * 200;
 
-		flixel.tweens.FlxTween.tween(slotGroup, {x: slotGroup.x + slideOutOffset, alpha: 0}, 0.15, {
-			ease: flixel.tweens.FlxEase.quadOut,
+		FlxTween.tween(slotGroup, {x: slotGroup.x + slideOutOffset, alpha: 0}, 0.15, {
+			ease: FlxEase.quadOut,
 			onComplete: function(t) {
 				buildPage();
 				slotGroup.x -= (slideOutOffset + slideInOffset);
 
-				flixel.tweens.FlxTween.tween(slotGroup, {x: slotGroup.x + slideInOffset, alpha: 1}, 0.15, {
-					ease: flixel.tweens.FlxEase.quadOut,
+				FlxTween.tween(slotGroup, {x: slotGroup.x + slideInOffset, alpha: 1}, 0.15, {
+					ease: FlxEase.quadOut,
 					onComplete: function(t) {
 						isPaginating = false;
 					}

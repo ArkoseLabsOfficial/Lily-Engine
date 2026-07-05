@@ -1,0 +1,29 @@
+{
+  "start": [
+    {
+      "leftChar": "lacie/thinking",
+      "name": "Lacie",
+      "text": "ch1.dialog.cafe.buy.whatshould",
+      "selections": [
+        {
+          "id": "ch1_food",
+          "text": "ch1.dialog.cafe.buy.food1"
+        },
+        {
+          "id": "ch1_food",
+          "text": "ch1.dialog.cafe.buy.food2"
+        },
+        {
+          "id": "ch1_food",
+          "text": "ch1.dialog.cafe.buy.food3"
+        }
+      ]
+    },
+    {
+      "leftChar": "lacie/thinking",
+      "name": "Lacie",
+      "text": "ch1.dialog.cafe.buy.illbuy",
+      "close": true
+    }
+  ]
+}

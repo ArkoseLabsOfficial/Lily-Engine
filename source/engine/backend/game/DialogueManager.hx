@@ -1,22 +1,187 @@
 package engine.backend.game;
 
+import engine.scripting.EventManager;
+import engine.scripting.events.DialogEvents;
+import haxe.DynamicAccess;
+
+typedef DialogSelectionDef = {
+	var ?id:String;
+	var ?text:String;
+	var ?target:String;
+	var ?setFlag:String;
+	var ?condIf:String;
+	var ?condUnless:String;
+	var ?script:String;
+}
+
+typedef DialogEntryDef = {
+	var ?name:String;
+	var ?text:String;
+	var ?leftChar:String;
+	var ?rightChar:String;
+	var ?selections:Array<DialogSelectionDef>;
+	var ?close:Bool;
+	var ?target:String;
+	var ?script:String;
+	var ?setFlag:String;
+	var ?condIf:String;
+	var ?condUnless:String;
+}
+
 class DialogueManager extends SubStateBackend {
+	public static var instance:DialogueManager;
+
 	var dialogBox:DialogBox;
-	var selectionMenu:DialogSelection;
-	var dialogCamera:FlxCamera;
-	var xmlData:Access;
-	var currentEntries:Array<Access> = [];
+
+	public var portraitLeft:FlxSprite;
+	public var portraitRight:FlxSprite;
+	public var leftBaseX:Float = 0;
+	public var leftBaseY:Float = 0;
+	public var rightBaseX:Float = 1400;
+	public var rightBaseY:Float = 0;
+
+	public var selectionMenu:DialogSelection;
+	public var dialogCamera:FlxCamera;
+
+	var jsonData:DynamicAccess<Array<DialogEntryDef>>;
+	var currentEntries:Array<DialogEntryDef> = [];
 	var entryIndex:Int = 0;
 	var onCompleteCallback:Void->Void;
+
 	var waitingForInput:Bool = false;
 
-	public function new(xmlPath:String, startDialogId:String, ?onComplete:Void->Void) {
+	public var isPaused:Bool = false;
+
+	var localDialogScript:Script = null;
+
+	public function injectScriptVariables():Void {
+		#if FEATURE_HSCRIPT
+		function set(name:String, thing:Dynamic) {
+			localDialogScript.set(name, thing);
+		}
+		set("room", RoomManager.instance);
+		set("player", RoomManager.instance.player);
+		set("parent", engine.states.BaseRoom.instance);
+		set("changeLayer", RoomManager.instance.changeLayer);
+		set("addItem", Game.itemsData.addItem);
+		set("removeItem", Game.itemsData.removeItem);
+		set("getOwnedAmount", Game.itemsData.getOwnedAmount);
+		set("lockPlayer", function(locked:Bool = true) {
+			if (RoomManager.instance.player != null) {
+				RoomManager.instance.player.canMove = !locked;
+				if (locked)
+					RoomManager.instance.player.velocity.set(0, 0);
+			}
+		});
+
+		set("wait", function(time:Float, cb:Dynamic) {
+			new FlxTimer().start(time, function(_) {
+				if (cb != null)
+					Reflect.callMethod(null, cb, []);
+			});
+		});
+
+		set("walkEntity", function(id:String, x:Float, y:Float, speed:Float, cb:Dynamic) {
+			var ent:engine.objects.CharacterEntity = null;
+
+			if (id == "player" && RoomManager.instance.player != null)
+				ent = RoomManager.instance.player;
+			else if (RoomManager.instance.characters.exists(id))
+				ent = RoomManager.instance.characters.get(id);
+			else if (RoomManager.instance.entities.exists(id) && Std.isOfType(RoomManager.instance.entities.get(id), CharacterEntity)) {
+				ent = cast RoomManager.instance.entities.get(id);
+			}
+
+			if (ent != null) {
+				ent.walkTo(x, y, speed, function() {
+					if (cb != null)
+						cb();
+				});
+			} else {
+				FlxG.log.warn('walkEntity: Character "' + id + '" not found or is not a CharacterEntity.');
+				if (cb != null)
+					cb();
+			}
+		});
+
+		set("faceEntity", function(id:String, dir:String) {
+			var ent:CharacterEntity = null;
+
+			if (id == "player" && RoomManager.instance.player != null)
+				ent = RoomManager.instance.player;
+			else if (RoomManager.instance.characters.exists(id))
+				ent = RoomManager.instance.characters.get(id);
+			else if (RoomManager.instance.entities.exists(id) && Std.isOfType(RoomManager.instance.entities.get(id), CharacterEntity)) {
+				ent = cast RoomManager.instance.entities.get(id);
+			}
+
+			if (ent != null) {
+				var d = CharacterEntity.FacingDirection.DOWN;
+				switch (dir.toLowerCase()) {
+					case "up":
+						d = UP;
+					case "down":
+						d = DOWN;
+					case "left":
+						d = LEFT;
+					case "right":
+						d = RIGHT;
+				}
+				ent.currentFacing = d;
+				ent.updateAnimations();
+			}
+		});
+
+		set("setCameraTarget", function(id:String) {
+			var target:FlxObject = null;
+
+			if (id == "player" && RoomManager.instance.player != null)
+				target = RoomManager.instance.player;
+			else if (RoomManager.instance.characters.exists(id))
+				target = RoomManager.instance.characters.get(id);
+			else if (RoomManager.instance.entities.exists(id))
+				target = RoomManager.instance.entities.get(id);
+
+			if (target != null) {
+				BaseRoom.instance.followTheObject(target, "NO_DEAD_ZONE", 1);
+			} else {
+				FlxG.log.warn('setCameraTarget: Target "' + id + '" not found.');
+			}
+		});
+
+		for (key => val in RoomManager.instance.entities)
+			set(key, val);
+		for (key => val in RoomManager.instance.characters)
+			if (!RoomManager.instance.entities.exists(key))
+				set(key, val);
+		#end
+	}
+
+	public function new(jsonPath:String, startDialogId:String, ?onComplete:Void->Void) {
 		super(0x00000000);
+		instance = this;
 		onCompleteCallback = onComplete;
 
-		xmlData = SimpleParser.loadXML('dialogues/$xmlPath.xml', "<!DOCTYPE lily-engine-dialog>");
-		if (xmlData != null)
+		if (jsonPath != "") {
+			var rawText = LilyAssets.getTextFromFile('dialogues/$jsonPath.json');
+			if (rawText != null) {
+				try {
+					jsonData = cast Json.parse(rawText);
+				} catch (e:Dynamic) {
+					FlxG.log.error(e);
+				}
+			}
+
+			localDialogScript = Script.create('dialogues/$jsonPath.hx');
+			injectScriptVariables();
+			localDialogScript.set("dialog", this);
+			localDialogScript.load();
+			localDialogScript.call("create");
+		}
+
+		if (jsonData != null && startDialogId != "") {
 			jumpToDialog(startDialogId);
+		}
 	}
 
 	override public function create():Void {
@@ -33,13 +198,33 @@ class DialogueManager extends SubStateBackend {
 		cameras = [dialogCamera];
 		dialogCamera.zoom = 1;
 
+		portraitLeft = new FlxSprite(leftBaseX, leftBaseY);
+		portraitLeft.antialiasing = true;
+		portraitLeft.scrollFactor.set(0, 0);
+		add(portraitLeft);
+
+		portraitRight = new FlxSprite(rightBaseX, rightBaseY);
+		portraitRight.antialiasing = true;
+		portraitRight.flipX = true;
+		portraitRight.scrollFactor.set(0, 0);
+		add(portraitRight);
+
 		dialogBox = new DialogBox();
+		if (localDialogScript != null)
+			localDialogScript.set("dialogBox", dialogBox);
 		add(dialogBox);
 
 		selectionMenu = new DialogSelection(this);
+		if (localDialogScript != null)
+			localDialogScript.set("selectionMenu", selectionMenu);
 		add(selectionMenu);
 
-		playCurrentEntry();
+		if (localDialogScript != null)
+			localDialogScript.call("postCreate");
+
+		if (jsonData != null) {
+			playCurrentEntry();
+		}
 	}
 
 	override public function update(elapsed:Float):Void {
@@ -54,95 +239,163 @@ class DialogueManager extends SubStateBackend {
 		#end
 
 		#if FLX_TOUCH
-		for (touch in FlxG.touches.list)
+		for (touch in FlxG.touches.list) {
 			if (touch.justPressed)
 				touchJustPressed = true;
+		}
 		#end
 
-		if (waitingForInput && !selectionMenu.activeMenu && (Controls.ACCEPT || pointerJustPressed || touchJustPressed)) {
+		if (!isPaused && waitingForInput && !selectionMenu.activeMenu && (Controls.ACCEPT || pointerJustPressed || touchJustPressed)) {
 			if (dialogBox.advance()) {
 				handleEntryEnd(currentEntries[entryIndex]);
 			}
 		}
 	}
 
+	public function updatePortrait(sprite:FlxSprite, path:String, baseX:Float, baseY:Float):Void {
+		if (path == null || path == "") {
+			sprite.visible = false;
+		} else {
+			sprite.loadGraphic(LilyAssets.image(path));
+			sprite.updateHitbox();
+			sprite.x = baseX;
+			sprite.y = baseY;
+			sprite.visible = true;
+		}
+	}
+
+	public function pause() {
+		isPaused = true;
+	}
+
+	public function resume() {
+		isPaused = false;
+		if (!waitingForInput)
+			playCurrentEntry();
+	}
+
+	public static function showStandaloneChoices(options:Array<String>, onSelect:Int->Void):Void {
+		var menu = new DialogueManager("", "");
+		FlxG.state.openSubState(menu);
+		menu.selectionMenu.show(options, function(idx) {
+			onSelect(idx);
+			menu.close();
+		});
+	}
+
 	function jumpToDialog(id:String):Void {
 		entryIndex = 0;
 		currentEntries = [];
 
-		if (xmlData == null)
+		if (localDialogScript != null) {
+			var evt = EventManager.get(DialogJumpEvent);
+			evt.dialogId = id;
+			localDialogScript.event("onDialogJump", evt);
+			if (evt.cancelled)
+				return;
+			id = evt.dialogId;
+		}
+
+		if (jsonData == null || !jsonData.exists(id))
 			return;
 
-		for (dialog in xmlData.nodes.dialog) {
-			if (dialog.att.id == id) {
-				for (entry in dialog.nodes.entry)
-					currentEntries.push(entry);
-				break;
-			}
+		var arr:Array<DialogEntryDef> = jsonData.get(id);
+		if (arr != null) {
+			for (i in 0...arr.length)
+				currentEntries.push(arr[i]);
 		}
 	}
 
+	function formatText(text:String):String {
+		var r = new EReg("\\{([^}]+)\\}", "g");
+		return r.map(text, function(e:EReg):String {
+			var key = e.matched(1);
+			var val = Game.saveData.getVariable(key);
+			return val != null ? Std.string(val) : "";
+		});
+	}
+
 	function playCurrentEntry():Void {
+		if (isPaused)
+			return;
+
 		if (entryIndex >= currentEntries.length) {
 			closeDialogue();
 			return;
 		}
 
 		var entry = currentEntries[entryIndex];
-		var canShow = true;
 
-		if (entry.has.resolve("if"))
-			canShow = evaluateLogic(entry.att.resolve("if"));
-		if (entry.has.unless)
-			canShow = !evaluateLogic(entry.att.unless);
-
-		if (!canShow) {
+		if (entry.condIf != null && !evaluateLogic(entry.condIf)) {
 			entryIndex++;
 			playCurrentEntry();
 			return;
 		}
 
-		if (entry.has.setFlag)
-			applySetFlag(entry.att.setFlag);
-
-		var charName = entry.has.name ? entry.att.name : "";
-		var textKey = entry.has.text ? entry.att.text : "";
-		var localizedText = Game.instance.language.getCaption(textKey);
-
-		if (Game.instance.language.getStoryCaption(textKey)[1] == true) {
-			localizedText = Game.instance.language.getStoryCaption(textKey)[0];
+		if (entry.condUnless != null && evaluateLogic(entry.condUnless)) {
+			entryIndex++;
+			playCurrentEntry();
+			return;
 		}
 
-		var leftPath = "";
-		if (entry.has.leftChar && entry.att.leftChar != "none") {
-			leftPath = "dialogs/characters/" + entry.att.leftChar;
+		if (Reflect.hasField(entry, "function") && localDialogScript != null) {
+			injectScriptVariables();
+			localDialogScript.call(Reflect.field(entry, "function"));
+			if (isPaused)
+				return;
 		}
 
-		var rightPath = "";
-		if (entry.has.rightChar && entry.att.rightChar != "none") {
-			rightPath = "dialogs/characters/" + entry.att.rightChar;
-		}
+		if (entry.setFlag != null)
+			applySetFlag(entry.setFlag);
 
-		var leftAnim = entry.has.leftCharAnim ? entry.att.leftCharAnim : "none";
-		var rightAnim = entry.has.rightCharAnim ? entry.att.rightCharAnim : "none";
-		dialogBox.show(charName, localizedText, leftPath, rightPath, leftAnim, rightAnim);
-		waitingForInput = true;
-	}
+		var charName = entry.name != null ? entry.name : "";
+		var textKey = entry.text != null ? entry.text : "";
 
-	function handleEntryEnd(entry:Access):Void {
-		waitingForInput = false;
-
-		if (entry.has.hasSelection && entry.att.hasSelection == "true") {
+		if (textKey == "" && entry.selections != null) {
 			showSelections(entry);
 			return;
 		}
 
-		if (entry.has.closeTheBox && entry.att.closeTheBox == "true") {
+		var localizedText = Game.languageData.getCaption(textKey);
+		if (Game.languageData.getDialogCaption(textKey)[1] == true) {
+			localizedText = Game.languageData.getDialogCaption(textKey)[0];
+		}
+
+		localizedText = formatText(localizedText);
+
+		if (localDialogScript != null) {
+			var evt = EventManager.get(DialogEntryEvent);
+			evt.entry = entry;
+			evt.text = localizedText;
+			localDialogScript.event("onDialogEntry", evt);
+			if (evt.cancelled)
+				return;
+			entry = cast evt.entry;
+			localizedText = evt.text;
+		}
+
+		var leftPath = (entry.leftChar != null && entry.leftChar != "none") ? "dialogs/characters/" + entry.leftChar : "";
+		var rightPath = (entry.rightChar != null && entry.rightChar != "none") ? "dialogs/characters/" + entry.rightChar : "";
+
+		dialogBox.show(charName, localizedText, leftPath, rightPath);
+		waitingForInput = true;
+	}
+
+	function handleEntryEnd(entry:DialogEntryDef):Void {
+		waitingForInput = false;
+
+		if (entry.selections != null) {
+			showSelections(entry);
+			return;
+		}
+
+		if (entry.close != null && entry.close == true) {
 			closeDialogue();
 			return;
 		}
-		if (entry.has.resolve("return")) {
-			jumpToDialog(entry.att.resolve("return"));
+
+		if (entry.target != null) {
+			jumpToDialog(entry.target);
 			playCurrentEntry();
 			return;
 		}
@@ -151,40 +404,62 @@ class DialogueManager extends SubStateBackend {
 		playCurrentEntry();
 	}
 
-	function showSelections(entry:Access):Void {
+	function showSelections(entry:DialogEntryDef):Void {
 		var options:Array<String> = [];
-		var validItems:Array<Access> = [];
+		var validItems:Array<DialogSelectionDef> = [];
 
-		if (entry.hasNode.selections) {
-			for (item in entry.node.selections.nodes.item) {
-				var canShow = true;
-				if (item.has.resolve("if"))
-					canShow = evaluateLogic(item.att.resolve("if"));
-				if (item.has.unless)
-					canShow = !evaluateLogic(item.att.unless);
-
-				if (canShow) {
-					var textKey = item.has.text ? item.att.text : "";
-					var localizedText = Game.instance.language.getCaption(textKey);
-					if (Game.instance.language.getStoryCaption(textKey)[1] == true) {
-						localizedText = Game.instance.language.getStoryCaption(textKey)[0];
-					}
-					options.push(localizedText);
-					validItems.push(item);
-				}
+		if (entry.selections != null) {
+			for (item in entry.selections) {
+				if (item.condIf != null && !evaluateLogic(item.condIf))
+					continue;
+				if (item.condUnless != null && evaluateLogic(item.condUnless))
+					continue;
+				validItems.push(item);
 			}
+		}
+
+		if (localDialogScript != null) {
+			var evt = EventManager.get(DialogSelectionEvent);
+			evt.selections = validItems;
+			localDialogScript.event("onBuildSelections", evt);
+			if (evt.cancelled)
+				return;
+			validItems = cast evt.selections;
+		}
+
+		for (item in validItems) {
+			var textKey = item.text != null ? item.text : "";
+			var localizedText = Game.languageData.getCaption(textKey);
+			if (Game.languageData.getDialogCaption(textKey)[1] == true) {
+				localizedText = Game.languageData.getDialogCaption(textKey)[0];
+			}
+			localizedText = formatText(localizedText);
+			options.push(localizedText);
 		}
 
 		selectionMenu.show(options, function(choiceIndex:Int) {
 			var chosenItem = validItems[choiceIndex];
 
-			if (chosenItem.has.id)
-				Game.instance.save.setFlag(chosenItem.att.id, true);
-			if (chosenItem.has.setFlag)
-				applySetFlag(chosenItem.att.setFlag);
+			if (chosenItem.id != null) {
+				Game.saveData.setFlag(chosenItem.id, true);
+				Game.saveData.setVariable(chosenItem.id, options[choiceIndex]);
+			}
 
-			jumpToDialog(chosenItem.att.selectionConfirmed);
-			playCurrentEntry();
+			if (chosenItem.setFlag != null)
+				applySetFlag(chosenItem.setFlag);
+
+			trace(chosenItem.script);
+			if (chosenItem.script != null && localDialogScript != null) {
+				localDialogScript.call(chosenItem.script);
+			}
+
+			if (chosenItem.target != null) {
+				jumpToDialog(chosenItem.target);
+				playCurrentEntry();
+			} else {
+				entryIndex++;
+				playCurrentEntry();
+			}
 		});
 	}
 
@@ -199,10 +474,15 @@ class DialogueManager extends SubStateBackend {
 				val = false;
 		}
 
-		Game.instance.save.setFlag(key, val);
+		Game.saveData.setFlag(key, val);
 	}
 
 	function closeDialogue():Void {
+		if (localDialogScript != null) {
+			localDialogScript.destroy();
+			localDialogScript = null;
+		}
+
 		dialogBox.hide(function() {
 			if (onCompleteCallback != null)
 				onCompleteCallback();
@@ -235,7 +515,7 @@ class DialogueManager extends SubStateBackend {
 		var invert = StringTools.startsWith(cond, "!");
 		if (invert)
 			cond = cond.substring(1);
-		var val = Game.instance.save.getFlag(cond);
+		var val = Game.saveData.getFlag(cond);
 		return invert ? !val : val;
 	}
 }

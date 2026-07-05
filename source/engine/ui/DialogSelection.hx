@@ -1,178 +1,191 @@
 package engine.ui;
 
 class DialogSelection extends FlxTypedGroup<FlxSprite> {
-    var menuFrame:MenuFrameNode;
-    var selector:FlxSprite;
-    var options:Array<String>;
-    var optionTexts:Array<FlxText> = [];
-    var selectedIndex:Int = 0;
-    
-    public var activeMenu:Bool = false;
-    public var onSelect:Int->Void;
+	var menuFrame:MenuFrameNode;
+	var selector:FlxSprite;
+	var options:Array<String>;
+	var optionTexts:Array<FlxText> = [];
+	var selectedIndex:Int = 0;
 
-    var optionSpacing:Float = 35;
-    var boxPaddingX:Float = 60;
+	public var activeMenu:Bool = false;
+	public var onSelect:Int->Void;
 
-    public var customBoxWidth:Float = 0;
-    public var customBoxHeight:Float = 0;
-    var parent:Dynamic = null;
+	var optionSpacing:Float = 35;
+	var boxPaddingX:Float = 60;
 
-    public function new(parent:Dynamic) {
-        super();
-        this.parent = parent;
-        
-        selector = new FlxSprite(0, 0).makeGraphic(1, 1, 0xFF4A4A4A);
+	public var customBoxWidth:Float = 0;
+	public var customBoxHeight:Float = 0;
+
+	var parent:Dynamic = null;
+
+	public function new(parent:Dynamic) {
+		super();
+		this.parent = parent;
+
+		selector = new FlxSprite(0, 0).makeGraphic(1, 1, 0xFF4A4A4A);
 		selector.alpha = 0.4;
-        selector.scrollFactor.set(0, 0);
-        
-        visible = false;
-        activeMenu = false;
-    }
+		selector.scrollFactor.set(0, 0);
 
-    public function show(optionsList:Array<String>, callback:Int->Void):Void {
-        options = optionsList;
-        onSelect = callback;
+		visible = false;
+		activeMenu = false;
+	}
 
-        for (txt in optionTexts) {
-            remove(txt, true);
-            txt.destroy();
-        }
-        optionTexts = [];
-        
-        remove(selector, true);
-        if (menuFrame != null) {
-            remove(menuFrame, true);
-            menuFrame.destroy();
-        }
-        
-        var maxTextWidth:Float = 200; 
-        var textHeight:Float = 20;
+	public function show(optionsList:Array<String>, callback:Int->Void):Void {
+		options = optionsList;
+		onSelect = callback;
 
-        for (opt in options) {
-            var tempText = new FlxText(0, 0, 0, opt, 40);
-	        tempText.font = LilyAssets.font("AlegreyaSC-Regular");
-            tempText.scale.set(0.5, 0.5);
-            tempText.updateHitbox();
-            
-            if (tempText.width > maxTextWidth) maxTextWidth = tempText.width;
-            textHeight = tempText.height;
-            
-            tempText.destroy();
-        }
-        
-        var totalTextHeight:Float = ((options.length - 1) * optionSpacing) + textHeight;
-        var finalBoxWidth = (customBoxWidth > 0) ? customBoxWidth : (maxTextWidth + boxPaddingX); 
-        var finalBoxHeight = (customBoxHeight > 0) ? customBoxHeight : (totalTextHeight + 60); 
-        
-        menuFrame = new MenuFrameNode(0, 0, finalBoxWidth, finalBoxHeight, 0);
-        menuFrame.scrollFactor.set(0, 0); 
-        menuFrame.screenCenter();
+		for (txt in optionTexts) {
+			remove(txt, true);
+			txt.destroy();
+		}
+		optionTexts = [];
 
-        add(menuFrame);
+		remove(selector, true);
+		if (menuFrame != null) {
+			remove(menuFrame, true);
+			menuFrame.destroy();
+		}
 
-        selector.setGraphicSize(Std.int(finalBoxWidth - 20), 30);
-        selector.updateHitbox();
-        selector.x = menuFrame.x + 10;
-        add(selector);
+		var maxTextWidth:Float = 200;
+		var textHeight:Float = 20;
 
-        var layoutY = menuFrame.y + ((finalBoxHeight - totalTextHeight) / 2);
+		for (opt in options) {
+			var tempText = new FlxText(0, 0, 0, opt, 40);
+			tempText.font = LilyAssets.font("AlegreyaSC-Regular");
+			tempText.scale.set(0.5, 0.5);
+			tempText.updateHitbox();
 
-        for (i in 0...options.length) {
-            var txt = new FlxText(0, layoutY, 0, options[i], 40);
-	    	txt.font = LilyAssets.font("AlegreyaSC-Regular");
-            txt.scale.set(0.5, 0.5);
-            txt.updateHitbox();
+			if (tempText.width > maxTextWidth)
+				maxTextWidth = tempText.width;
+			textHeight = tempText.height;
 
-            txt.x = menuFrame.x + ((finalBoxWidth - txt.width) / 2);
-            txt.scrollFactor.set(0, 0);
-            txt.setBorderStyle(OUTLINE, FlxColor.BLACK, 1.5); 
-            
-            add(txt); 
-            optionTexts.push(txt);
-            
-            layoutY += optionSpacing;
-        }
+			tempText.destroy();
+		}
 
-        visible = true;
-        activeMenu = true;
-        changeSelection(0);
-    }
+		var totalTextHeight:Float = ((options.length - 1) * optionSpacing) + textHeight;
+		var finalBoxWidth = (customBoxWidth > 0) ? customBoxWidth : (maxTextWidth + boxPaddingX);
+		var finalBoxHeight = (customBoxHeight > 0) ? customBoxHeight : (totalTextHeight + 60);
 
-    override public function update(elapsed:Float):Void {
-        super.update(elapsed);
+		menuFrame = new MenuFrameNode(0, 0, finalBoxWidth, finalBoxHeight, 0);
+		menuFrame.scrollFactor.set(0, 0);
+		menuFrame.screenCenter();
 
-        if (!activeMenu) return;
+		add(menuFrame);
 
-        var pointerMoved = false;
-        var pointerJustPressed = false;
+		selector.setGraphicSize(Std.int(finalBoxWidth - 20), 30);
+		selector.updateHitbox();
+		selector.x = menuFrame.x + 10;
+		add(selector);
 
-        #if FLX_MOUSE
-        if (FlxG.mouse.justMoved) pointerMoved = true;
-        if (FlxG.mouse.justPressed) pointerJustPressed = true;
-        #end
+		var layoutY = menuFrame.y + ((finalBoxHeight - totalTextHeight) / 2);
 
-        var touchJustPressed = false;
-        for (touch in FlxG.touches.list) {
-            pointerMoved = true; 
-            if (touch.justPressed) touchJustPressed = true;
-        }
+		for (i in 0...options.length) {
+			var txt = new FlxText(0, layoutY, 0, options[i], 40);
+			txt.font = LilyAssets.font("AlegreyaSC-Regular");
+			txt.scale.set(0.5, 0.5);
+			txt.updateHitbox();
 
-        if (pointerMoved || pointerJustPressed || touchJustPressed) {
-            for (i in 0...optionTexts.length) {
-                var txt = optionTexts[i];
-                var overlap = false;
+			txt.x = menuFrame.x + ((finalBoxWidth - txt.width) / 2);
+			txt.scrollFactor.set(0, 0);
+			txt.setBorderStyle(OUTLINE, FlxColor.BLACK, 1.5);
 
-                #if FLX_MOUSE
-                if (FlxG.mouse.overlaps(txt, parent.dialogCamera)) overlap = true;
-                #end
+			add(txt);
+			optionTexts.push(txt);
 
-                for (touch in FlxG.touches.list) {
-                    if (touch.overlaps(txt, parent.dialogCamera)) overlap = true;
-                }
+			layoutY += optionSpacing;
+		}
 
-                if (overlap) {
-                    if (selectedIndex != i) {
-                        LilyAssets.play(LilyAssets.NAVIGATE);
-                        changeSelection(i - selectedIndex); 
-                    }
-                    if (pointerJustPressed || touchJustPressed) {
-                        confirmSelection();
-                        return; 
-                    }
-                }
-            }
-        }
+		visible = true;
+		activeMenu = true;
+		changeSelection(0);
+	}
 
-        if (Controls.UP_P) {
-            LilyAssets.play(LilyAssets.NAVIGATE);
-            changeSelection(-1);
-        }
-        if (Controls.DOWN_P) {
-            LilyAssets.play(LilyAssets.NAVIGATE);
-            changeSelection(1);
-        }
-        
-        if (Controls.ACCEPT) {
-            confirmSelection();
-        }
-    }
+	override public function update(elapsed:Float):Void {
+		super.update(elapsed);
 
-    function confirmSelection():Void {
-        LilyAssets.play(LilyAssets.CONFIRM);
-        visible = false;
-        activeMenu = false;
-        if (onSelect != null) onSelect(selectedIndex);
-    }
+		if (!activeMenu)
+			return;
 
-    function changeSelection(change:Int):Void {
-        selectedIndex += change;
-        
-        if (selectedIndex < 0) selectedIndex = options.length - 1;
-        if (selectedIndex >= options.length) selectedIndex = 0;
+		var pointerMoved = false;
+		var pointerJustPressed = false;
 
-        if (optionTexts.length > 0) {
-            var targetText = optionTexts[selectedIndex];
-            selector.y = targetText.y + (targetText.height / 2) - (selector.height / 2);
-        }
-    }
+		#if FLX_MOUSE
+		if (FlxG.mouse.justMoved)
+			pointerMoved = true;
+		if (FlxG.mouse.justPressed)
+			pointerJustPressed = true;
+		#end
+
+		var touchJustPressed = false;
+		for (touch in FlxG.touches.list) {
+			pointerMoved = true;
+			if (touch.justPressed)
+				touchJustPressed = true;
+		}
+
+		if (pointerMoved || pointerJustPressed || touchJustPressed) {
+			for (i in 0...optionTexts.length) {
+				var txt = optionTexts[i];
+				var overlap = false;
+
+				var cam = (parent != null && parent.dialogCamera != null) ? parent.dialogCamera : FlxG.camera;
+
+				#if FLX_MOUSE
+				if (FlxG.mouse.overlaps(txt, cam))
+					overlap = true;
+				#end
+
+				for (touch in FlxG.touches.list) {
+					if (touch.overlaps(txt, cam))
+						overlap = true;
+				}
+
+				if (overlap) {
+					if (selectedIndex != i) {
+						LilyAssets.play(LilyAssets.NAVIGATE);
+						changeSelection(i - selectedIndex);
+					}
+					if (pointerJustPressed || touchJustPressed) {
+						confirmSelection();
+						return;
+					}
+				}
+			}
+		}
+
+		if (Controls.UP_P) {
+			LilyAssets.play(LilyAssets.NAVIGATE);
+			changeSelection(-1);
+		}
+		if (Controls.DOWN_P) {
+			LilyAssets.play(LilyAssets.NAVIGATE);
+			changeSelection(1);
+		}
+
+		if (Controls.ACCEPT) {
+			confirmSelection();
+		}
+	}
+
+	function confirmSelection():Void {
+		LilyAssets.play(LilyAssets.CONFIRM);
+		visible = false;
+		activeMenu = false;
+		if (onSelect != null)
+			onSelect(selectedIndex);
+	}
+
+	function changeSelection(change:Int):Void {
+		selectedIndex += change;
+
+		if (selectedIndex < 0)
+			selectedIndex = options.length - 1;
+		if (selectedIndex >= options.length)
+			selectedIndex = 0;
+
+		if (optionTexts.length > 0) {
+			var targetText = optionTexts[selectedIndex];
+			selector.y = targetText.y + (targetText.height / 2) - (selector.height / 2);
+		}
+	}
 }

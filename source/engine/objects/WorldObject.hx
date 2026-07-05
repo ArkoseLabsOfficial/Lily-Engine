@@ -47,7 +47,7 @@ class WorldObject extends FlxSprite {
 			dialogPath = props.get("dialog");
 
 		immovable = true;
-		allowCollisions = solidCollision ? flixel.FlxObject.ANY : flixel.FlxObject.NONE;
+		allowCollisions = solidCollision ? FlxObject.ANY : FlxObject.NONE;
 	}
 
 	public function generateAccurateHitbox() {

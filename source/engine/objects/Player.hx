@@ -12,19 +12,22 @@ class Player extends CharacterEntity {
 		colOffsetX = -(colWidth / 2);
 		colOffsetY = -colHeight;
 
-		hitboxGraphic.makeGraphic(Std.int(colWidth), Std.int(colHeight), flixel.util.FlxColor.TRANSPARENT);
-		flixel.util.FlxSpriteUtil.drawRect(hitboxGraphic, 0, 0, colWidth, colHeight, flixel.util.FlxColor.TRANSPARENT,
-			{thickness: 2, color: flixel.util.FlxColor.RED});
+		hitboxGraphic.makeGraphic(Std.int(colWidth), Std.int(colHeight), FlxColor.TRANSPARENT);
+		FlxSpriteUtil.drawRect(hitboxGraphic, 0, 0, colWidth, colHeight, FlxColor.TRANSPARENT,
+			{thickness: 2, color: FlxColor.RED});
 
 		showHitbox = false;
 	}
 
 	override public function update(elapsed:Float):Void {
-		velocity.set(0, 0);
-		if (canMove)
+		if (canMove) {
+			velocity.set(0, 0);
 			handleMovement(elapsed);
+		} else if (!isScriptMoving) {
+			velocity.set(0, 0);
+		}
 
-		if (velocity.x != 0 || velocity.y != 0) {
+		if (!isScriptMoving && (velocity.x != 0 || velocity.y != 0)) {
 			var stepX = velocity.x * elapsed;
 			var stepY = velocity.y * elapsed;
 
