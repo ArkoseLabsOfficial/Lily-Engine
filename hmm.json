@@ -14,8 +14,8 @@
     {
       "name": "flixel",
       "type": "git",
-      "ref": "5.6.1",
-      "url": "https://github.com/PsychExtendedThings/flixel"
+      "ref": "main",
+      "url": "https://github.com/ArkoseLabsOfficial/flixel-lily"
     },
     {
       "name": "flixel-addons",
