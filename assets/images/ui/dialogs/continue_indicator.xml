@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas imagePath="continue_indicator.png">
+    <SubTexture name="frame_0000" x="0" y="0" width="95" height="95"/>
+    <SubTexture name="frame_0001" x="95" y="0" width="95" height="95"/>
+    <SubTexture name="frame_0002" x="190" y="0" width="95" height="95"/>
+</TextureAtlas>

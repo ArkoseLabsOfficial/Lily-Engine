@@ -1,79 +1,96 @@
 package engine.backend.game;
 
-typedef SortData = {
-	var sortY:Float;
-	var treeIndex:Int;
-	var z:Int;
-	var isDynamic:Bool;
-	var isFlat:Bool;
-}
-
-class RoomManager extends FlxTypedGroup<FlxSprite> {
+class RoomManager extends FlxGroup {
 	public static var instance:RoomManager;
 	public static var currentRoomName:String;
 
-	public var entities:Map<String, WorldObject>;
-	public var characters:Map<String, CharacterEntity>;
-	public var solids:FlxTypedGroup<CollisionBlock>;
-	public var partyMembers:Array<Follower>;
-	public var spawnPoints:Map<String, {x:Float, y:Float, dir:String}>;
-	public var roomEvents:Array<{id:String, rect:FlxRect, trigger:String}>;
-	public var quitObjects:Map<WorldObject, {room:String, spawnId:Int}>;
-	public var triggers:Array<{obj:WorldObject, needsPress:Bool}>;
-	public var sortMap:Map<FlxSprite, SortData>;
-	public var layerIndices:Map<String, Int>;
-	public var player:Player;
-	public var roomZoom:Float = 1.0;
-	public var info:Map<String, Dynamic>;
+	public var partyMembers:Array<Character> = [];
 
-	private var interactCooldown:Float = 0;
-	private var wasInteractPressed:Bool = false;
-	private var previousOverlaps:Map<String, Bool>;
+	public var currentScene:Scene;
+
+	public var player:Player;
+	public var roomZoom:Float = 3.0;
+
+	public var info:Map<String, Dynamic> = new Map();
 
 	#if FEATURE_HSCRIPT
-	public var scripts:ScriptPack;
-	public var entityScripts:Map<String, Script>;
+	public var scripts:ScriptPack = new ScriptPack("RoomScripts");
 	#end
+
 	public var mainState:Dynamic = null;
 
 	public function new(?mainState:Dynamic) {
 		super();
 		instance = this;
-		entities = new Map();
-		characters = new Map();
-		solids = new FlxTypedGroup<CollisionBlock>();
-		partyMembers = [];
-		spawnPoints = new Map();
-		roomEvents = [];
-		quitObjects = new Map();
-		triggers = [];
-		sortMap = new Map();
-		layerIndices = new Map();
-		info = new Map<String, Dynamic>();
-		previousOverlaps = new Map<String, Bool>();
-
-		#if FEATURE_HSCRIPT
-		scripts = new ScriptPack("RoomScripts");
-		entityScripts = new Map<String, Script>();
-		#end
 		this.mainState = mainState;
 	}
 
-	public function loadRoom(filePath:String, spawnId:Int = 0):Void {
-		var tmxPath = "rooms/" + filePath + ".tmx";
-		if (LilyAssets.fileExists(tmxPath)) {
-			TmxParser.read(this, LilyAssets.getTextFromFile(tmxPath), filePath, spawnId);
-		} else {
-			FlxG.log.error("Failed to load map. File does not exist: " + tmxPath);
+	public function loadRoom(filePath:String):Void {
+		var tscnPath = Flags.roomFolder + filePath + ".tscn";
+
+		if (!LilyAssets.fileExists(tscnPath)) {
+			FlxG.log.error("Failed to load map. TSCN does not exist for: " + filePath);
 			return;
+		}
+
+		RoomManager.currentRoomName = filePath;
+
+		if (currentScene != null) {
+			remove(currentScene, true);
+			currentScene.destroy();
+		}
+
+		#if FEATURE_HSCRIPT
+		if (scripts != null) {
+			scripts.destroy();
+		}
+		scripts = new engine.scripting.ScriptPack("RoomScripts");
+		#end
+
+		currentScene = new Scene();
+		currentScene.applyScript.add(onNodeScriptApply);
+
+		currentScene.load(LilyAssets.getPath(tscnPath));
+		add(currentScene);
+
+		spawnParty(0, 0, 0);
+
+		if (BaseRoom.instance != null && BaseRoom.instance.camGame != null) {
+			initPlayerState(BaseRoom.instance.camGame, false);
 		}
 
 		#if FEATURE_HSCRIPT
 		injectScriptVariables();
-		scripts.setParent(engine.states.BaseRoom.instance);
-		Game.instance.bindToScript(scripts);
-		if (scripts != null)
-			scripts.call("create");
+		scripts.setParent(BaseRoom.instance);
+		scripts.load();
+		scripts.call("create");
+		#end
+	}
+
+	private function onNodeScriptApply(node:Node, hxScriptPath:String):Void {
+		#if FEATURE_HSCRIPT
+		if (hxScriptPath.startsWith("script/")) {
+			hxScriptPath = hxScriptPath.replace("script/", "scripts/");
+		}
+		if (hxScriptPath.startsWith("assets/")) {
+			hxScriptPath = hxScriptPath.replace("assets/", "");
+		}
+		if (LilyAssets.fileExists(hxScriptPath)) {
+			var script = engine.scripting.Script.create(hxScriptPath);
+			script.set("this", node);
+			script.set("obj", node);
+			if (TscnParser.scriptPropertiesMap.exists(node)) {
+				var props:Map<String, Dynamic> = TscnParser.scriptPropertiesMap.get(node);
+				for (key in props.keys()) {
+					script.set(key, props.get(key));
+				}
+			}
+			scripts.add(script);
+			try {
+				Reflect.setField(node, "__script__", script);
+			} catch (e:Dynamic) {}
+		}
+		scripts.set(node.nodeName, node);
 		#end
 	}
 
@@ -81,12 +98,12 @@ class RoomManager extends FlxTypedGroup<FlxSprite> {
 		if (player == null)
 			return;
 
-		var savePos = Game.saveData.partyPositions;
+		var savePos = Game.save.partyPositions;
 		if (isFromLoad && savePos != null && savePos.length > 0) {
 			player.x = savePos[0].x;
 			player.y = savePos[0].y;
 		} else {
-			Game.saveData.partyPositions = [{x: player.x, y: player.y}];
+			Game.save.partyPositions = [{x: player.x, y: player.y}];
 		}
 		player.positionHistory = [];
 
@@ -106,83 +123,161 @@ class RoomManager extends FlxTypedGroup<FlxSprite> {
 		camGame.follow(player, NO_DEAD_ZONE, 1);
 	}
 
-	public function getObject<T>(objName:String, objClass:Class<T>):T {
-		var obj = entities.get(objName);
-		return (obj != null && Std.isOfType(obj, objClass)) ? cast obj : null;
+	public function getNodesOfType<T>(classType:Class<T>, ?startGroup:Dynamic):Array<T> {
+		var results:Array<T> = [];
+		var grp:Dynamic = startGroup != null ? startGroup : currentScene;
+		if (grp == null)
+			return results;
+
+		function search(g:Dynamic) {
+			var members:Array<Dynamic> = null;
+
+			if (Std.isOfType(g, FlxGroup)) {
+				members = (cast g : FlxGroup).members;
+			} else if (Std.isOfType(g, FlxSpriteGroup)) {
+				members = (cast g : FlxSpriteGroup).group.members;
+			}
+
+			if (members != null) {
+				for (m in members) {
+					if (m == null)
+						continue;
+
+					if (Std.isOfType(m, classType)) {
+						results.push(cast m);
+					}
+
+					if (Std.isOfType(m, FlxGroup) || Std.isOfType(m, FlxSpriteGroup)) {
+						search(m);
+					}
+				}
+			}
+		}
+
+		search(grp);
+		return results;
 	}
 
-	public function getPartyMember(index:Int):CharacterEntity {
+	public function getObject<T>(objName:String, objClass:Class<T>):T {
+		var node = currentScene.getNode(objName);
+		return (node != null && Std.isOfType(node, objClass)) ? cast node : null;
+	}
+
+	public function getPartyMember(index:Int):Character {
 		if (index == 0)
 			return player;
 		return (index > 0 && index <= partyMembers.length) ? partyMembers[index - 1] : null;
 	}
 
-	public function spawnParty(px:Float, py:Float, pz:Int, ?node:Access):Void {
-		var party = Game.saveData.party;
+	public function spawnParty(px:Float, py:Float, pz:Int, ?nodeName:String):Void {
+		var party = Game.save.party;
 		if (party == null || party.length == 0)
 			party = ["lacie"];
 
 		if (player != null) {
-			remove(player);
-			entities.remove(player.xmlName);
-			characters.remove(player.xmlName);
-			sortMap.remove(player);
+			player.kill();
+			player.destroy();
 		}
 		for (f in partyMembers) {
-			remove(f);
-			entities.remove(f.xmlName);
-			characters.remove(f.xmlName);
-			sortMap.remove(f);
+			f.kill();
+			f.destroy();
 		}
 		partyMembers = [];
 
-		player = new Player(px, py, pz, (node != null && node.has.name) ? node.att.name : "player");
-		player.loadEntity("", "characters/" + party[0]);
-		addEntity(player);
-		characters.set(player.xmlName, player);
-		sortMap.set(player, {
-			sortY: 0,
-			treeIndex: 1000000,
-			z: pz,
-			isDynamic: true,
-			isFlat: false
-		});
+		if (BaseRoom.instance != null) {
+			BaseRoom.instance.clearFollowers();
+		}
 
-		var prev:CharacterEntity = player;
+		var targetNode:Dynamic = currentScene.getNode("Main");
+		if (targetNode == null)
+			targetNode = currentScene.root;
+
+		if (Std.isOfType(targetNode, godot.nodes.Node2D)) {
+			var n2d:Node2D = cast targetNode;
+			n2d.ySort = true;
+		}
+
+		player = new Player(px, py, pz, nodeName != null ? nodeName : "player");
+		player.loadEntity(party[0]);
+		targetNode.add(player);
+
+		var prev:Character = player;
 		for (i in 1...party.length) {
-			var member = new Follower(px, py, pz, party[i]);
-			member.loadEntity("", "characters/" + party[i]);
-			member.target = prev;
-			addEntity(member);
-			characters.set(member.xmlName, member);
-			sortMap.set(member, {
-				sortY: 0,
-				treeIndex: 1000000 + i,
-				z: pz,
-				isDynamic: true,
-				isFlat: false
-			});
+			var member = new Character(px, py, pz, party[i]);
+			member.loadEntity(party[i]);
+
+			targetNode.add(member);
 			partyMembers.push(member);
+
+			if (BaseRoom.instance != null) {
+				BaseRoom.instance.addFollower(member, prev, 12, true);
+			}
 			prev = member;
+		}
+
+		if (BaseRoom.instance != null && BaseRoom.instance.camGame != null) {
+			BaseRoom.instance.camGame.focusOn(player.getPosition());
 		}
 	}
 
-	public function addEntity(obj:WorldObject):Void {
-		add(obj);
-		entities.set(obj.xmlName, obj);
+	public function changeLayer(obj:Dynamic, layerName:String):Void {
+		var targetNode:Node = null;
+
+		if (Std.isOfType(obj, Node)) {
+			targetNode = cast obj;
+		} else if (Std.isOfType(obj, String)) {
+			targetNode = currentScene.getNode(cast(obj, String));
+		}
+
+		if (targetNode == null) {
+			FlxG.log.warn('RoomManager.changeLayer: Object is null or not a valid Node.');
+			return;
+		}
+
+		var newParent:Node = currentScene.getNode(layerName);
+		if (newParent == null) {
+			FlxG.log.warn('RoomManager.changeLayer: Layer "$layerName" not found in scene.');
+			return;
+		}
+
+		var savedX:Float = targetNode.x;
+		var savedY:Float = targetNode.y;
+
+		var oldParent:Node = targetNode.parentNode;
+		if (oldParent != null) {
+			oldParent.removeChild(targetNode.nodeName, targetNode);
+		}
+
+		newParent.addChild(targetNode.nodeName, targetNode);
+
+		targetNode.x = savedX;
+		targetNode.y = savedY;
 	}
 
-	public function changeLayer(obj:Dynamic, layerName:String):Void {
-		var targetSpr:FlxSprite = Std.isOfType(obj,
-			FlxSprite) ? cast obj : (Std.isOfType(obj, String) ? (characters.exists(obj) ? characters.get(obj) : entities.get(obj)) : null);
+	public function followPath2D(path2dnodepath:String, objnode:Dynamic, speed:Float = 150, loop:Bool = false, ?onFinish:Dynamic):Void {
+		var pathNode:PathFollow2D = getObject(path2dnodepath, PathFollow2D);
+		if (pathNode != null) {
+			pathNode.speed = speed;
+			pathNode.loop = loop;
+			pathNode.paused = false;
 
-		if (targetSpr != null && layerName != null) {
-			var ln = layerName.toLowerCase();
-			if (layerIndices.exists(ln) && sortMap.exists(targetSpr)) {
-				sortMap.get(targetSpr).z = layerIndices.get(ln);
-			} else {
-				FlxG.log.error('changeLayer Failed: Layer "$layerName" does not exist!');
+			var char:Character = Std.isOfType(objnode, Character) ? cast objnode : null;
+			if (char != null) {
+				char.isFollowingPath = true;
 			}
+
+			pathNode.onFinish = function() {
+				if (char != null)
+					char.isFollowingPath = false;
+
+				if (onFinish != null && Reflect.isFunction(onFinish)) {
+					Reflect.callMethod(null, onFinish, []);
+				}
+			};
+
+			pathNode.follow(objnode);
+		} else {
+			FlxG.log.error('followPath2D failed: PathFollow2D node not found at path "${path2dnodepath}"');
 		}
 	}
 
@@ -191,250 +286,57 @@ class RoomManager extends FlxTypedGroup<FlxSprite> {
 		if (scripts == null)
 			return;
 
-		function set(name:String, thing:Dynamic) {
-			scripts.set(name, thing);
+		Game.instance.bindToScript(scripts);
+
+		var allNodes = getNodesOfType(FlxBasic);
+		for (node in allNodes) {
+			if (Reflect.hasField(node, "nodeName")) {
+				var n:String = Reflect.field(node, "nodeName");
+				if (n != null && n != "")
+					scripts.set(n, node);
+			} else if (Reflect.hasField(node, "xmlName")) {
+				var n:String = Reflect.field(node, "xmlName");
+				if (n != null && n != "")
+					scripts.set(n, node);
+			}
 		}
-		set("room", RoomManager.instance);
-		set("player", RoomManager.instance.player);
-		set("parent", engine.states.BaseRoom.instance);
-		set("changeLayer", RoomManager.instance.changeLayer);
-		set("addItem", Game.itemsData.addItem);
-		set("removeItem", Game.itemsData.removeItem);
-		set("getOwnedAmount", Game.itemsData.getOwnedAmount);
-		set("lockPlayer", function(locked:Bool = true) {
-			if (RoomManager.instance.player != null) {
-				RoomManager.instance.player.canMove = !locked;
-				if (locked)
-					RoomManager.instance.player.velocity.set(0, 0);
-			}
-		});
-
-		set("wait", function(time:Float, cb:Dynamic) {
-			new FlxTimer().start(time, function(_) {
-				if (cb != null)
-					Reflect.callMethod(null, cb, []);
-			});
-		});
-
-		set("walkEntity", function(id:String, x:Float, y:Float, speed:Float, cb:Dynamic) {
-			var ent:engine.objects.CharacterEntity = null;
-
-			if (id == "player" && RoomManager.instance.player != null)
-				ent = RoomManager.instance.player;
-			else if (RoomManager.instance.characters.exists(id))
-				ent = RoomManager.instance.characters.get(id);
-			else if (RoomManager.instance.entities.exists(id) && Std.isOfType(RoomManager.instance.entities.get(id), CharacterEntity)) {
-				ent = cast RoomManager.instance.entities.get(id);
-			}
-
-			if (ent != null) {
-				ent.walkTo(x, y, speed, function() {
-					if (cb != null)
-						cb();
-				});
-			} else {
-				FlxG.log.warn('walkEntity: Character "' + id + '" not found or is not a CharacterEntity.');
-				if (cb != null)
-					cb();
-			}
-		});
-
-		set("faceEntity", function(id:String, dir:String) {
-			var ent:CharacterEntity = null;
-
-			if (id == "player" && RoomManager.instance.player != null)
-				ent = RoomManager.instance.player;
-			else if (RoomManager.instance.characters.exists(id))
-				ent = RoomManager.instance.characters.get(id);
-			else if (RoomManager.instance.entities.exists(id) && Std.isOfType(RoomManager.instance.entities.get(id), CharacterEntity)) {
-				ent = cast RoomManager.instance.entities.get(id);
-			}
-
-			if (ent != null) {
-				var d = CharacterEntity.FacingDirection.DOWN;
-				switch (dir.toLowerCase()) {
-					case "up":
-						d = UP;
-					case "down":
-						d = DOWN;
-					case "left":
-						d = LEFT;
-					case "right":
-						d = RIGHT;
-				}
-				ent.currentFacing = d;
-				ent.updateAnimations();
-			}
-		});
-
-		set("setCameraTarget", function(id:String) {
-			var target:FlxObject = null;
-
-			if (id == "player" && RoomManager.instance.player != null)
-				target = RoomManager.instance.player;
-			else if (RoomManager.instance.characters.exists(id))
-				target = RoomManager.instance.characters.get(id);
-			else if (RoomManager.instance.entities.exists(id))
-				target = RoomManager.instance.entities.get(id);
-
-			if (target != null) {
-				BaseRoom.instance.followTheObject(target, "NO_DEAD_ZONE", 1);
-			} else {
-				FlxG.log.warn('setCameraTarget: Target "' + id + '" not found.');
-			}
-		});
-
-		for (key => val in RoomManager.instance.entities)
-			set(key, val);
-		for (key => val in RoomManager.instance.characters)
-			if (!RoomManager.instance.entities.exists(key))
-				set(key, val);
 		#end
 	}
 
 	override public function update(elapsed:Float):Void {
 		#if FEATURE_HSCRIPT
-		if (scripts != null)
-			scripts.call("update", [elapsed]);
+		scripts?.call("update", [elapsed]);
 		#end
 
 		super.update(elapsed);
-		if (interactCooldown > 0)
-			interactCooldown -= elapsed;
 
 		if (player != null && player.canMove) {
-			FlxG.collide(player, solids);
-			for (entity in entities) {
-				if (entity != player && entity.solidCollision)
-					FlxG.collide(player, entity);
-			}
-
-			Game.saveData.partyPositions = [{x: player.x, y: player.y}];
+			Game.save.partyPositions = [{x: player.x, y: player.y}];
 			for (member in partyMembers)
-				Game.saveData.partyPositions.push({x: member.x, y: member.y});
-
-			var playerHitbox = player.getCollisionBox();
-			var isInteractPressedNow = Controls.ACCEPT;
-			var switchedRoom = false;
-
-			var currentOverlaps = new Map<String, Bool>();
-			for (t in triggers) {
-				var tBox = t.obj.getCollisionBox();
-				var isOver = playerHitbox.overlaps(tBox);
-				var isOverInteraction = player.getInteractionBox().overlaps(tBox);
-
-				if (isOver && !t.needsPress || isOverInteraction && t.needsPress) {
-					currentOverlaps.set(t.obj.xmlName, true);
-					var justEntered = !previousOverlaps.exists(t.obj.xmlName);
-
-					if (!t.needsPress && justEntered) {
-						#if FEATURE_HSCRIPT
-						var s = entityScripts.get(t.obj.xmlName);
-						if (s != null)
-							s.call("onInteracted", [t.obj.xmlName, t.obj.tiledID, "Trigger", t.obj.tiledProps]);
-						#end
-						if (t.obj.dialogPath != "")
-							Game.instance.playDialogue(t.obj.dialogPath, "start");
-					} else if (t.needsPress && isInteractPressedNow && !wasInteractPressed && interactCooldown <= 0) {
-						interactCooldown = 0.2;
-						#if FEATURE_HSCRIPT
-						var s = entityScripts.get(t.obj.xmlName);
-						if (s != null)
-							s.call("onInteracted", [t.obj.xmlName, t.obj.tiledID, "Trigger", t.obj.tiledProps]);
-						#end
-						if (t.obj.dialogPath != "")
-							Game.instance.playDialogue(t.obj.dialogPath, "start");
-					}
-				}
-				tBox.put();
-			}
-			previousOverlaps = currentOverlaps;
-
-			if (isInteractPressedNow && !wasInteractPressed && interactCooldown <= 0) {
-				for (quitObj => quitData in quitObjects) {
-					if (playerHitbox.overlaps(quitObj.getCollisionBox())) {
-						StateBackend.switchState(new engine.states.BaseRoom(quitData.room, quitData.spawnId, false));
-						switchedRoom = true;
-						break;
-					}
-				}
-
-				if (!switchedRoom) {
-					var box = player.getInteractionBox();
-					for (entity in entities) {
-						if (entity != player && entity.interactable && box.overlaps(entity.getCollisionBox())) {
-							interactCooldown = 0.2;
-							#if FEATURE_HSCRIPT
-							var s = entityScripts.get(entity.xmlName);
-							if (s != null)
-								s.call("onInteracted", [
-									entity.xmlName,
-									entity.tiledID,
-									Std.isOfType(entity, CharacterEntity) ? "Entity" : "Object",
-									entity.tiledProps
-								]);
-							#end
-							if (entity.dialogPath != "")
-								Game.instance.playDialogue(entity.dialogPath, "start");
-							break;
-						}
-					}
-					box.put();
-				}
-			}
-			wasInteractPressed = isInteractPressedNow;
-			playerHitbox.put();
+				Game.save.partyPositions.push({x: member.x, y: member.y});
 		}
 
-		sort(depthSortCallback);
-
 		#if FEATURE_HSCRIPT
-		if (scripts != null)
-			scripts.call("postUpdate", [elapsed]);
+		scripts?.call("postUpdate", [elapsed]);
 		#end
 	}
 
-	private function depthSortCallback(order:Int, obj1:FlxSprite, obj2:FlxSprite):Int {
-		var d1 = sortMap.get(obj1);
-		var d2 = sortMap.get(obj2);
-
-		var z1 = d1 != null ? d1.z : (Std.isOfType(obj1, WorldObject) ? (cast obj1 : WorldObject).z : 1);
-		var z2 = d2 != null ? d2.z : (Std.isOfType(obj2, WorldObject) ? (cast obj2 : WorldObject).z : 1);
-
-		if (z1 != z2)
-			return FlxSort.byValues(order, z1, z2);
-
-		var b1 = obj1.y - obj1.offset.y + (obj1.frameHeight != 0 ? obj1.frameHeight : obj1.height);
-		var b2 = obj2.y - obj2.offset.y + (obj2.frameHeight != 0 ? obj2.frameHeight : obj2.height);
-
-		if (b1 != b2)
-			return FlxSort.byValues(order, b1, b2);
-
-		return FlxSort.byValues(order, d1 != null ? d1.treeIndex : 0, d2 != null ? d2.treeIndex : 0);
-	}
-
 	override public function destroy():Void {
+		TscnParser.scriptPropertiesMap = new haxe.ds.ObjectMap();
+
 		#if FEATURE_HSCRIPT
 		if (scripts != null) {
 			scripts.destroy();
 			scripts = null;
 		}
-		if (entityScripts != null) {
-			entityScripts.clear();
-			entityScripts = null;
-		}
 		#end
+
+		if (currentScene != null) {
+			currentScene.destroy();
+			currentScene = null;
+		}
+
 		currentRoomName = null;
-		if (layerIndices != null) {
-			layerIndices.clear();
-			layerIndices = null;
-		}
-		if (quitObjects != null) {
-			quitObjects.clear();
-			quitObjects = null;
-		}
-		triggers = null;
-		previousOverlaps = null;
 		super.destroy();
 	}
 }

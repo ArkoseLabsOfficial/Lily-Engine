@@ -1,11 +1,22 @@
 package engine.ui;
 
+import flixel.group.FlxSpriteGroup;
+import flixel.FlxSprite;
+import flixel.text.FlxText;
+import flixel.addons.text.FlxTypeText;
+import flixel.FlxG;
+import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
+import io.LilyAssets;
+import engine.backend.game.DialogueManager;
+
 class DialogBox extends FlxSpriteGroup {
 	var bg:FlxSprite;
 	var nameText:FlxText;
 	var nameSeperator:FlxSprite;
 	var bodyText:FlxTypeText;
 	var continueIcon:FlxSprite;
+
 	public var isTyping:Bool = false;
 
 	public function new() {
@@ -75,6 +86,15 @@ class DialogBox extends FlxSpriteGroup {
 		bodyText.start(0.03, true);
 	}
 
+	public function pauseTyping(time:Float):Void {
+		if (!isTyping || bodyText.paused)
+			return;
+		bodyText.paused = true;
+		new flixel.util.FlxTimer().start(time, function(_) {
+			bodyText.paused = false;
+		});
+	}
+
 	public function hide(onComplete:Void->Void):Void {
 		visible = false;
 		onComplete();
@@ -83,6 +103,7 @@ class DialogBox extends FlxSpriteGroup {
 	public function advance():Bool {
 		if (isTyping) {
 			bodyText.skip();
+			bodyText.paused = false;
 			isTyping = false;
 			continueIcon.visible = true;
 			continueIcon.animation.play("blink");

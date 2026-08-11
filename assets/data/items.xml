@@ -1,0 +1,12 @@
+<!DOCTYPE lily-engine-item>
+<data>
+    <items>
+        <item 
+            id="ch1_knife" 
+            name="game.item.name.knife" 
+            desc="game.item.desc.knife"
+            sprite="items/ch1_mk_knife"
+            script="items/knife"
+        />
+    </items>
+</data>

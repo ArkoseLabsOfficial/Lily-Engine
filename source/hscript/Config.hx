@@ -4,7 +4,11 @@ class Config {
 	// Runs support for custom classes in these
 	public static final ALLOWED_CUSTOM_CLASSES = [
 		"flixel",
-        "engine.scripting"
+        "engine",
+		"engine.scripting.ScriptedSprite",
+		"engine.scripting.ScriptedSpriteGroup",
+		"engine.scripting.ScriptedState",
+		"engine.scripting.ScriptedSubState",
 	];
 
 	// Runs support for abstract support in these
@@ -15,11 +19,17 @@ class Config {
 		"flixel.util",
 		"openfl.display.BlendMode",
 		"haxe.xml",
+		"haxe.ds.Map",
+		"flixel.input.keyboard.FlxKey",
+		"engine"
 	];
 
 	// Incase any of your files fail
 	// These are the module names
 	public static final DISALLOW_CUSTOM_CLASSES = [
+	// Scripting side
+	"engine.scripting.HScript",
+
 	// Flixel-UI core classes
 	"flixel.addons.ui.FlxUI",
 	"flixel.addons.ui.FlxUIState",
@@ -49,6 +59,6 @@ class Config {
 ];
 
 	public static final DISALLOW_ABSTRACT_AND_ENUM = [
-
+		"engine.scripting.HScript",
 	];
 }

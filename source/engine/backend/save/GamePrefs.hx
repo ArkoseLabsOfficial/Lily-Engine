@@ -1,21 +1,27 @@
 package engine.backend.save;
 
 class GamePrefs {
-	public static var language:String = "English";
+	public static var currentMod:String = "";
 
 	public static var options:Map<String, Dynamic> = new Map();
 	public static var keybinds:Map<String, Array<String>> = new Map();
 
+	public static function loadMod() {
+		FlxG.save.bind("LilyEngine_Prefs");
+		if (FlxG.save.data.currentMod != null)
+			currentMod = FlxG.save.data.currentMod;
+	}
+
 	public static function loadSettings():Void {
-		// Options are now strictly isolated in their own save bind
 		FlxG.save.bind("LilyEngine_Prefs");
 		if (FlxG.save.data.language != null)
-			language = FlxG.save.data.language;
+			Lang.setLanguage(FlxG.save.data.language);
 
 		if (FlxG.save.data.options != null) {
 			var savedOptions:Dynamic = FlxG.save.data.options;
 			for (field in Reflect.fields(savedOptions)) {
 				options.set(field, Reflect.field(savedOptions, field));
+				GlobalScript.call("onOptionLoaded", [field, Reflect.field(savedOptions, field)]);
 			}
 		}
 
@@ -47,7 +53,8 @@ class GamePrefs {
 		for (key in keybinds.keys())
 			Reflect.setField(bindsObj, key, keybinds.get(key));
 		FlxG.save.data.keybinds = bindsObj;
-		FlxG.save.data.language = language;
+		FlxG.save.data.language = Lang.getCurrentLanguage();
+		FlxG.save.data.currentMod = currentMod;
 
 		FlxG.save.flush();
 	}

@@ -1,6 +1,6 @@
 package engine.substates;
 
-import engine.backend.save.SaveManager;
+import lang.Lang;
 
 class SaveLoad extends SubStateBackend {
 	public var isSavingMode:Bool;
@@ -15,6 +15,8 @@ class SaveLoad extends SubStateBackend {
 	var currentPage:Int = 0;
 	var isPaginating:Bool = false;
 	var fromMain:Bool = false;
+
+	public var canInput:Bool = false;
 
 	public function new(isSavingMode:Bool = true, fromMain:Bool = false) {
 		super();
@@ -36,8 +38,8 @@ class SaveLoad extends SubStateBackend {
 		var startX = (FlxG.width - MAIN_PANEL_W) / 2;
 		var startY = (FlxG.height - MAIN_PANEL_H) / 2;
 
-		var titleTxt = Game.instance.language.getCaption(isSavingMode ? "system.menu.savegame" : "system.menu.loadgame");
-		var frame = new engine.ui.MenuFrameNode(startX, startY, MAIN_PANEL_W, MAIN_PANEL_H, 2);
+		var titleTxt = isSavingMode ? "system.menu.savegame" : "system.menu.loadgame";
+		var frame = new MenuFrameNode(startX, startY, MAIN_PANEL_W, MAIN_PANEL_H, 2);
 		frame.setTitle(titleTxt);
 		frame.divider = new FlxSprite(0, 0, LilyAssets.image("ui/dividers/divider_lg"));
 		add(frame);
@@ -51,6 +53,20 @@ class SaveLoad extends SubStateBackend {
 		Game.mobileC.addDPad("FULL");
 		Game.mobileC.addButton("MENU");
 		#end
+
+		new FlxTimer().start(0.1, function(_) {
+			canInput = true;
+		});
+	}
+
+	override public function openSubState(SubState:FlxSubState):Void {
+		canInput = false;
+		super.openSubState(SubState);
+	}
+
+	override public function closeSubState():Void {
+		canInput = true;
+		super.closeSubState();
 	}
 
 	function buildPage() {
@@ -59,7 +75,7 @@ class SaveLoad extends SubStateBackend {
 
 		for (i in 0...3) {
 			var slotNum = (currentPage * 3) + i + 1;
-			var info = Game.instance.save.getSlotInfo(slotNum);
+			var info = Game.save.getSlotInfo(slotNum);
 
 			var entry = new SaveLoadSlotEntry(0, i * 140, info);
 			entries.push(entry);
@@ -74,7 +90,7 @@ class SaveLoad extends SubStateBackend {
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if (isPaginating)
+		if (isPaginating || !canInput)
 			return;
 
 		if (Controls.UP_P)
@@ -97,13 +113,13 @@ class SaveLoad extends SubStateBackend {
 
 			if (isSavingMode) {
 				LilyAssets.play(LilyAssets.CONFIRM);
-				Game.instance.save.saveGame(selectedInfo.slotNum);
-				buildPage(); // Refresh UI to show newly saved data
+				Game.save.saveGame(selectedInfo.slotNum);
+				buildPage();
 			} else {
 				if (!selectedInfo.isEmpty) {
 					LilyAssets.play(LilyAssets.CONFIRM);
-					if (Game.instance.save.loadGame(selectedInfo.slotNum)) {
-						StateBackend.switchState(new BaseRoom(Game.instance.save.room, 0, true));
+					if (Game.save.loadGame(selectedInfo.slotNum)) {
+						StateBackend.switchState(new BaseRoom(Game.save.room, true));
 					}
 				} else {
 					LilyAssets.play(LilyAssets.ERROR);
@@ -182,7 +198,7 @@ class SaveLoadSlotEntry extends FlxSpriteGroup {
 		if (info.isEmpty) {
 			bg.loadGraphic(LilyAssets.image("ui/saves/save_slot_empty"));
 
-			var lbl = new FlxText(0, 40, SLOT_W, Game.instance.language.getCaption("system.menu.file") + " " + info.slotNum, 36);
+			var lbl = new FlxText(0, 40, SLOT_W, Lang.get("system.menu.file") + " " + info.slotNum, 36);
 			lbl.alignment = CENTER;
 			add(lbl);
 		} else {
@@ -202,7 +218,6 @@ class SaveLoadSlotEntry extends FlxSpriteGroup {
 			timeTxt.color = 0xFFAAAAAA;
 			add(timeTxt);
 
-			// AUTO LOCATION IMAGE! Derived strictly from the room string.
 			var locImg = new FlxSprite(870, 6);
 			var expectedPath = "saves/" + info.room;
 			if (LilyAssets.fileExists("images/" + expectedPath + ".png"))

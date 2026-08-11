@@ -23,8 +23,10 @@ class ItemManager {
 	public function new() {}
 
 	public function load():Void {
-		var path = "items.xml";
-		var xml = SimpleParser.loadXML(path, "<!DOCTYPE lily-engine-item>");
+		var rawXML = LilyAssets.getTextFromFile(Flags.itemsFile);
+		rawXML = rawXML.replace("<!DOCTYPE lily-engine-item>", "");
+		var parsed = Xml.parse(rawXML).firstElement();
+		var xml = new Access(parsed);
 		if (xml == null)
 			return;
 
@@ -63,6 +65,10 @@ class ItemManager {
 		}
 	}
 
+	public function reset() {
+		inventory.clear();
+	}
+
 	public function runItemScript(scriptPath:String):Void {
 		trace("scripts/" + scriptPath);
 		if (scriptPath == "")
@@ -71,11 +77,8 @@ class ItemManager {
 		trace("scripts/" + fullPath);
 
 		#if FEATURE_HSCRIPT
-		var itemScript = Script.create("scripts/" + fullPath);
+		var itemScript = engine.scripting.Script.create("scripts/" + fullPath);
 		Game.instance.bindToScript(itemScript);
-		itemScript.set("addItem", addItem);
-		itemScript.set("removeItem", removeItem);
-		itemScript.set("getOwnedAmount", getOwnedAmount);
 
 		itemScript.load();
 		itemScript.call("onUse");

@@ -1,5 +1,7 @@
 package engine.substates;
 
+import lang.Lang;
+
 typedef ObtainedItem = {
 	var itemID:String;
 	var count:Int;
@@ -66,7 +68,7 @@ class Obtain extends SubStateBackend {
 
 	private function progressQueue():Void {
 		var currentItem = itemQueue[currentIndex];
-		Game.instance.items.addItem(currentItem.itemID, currentItem.count);
+		Game.items.addItem(currentItem.itemID, currentItem.count);
 		currentIndex++;
 
 		if (currentIndex >= itemQueue.length) {
@@ -78,9 +80,10 @@ class Obtain extends SubStateBackend {
 
 	private function updateScreenToCurrentItem():Void {
 		var currentItem = itemQueue[currentIndex];
-		var localizedItemName:String = Game.instance.language.getCaption("system.game.item." + currentItem.itemID);
+		var localizedItemName:String = Lang.get("system.game.item." + currentItem.itemID);
 		var quantityStr = currentItem.count > 1 ? " x" + currentItem.count : "";
-		obtainText.text = Game.instance.language.getCaption("system.menu.obtained") + ": " + localizedItemName + quantityStr;
+		obtainText.text = Lang.get("system.menu.obtained") + ": " + localizedItemName + quantityStr;
+
 		itemIcon.loadGraphic(LilyAssets.image("sprite/common/item/" + currentItem.itemID));
 		itemIcon.setGraphicSize(40, 40);
 		itemIcon.updateHitbox();

@@ -1,0 +1,60 @@
+<!DOCTYPE lily-engine-character>
+<character sprite="characters/lacie/lacie_spritesheet_playable" flipX="false">
+    <anim name="standing_UP" anim="standing_up" fps="6" loop="false"/>
+    <anim name="standing_DOWN" anim="standing_down" fps="6" loop="false"/>
+
+    <anim name="idleUP" anim="idle_up0000" fps="1" loop="false"/>
+    <anim name="idleLEFT" anim="idle_left0000" fps="1" loop="false"/>
+    <anim name="idleRIGHT" anim="idle_right0000" fps="1" loop="false"/>
+    <anim name="idleDOWN" anim="idle_down0000" fps="1" loop="false"/>
+
+    <anim name="walkUP" anim="walk_up" fps="4" loop="true"/>
+    <anim name="walkLEFT" anim="walk_left" fps="4" loop="true"/>
+    <anim name="walkRIGHT" anim="walk_right" fps="4" loop="true"/>
+    <anim name="walkDOWN" anim="walk_down" fps="4" loop="true"/>
+
+    <anim name="runUP" anim="run_up" fps="6" loop="true"/>
+    <anim name="runLEFT" anim="run_left" fps="6" loop="true"/>
+    <anim name="runRIGHT" anim="run_right" fps="6" loop="true"/>
+    <anim name="runDOWN" anim="run_down" fps="6" loop="true"/>
+
+    <anim name="sneakUP" anim="sneak_up" fps="4" loop="true"/>
+    <anim name="sneakLEFT" anim="sneak_left" fps="4" loop="true"/>
+    <anim name="sneakRIGHT" anim="sneak_right" fps="4" loop="true"/>
+    <anim name="sneakDOWN" anim="sneak_down" fps="4" loop="true"/>
+
+    <anim name="pushUP" anim="push_up" fps="8" loop="true"/>
+    <anim name="pushLEFT" anim="push_left" fps="8" loop="true"/>
+    <anim name="pushRIGHT" anim="push_right" fps="8" loop="true"/>
+    <anim name="pushDOWN" anim="push_down" fps="8" loop="true"/>
+
+    <anim name="sitUP" anim="sit_up" y="60" fps="1" loop="true"/>
+    <anim name="sitLEFT" anim="sit_left" y="60" fps="1" loop="true"/>
+    <anim name="sitRIGHT" anim="sit_right" y="60" fps="1" loop="true"/>
+    <anim name="sitDOWN" anim="sit_down" y="60" fps="1" loop="true"/>
+
+    <anim name="shadowUP" anim="shadow_up" fps="3" loop="true"/>
+    <anim name="shadowLEFT" anim="shadow_left" fps="3" loop="true"/>
+    <anim name="shadowRIGHT" anim="shadow_right" fps="3" loop="true"/>
+    <anim name="shadowDOWN" anim="shadow_down" fps="3" loop="true"/>
+
+    <anim name="limpUP" anim="limp_up" fps="4" loop="true"/>
+    <anim name="limpLEFT" anim="limp_left" fps="4" loop="true"/>
+    <anim name="limpRIGHT" anim="limp_right" fps="4" loop="true"/>
+    <anim name="limpDOWN" anim="limp_down" fps="4" loop="true"/>
+
+    <anim name="indoorsDOWN" anim="indoors_down" fps="3" loop="true"/>
+
+    <anim name="fall" anim="fall" fps="4" loop="false"/>
+    <anim name="collapse" anim="collapse" fps="6" loop="false"/>
+
+    <anim name="battleIdle" anim="battle_idle" fps="2" loop="true"/>
+    <anim name="battleUP" anim="battle_up" fps="1" loop="false"/>
+    <anim name="battleLEFT" anim="battle_left" fps="1" loop="false"/>
+    <anim name="battleRIGHT" anim="battle_right" fps="1" loop="false"/>
+    <anim name="battleDOWN" anim="battle_down" fps="1" loop="false"/>
+
+    <anim name="sleep" anim="liedown_sleep" sprite="characters/lacie/lacie_liedown" y="15" fps="1" loop="false"/>
+    <anim name="wakeup" anim="liedown_wakeup" sprite="characters/lacie/lacie_liedown_2" y="15" fps="1" loop="false"/>
+    <anim name="aweking" anim="waking" sprite="characters/lacie/lacie_collapse" camX="-3" camY="-10" y="20" fps="3" loop="false"/>
+</character>

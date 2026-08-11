@@ -8,15 +8,14 @@
     },
     {
       "name": "openfl",
-      "type": "git",
-      "ref": "main",
-      "url": "https://github.com/ArkoseLabsOfficial/openfl-lily"
+      "type": "haxelib",
+      "version": "9.3.3"
     },
     {
       "name": "flixel",
       "type": "git",
-      "ref": "main",
-      "url": "https://github.com/ArkoseLabsOfficial/flixel-lily"
+      "ref": "5.6.1",
+      "url": "https://github.com/PsychExtendedThings/flixel"
     },
     {
       "name": "flixel-addons",
@@ -41,11 +40,11 @@
       "url": "https://github.com/kittycathy233/hxcpp"
     },
     {
-      "name": "hscript-iris",
+      "name": "LilyScript",
       "type":"git",
       "dir": null,
       "ref": null,
-      "url": "https://github.com/NovaFlare-Engine-Concentration/hscript-iris-improved"
+      "url": "https://github.com/ArkoseLabsOfficial/LilyScript"
     },
     {
       "name": "mobile-controls",

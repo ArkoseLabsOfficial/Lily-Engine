@@ -12,10 +12,6 @@ import openfl.display.Bitmap;
 import sys.FileSystem as SysFileSystem;
 import sys.io.File as SysFile;
 #end
-#if scriptable
-import cpp.cppia.Host;
-import cpp.cppia.Module;
-#end
 import openfl.events.MouseEvent;
 
 #if FEATURE_TOUCH_CONTROLS
@@ -24,34 +20,21 @@ import mobile.openfl.controls.MobileControls;
 import openfl.ui.Mouse;
 
 class Main extends Sprite {
-	var game:Game;
+	public static var game:Game;
 	#if FEATURE_TOUCH_CONTROLS
 	public static var mobileControls:MobileControls;
 	#end
     public function new() {
         super();
-        #if android
-        Sys.setCwd(haxe.io.Path.addTrailingSlash(android.content.Context.getExternalFilesDir()));
-        #elseif ios
-        Sys.setCwd(lime.system.System.documentsDirectory);
-        #end
-        FlxAssets.FONT_DEFAULT = "assets/font/NotoSans-Regular.ttf";
-        FlxSprite.defaultAntialiasing = true;
-
-
-		/* Loading Game Stuffs */
-		game = new Game();
-		loadAllMods();
-
 		/* Game and Mobile Control Childs */
 		#if FEATURE_TOUCH_CONTROLS
 		mobileControls = new MobileControls(1920, 1080);
 		#end
-		addChild(new FlxGame(1920, 1080, TitleMenu, 144, 144, true));
+		addChild(new FlxGame(1920, 1080, MainState, 60, 60, true));
 		#if FEATURE_TOUCH_CONTROLS
 		addChild(mobileControls);
-		#end
 		mobile.openfl.screen.ScreenUtil.init(stage);
+		#end
 
 		FlxG.mouse.useSystemCursor = true;
 		FlxG.fixedTimestep = false;
@@ -66,29 +49,11 @@ class Main extends Sprite {
 			customCursor.x = e.stageX;
 			customCursor.y = e.stageY;
 		});
-		customCursor.scaleX = 0.15;
-		customCursor.scaleY = 0.15;
+		customCursor.smoothing = true;
+		customCursor.scaleX = 0.13;
+		customCursor.scaleY = 0.13;
 		#end
     }
 
 	static var loadedFiles = new Map<String, Bool>();
-
-	/**
-	 * A cppia loader.
-	**/
-	public static function loadAllMods() {
-		#if (!cppia && scriptable)
-        var modDir = "mods/";
-        if (!FileSystem.exists(modDir)) return;
-
-        for (file in FileSystem.readDirectory(modDir)) {
-            if (file.endsWith(".cppia")) {
-                var bytes = modDir + file;
-                Host.runFile(bytes);
-				loadedFiles.set(file.replace(".cppia", ""), true);
-                trace("Mod yüklendi: " + file);
-            }
-        }
-		#end
-    }
 }

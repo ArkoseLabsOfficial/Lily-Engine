@@ -1,0 +1,59 @@
+{
+  "Sign1": [
+    {
+      "text": "Test for one sprite double sitting objects."
+    }
+  ],
+  "Sign2": [
+    {
+      "text": "Test for sitting animation and objects."
+    }
+  ],
+  "Sign3": [
+    {
+      "text": "Test for testing Godot anims and changing object anims with trigger."
+    }
+  ],
+  "Sign4": [
+    {
+      "text": "Basic animation test."
+    },
+    {
+      "text": "Do you want to start the basic animation test?",
+      "selections": [
+        {
+          "text": "Yes",
+          "setFlag": "start_anim_test=true",
+          "target": "Sign4_Start"
+        },
+        {
+          "text": "No",
+          "target": "Sign4_Cancel"
+        }
+      ]
+    }
+  ],
+  "Sign5": [
+    {
+      "text": "Ligh2D testing, this is here because Light2D parsing still has too many problems."
+    }
+  ],
+  "Sign6": [
+    {
+      "text": "Use this door for exiting (or you can exit from Pause Menu)."
+    }
+  ],
+  "Sign4_Start": [
+    {
+      "text": "Great! Let's begin the animation test.",
+      "functionPost": "startFollowing",
+      "close": true
+    }
+  ],
+  "Sign4_Cancel": [
+    {
+      "text": "Maybe next time.",
+      "close": true
+    }
+  ]
+}

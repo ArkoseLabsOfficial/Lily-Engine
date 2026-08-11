@@ -1,5 +1,10 @@
 package engine.backend.game;
 
+import io.FileSystem;
+import lang.Lang;
+
+using StringTools;
+
 class ObjectiveManager {
 	public var objectives:Map<String, Objective>;
 
@@ -8,17 +13,17 @@ class ObjectiveManager {
 	private var currentObjectives(get, never):Array<String>;
 
 	private function get_currentObjectives()
-		return Game.instance.save.currentObjectives;
+		return Game.save.currentObjectives;
 
 	private var completedObjectives(get, never):Array<String>;
 
 	private function get_completedObjectives()
-		return Game.instance.save.completedObjectives;
+		return Game.save.completedObjectives;
 
 	private var failedObjectives(get, never):Array<String>;
 
 	private function get_failedObjectives()
-		return Game.instance.save.failedObjectives;
+		return Game.save.failedObjectives;
 
 	public function new() {
 		init();
@@ -27,21 +32,42 @@ class ObjectiveManager {
 	public function init():Void {
 		objectives = new Map<String, Objective>();
 		var order:Int = 0;
-		var jsonPaths = ["objectives/story.json", "objectives/sidequests.json"];
 
-		for (path in jsonPaths) {
-			var parsedFile = SimpleParser.loadJSON(path);
+		var dirPath = LilyAssets.getPath(Flags.objectiveFolder);
+		var files:Array<String> = [];
+
+		if (FileSystem.exists(dirPath) && FileSystem.isDirectory(dirPath)) {
+			files = FileSystem.readDirectory(dirPath);
+		}
+
+		for (file in files) {
+			if (!file.endsWith(".json"))
+				continue;
+
+			var path = dirPath + (dirPath.endsWith("/") ? "" : "/") + file;
+			var rawJson = LilyAssets.getTextFromFile(path);
+
+			if (rawJson == null)
+				continue;
+
+			var parsedFile:Dynamic = null;
+			try {
+				parsedFile = Json.parse(rawJson);
+			} catch (e:Dynamic) {
+				FlxG.log.error("Failed to parse objective JSON: " + path);
+				continue;
+			}
+
 			if (parsedFile == null || parsedFile.Objectives == null)
 				continue;
 
-			var groupName = path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf("."));
+			var groupName = file.substring(0, file.lastIndexOf("."));
 
 			for (objDto in (parsedFile.Objectives : Array<ObjectiveData>)) {
 				parseObjectiveFromDto(objDto, objDto.Id, groupName, null, order);
 				order++;
 			}
 		}
-		applyTranslationOverrides();
 	}
 
 	private function parseObjectiveFromDto(dto:ObjectiveData, id:String, group:String, parent:Objective, currentOrder:Int):Objective {
@@ -49,8 +75,11 @@ class ObjectiveManager {
 		obj.id = id;
 		obj.group = group;
 		obj.order = currentOrder;
-		obj.name = dto.Name;
-		obj.description = dto.Description;
+
+		// Strictly use language system identifiers instead of parsing strings from JSON
+		obj.name = 'objectives.name.${obj.id}';
+		obj.description = 'objectives.desc.${obj.id}';
+
 		obj.hidden = dto.Hidden != null ? dto.Hidden : false;
 		obj.onComplete = dto.OnComplete != null ? dto.OnComplete : [];
 		obj.parent = parent;
@@ -65,24 +94,25 @@ class ObjectiveManager {
 		return obj;
 	}
 
-	public function applyTranslationOverrides():Void {
-		for (obj in objectives) {
-			obj.name = Game.instance.language.getCaption('objectives.name.${obj.id}');
-			obj.description = Game.instance.language.getCaption('objectives.desc.${obj.id}');
-		}
+	public function insterCustomObjective(objective:Objective):Void {
+		objectives.set(objective.id, objective);
 	}
 
-	public function add(objectiveId:String):Void {
+	public function insertCustomObjective(objective:Objective):Void {
+		insterCustomObjective(objective);
+	}
+
+	public function addObjective(objectiveId:String):Void {
 		if (!isObjectiveValid(objectiveId)) {
 			FlxG.log.error("Attempting to add an invalid objective: " + objectiveId);
 			return;
 		}
-		addObj(objectives.get(objectiveId));
+		_addObjective(objectives.get(objectiveId), false);
 	}
 
-	private function addObj(objective:Objective):Void {
-		if (objective.hasParent()) {
-			addObj(objective.parent);
+	private function _addObjective(objective:Objective, isChildCall:Bool = false):Void {
+		if (objective.hasParent() && !isChildCall) {
+			_addObjective(objective.parent, false);
 			if (!currentObjectives.contains(objective.parent.id))
 				return;
 		}
@@ -91,81 +121,96 @@ class ObjectiveManager {
 			&& !failedObjectives.contains(objective.id)) {
 			currentObjectives.push(objective.id);
 			_objectivesUpdated = true;
+
+			if (!isChildCall) {
+				FlxG.state.add(new ObjectivePopUp("Added", Lang.get(objective.name)));
+			}
+
+			if (objective.hasChildren()) {
+				for (child in objective.children) {
+					_addObjective(child, true);
+				}
+			}
 		}
 	}
 
-	public function remove(objectiveId:String):Void {
+	public function removeObjective(objectiveId:String):Void {
 		if (!isObjectiveValid(objectiveId)) {
 			FlxG.log.error("Attempting to remove an invalid objective: " + objectiveId);
 			return;
 		}
-		removeObj(objectives.get(objectiveId));
+		_removeObjective(objectives.get(objectiveId));
 	}
 
-	private function removeObj(objective:Objective):Void {
+	private function _removeObjective(objective:Objective):Void {
 		currentObjectives.remove(objective.id);
 		if (objective.hasChildren()) {
 			for (child in objective.children) {
 				if (currentObjectives.contains(child.id))
-					removeObj(child);
+					_removeObjective(child);
 			}
 		}
 		if (objective.hasParent() && !objectiveHasPendingChildren(objective.parent)) {
-			removeObj(objective.parent);
+			_removeObjective(objective.parent);
 		}
 	}
 
-	public function complete(objectiveId:String):Void {
+	public function completeObjective(objectiveId:String):Void {
 		if (!isObjectiveValid(objectiveId)) {
 			FlxG.log.error("Attempting to complete an invalid objective: " + objectiveId);
 			return;
 		}
-		completeObj(objectives.get(objectiveId));
+		_completeObjective(objectives.get(objectiveId));
 	}
 
-	private function completeObj(objective:Objective):Void {
+	private function _completeObjective(objective:Objective):Void {
 		if (completedObjectives.contains(objective.id) || failedObjectives.contains(objective.id))
 			return;
 
 		currentObjectives.remove(objective.id);
 		completedObjectives.push(objective.id);
 
+		FlxG.state.add(new ObjectivePopUp("Completed", Lang.get(objective.name)));
+
 		if (objective.hasChildren()) {
 			for (child in objective.children) {
 				if (currentObjectives.contains(child.id))
-					completeObj(child);
+					_completeObjective(child);
 			}
 		}
 		if (objective.hasParent() && !objectiveHasPendingChildren(objective.parent)) {
-			completeObj(objective.parent);
+			_completeObjective(objective.parent);
 		}
 		for (triggeredId in objective.onComplete) {
-			add(triggeredId);
+			addObjective(triggeredId);
 		}
 	}
 
-	public function fail(objectiveId:String):Void {
+	public function failObjective(objectiveId:String):Void {
 		if (!isObjectiveValid(objectiveId)) {
-			FlxG.log.error("Attempting to fail an invalid objective: " + objectiveId);
+			trace("Attempting to fail an invalid objective: " + objectiveId);
 			return;
 		}
-		failObj(objectives.get(objectiveId));
+		_failObjective(objectives.get(objectiveId));
 	}
 
-	private function failObj(objective:Objective):Void {
+	private function _failObjective(objective:Objective):Void {
 		if (completedObjectives.contains(objective.id) || failedObjectives.contains(objective.id))
 			return;
+
 		currentObjectives.remove(objective.id);
 		failedObjectives.push(objective.id);
 
+		FlxG.state.add(new ObjectivePopUp("Failed", Lang.get(objective.name)));
+
 		if (objective.hasChildren()) {
 			for (child in objective.children) {
 				if (currentObjectives.contains(child.id))
-					failObj(child);
+					_failObjective(child);
 			}
 		}
 		if (objective.hasParent() && !objectiveHasPendingChildren(objective.parent)) {
-			failObj(objective.parent);
+			_failObjective(objective.parent);
 		}
 	}
 
@@ -183,6 +228,28 @@ class ObjectiveManager {
 		return activeList;
 	}
 
+	public function getCompletedObjectives():Array<Objective> {
+		var list:Array<Objective> = [];
+		for (objId in completedObjectives) {
+			if (objectives.exists(objId)) {
+				list.push(objectives.get(objId));
+			}
+		}
+		list.sort(function(x, y) return x.order - y.order);
+		return list;
+	}
+
+	public function getFailedObjectives():Array<Objective> {
+		var list:Array<Objective> = [];
+		for (objId in failedObjectives) {
+			if (objectives.exists(objId)) {
+				list.push(objectives.get(objId));
+			}
+		}
+		list.sort(function(x, y) return x.order - y.order);
+		return list;
+	}
+
 	public function getAllObjectives():Array<Objective> {
 		var list:Array<Objective> = [];
 		for (obj in objectives)
@@ -197,14 +264,6 @@ class ObjectiveManager {
 	}
 
 	public function silenceNotifications():Void {
-		_objectivesUpdated = false;
-	}
-
-	public function showNotification():Void {
-		if (GamePrefs.getOption("objectiveNotifications") && _objectivesUpdated) {
-			FlxG.log.notice("Objectives Updated!");
-			// this can be replaced with a generic UI flyout later!
-		}
 		_objectivesUpdated = false;
 	}
 
@@ -228,6 +287,9 @@ class ObjectiveManager {
 		if (objective.hasChildren()) {
 			for (child in objective.children) {
 				if (!isObjectiveCompleted(child.id) && !isObjectiveFailed(child.id)) {
+					return true;
+				}
+				if (objectiveHasPendingChildren(child)) {
 					return true;
 				}
 			}

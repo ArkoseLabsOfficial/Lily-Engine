@@ -1,0 +1,890 @@
+give me full updated SScript.
+update HScript  with new SScript.
+
+HScript.hx:
+package engine.scripting;
+
+#if FEATURE_HSCRIPT
+import flixel.FlxState;
+import haxe.io.Path;
+import haxe.exceptions.NotImplementedException;
+import haxe.PosInfos;
+import openfl.utils.Assets;
+import flixel.FlxG;
+import flixel.FlxBasic;
+import hscript.Expr.Error;
+import hscript.SScript;
+import hscript.Interp;
+import hscript.Expr;
+import lime.app.Application;
+import flixel.util.FlxDestroyUtil.IFlxDestroyable;
+import flixel.util.FlxStringUtil;
+import engine.scripting.events.CancellableEvent;
+import flixel.util.FlxSave;
+import hscript.IHScriptCustomAccessBehaviour;
+
+/**
+ * HScript implementation using SScript instead of manual hscript parsing.
+ */
+class HScript extends Script {
+    public var sscript:SScript;
+    public var code:String = null;
+
+    var __importedPaths:Array<String>;
+
+    public override function onCreate(path:String) {
+        super.onCreate(path);
+
+        // Create SScript with preset (standard classes) but no auto-execution
+        sscript = new SScript("", true, false);
+
+        // Configure parser for HScript needs
+        sscript.parser.allowJSON = true;
+        sscript.parser.preprocessorValues = Script.getDefaultPreprocessors();
+
+        try {
+            if (FileSystem.exists(rawPath))
+                code = File.getContent(rawPath);
+        } catch (e) {
+            FlxG.stage.window.alert('Error while reading $path: ${Std.string(e)}', "HScript");
+        }
+
+        __importedPaths = [path];
+
+        // Configure interp through SScript
+        sscript.interp.errorHandler = _errorHandler;
+        sscript.interp.warnHandler = _warnHandler;
+        sscript.interp.importFailedCallback = importFailedCallback;
+
+        dottedName = HScript.normalizeScriptPath(sourcePath != null ? sourcePath : path);
+        baseName = dottedName.split(".").pop();
+
+        var statics:Map<String, Dynamic> = HScript.classStatics.get(dottedName);
+        if (statics == null) {
+            statics = [];
+            HScript.classStatics.set(dottedName, statics);
+        }
+
+        sscript.interp.staticVariables = statics;
+        sscript.interp.publicVariables = [];
+        sscript.interp.allowStaticVariables = true;
+        sscript.interp.allowPublicVariables = true;
+        sscript.interp.scriptName = baseName;
+
+        Interp.registerScriptClass(baseName, statics, function(args:Array<Dynamic>):Dynamic {
+            return HScript.instantiateByPath(dottedName, sourcePath != null ? sourcePath : path, args);
+        });
+
+        sscript.set("importScript", function(path:String):Dynamic {
+            return importScriptFile(path);
+        });
+
+        #if GLOBAL_SCRIPT
+        engine.scripting.GlobalScript.call("onScriptCreated", [this, "hscript"]);
+        #end
+
+        loadFromString(code);
+    }
+
+    public override function loadFromString(code:String) {
+        this.code = code;
+        return this;
+    }
+
+    private function importFailedCallback(cl:Array<String>, ?asName:String):Bool {
+        var dotted:String = cl.join(".");
+        var base:String = dotted.split(".").pop();
+
+        if (Interp.scriptClasses.exists(base))
+            return true;
+
+        var relPath:String = dotted.replace(".", "/");
+        var candidates:Array<String> = [];
+
+        for (ext in Script.scriptExtensions) {
+            candidates.push('scripts/$relPath.$ext');
+            candidates.push('script/$relPath.$ext');
+            candidates.push('$relPath.$ext');
+            candidates.push('source/$relPath.$ext');
+        }
+
+        for (candidate in candidates) {
+            if (__importedPaths.contains(candidate))
+                continue;
+
+            var fullPath:String = LilyAssets.getPath(candidate);
+            if (FileSystem.exists(fullPath)) {
+                var script:Script = Script.create(candidate);
+                if (!(script is DummyScript)) {
+                    __importedPaths.push(candidate);
+                    script.ownerPack = ownerPack;
+                    if (ownerPack != null && !ownerPack.contains(script.path))
+                        ownerPack.add(script);
+                    script.load();
+                    return Interp.scriptClasses.exists(base);
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private function _errorHandler(error:Error) {
+        var fileName = error.origin;
+        var oldfn = '$fileName:${error.line}: ';
+
+        if (remappedNames.exists(fileName))
+            fileName = remappedNames.get(fileName);
+
+        var fn = '$fileName:${error.line}: ';
+        var err = error.toString();
+
+        while (err.startsWith(oldfn) || err.startsWith(fn)) {
+            if (err.startsWith(oldfn))
+                err = err.substr(oldfn.length);
+            if (err.startsWith(fn))
+                err = err.substr(fn.length);
+        }
+
+        trace("ERROR Caused in " + fn + err);
+    }
+
+    private function _warnHandler(error:Error) {
+        var fileName = error.origin;
+        var oldfn = '$fileName:${error.line}: ';
+
+        if (remappedNames.exists(fileName))
+            fileName = remappedNames.get(fileName);
+
+        var fn = '$fileName:${error.line}: ';
+        var err = error.toString();
+
+        while (err.startsWith(oldfn) || err.startsWith(fn)) {
+            if (err.startsWith(oldfn))
+                err = err.substr(oldfn.length);
+            if (err.startsWith(fn))
+                err = err.substr(fn.length);
+        }
+
+        trace("WARN Caused in " + err);
+    }
+
+    public override function setParent(parent:Dynamic) {
+        sscript.interp.scriptObject = parent;
+    }
+
+    public override function onLoad() {
+        if (code != null && code.trim() != "") {
+            sscript.doString(code, fileName);
+
+            if (sscript.parsingException != null) {
+                trace("Failed to execute script: " + sscript.parsingException.toString());
+                return;
+            }
+        }
+
+        sscript.interp.registerScriptInstance(baseName);
+
+        var cls = Interp.scriptClasses.get(baseName);
+        if (cls != null)
+            cls.staticNames = sscript.interp.staticVarNames;
+
+        call("new", constructorArgs != null ? constructorArgs : []);
+        constructorArgs = null;
+
+        #if GLOBAL_SCRIPT
+        GlobalScript.call("onScriptSetup", [this, "hscript"]);
+        #end
+    }
+
+    public override function reload() {
+        if (sscript != null) {
+            sscript.interp.unregisterScriptScope();
+            sscript.interp.allowStaticVariables = false;
+            sscript.interp.allowPublicVariables = false;
+        }
+
+        var savedVariables:Map<String, Dynamic> = [];
+        for (k => e in sscript.interp.variables) {
+            if (!Reflect.isFunction(e))
+                savedVariables[k] = e;
+        }
+
+        var oldParent = sscript.interp.scriptObject;
+
+        onCreate(path);
+
+        for (k => e in Script.getDefaultVariables(this))
+            set(k, e);
+
+        load();
+        setParent(oldParent);
+
+        for (k => e in savedVariables) {
+            if (sscript.interp.publicVarNames.exists(k) || sscript.interp.staticVarNames.exists(k))
+                continue;
+            sscript.interp.variables.set(k, e);
+        }
+
+        sscript.interp.allowStaticVariables = true;
+        sscript.interp.allowPublicVariables = true;
+    }
+
+    private override function onCall(funcName:String, parameters:Array<Dynamic>):Dynamic {
+        if (sscript == null)
+            return null;
+
+        var func:Dynamic = null;
+
+        if (sscript.interp.allowPublicVariables && sscript.interp.publicVarNames.exists(funcName)
+            && sscript.interp.publicVariables.exists(funcName))
+            func = sscript.interp.publicVariables.get(funcName);
+        else if (sscript.interp.allowStaticVariables && sscript.interp.staticVarNames.exists(funcName)
+            && sscript.interp.staticVariables.exists(funcName))
+            func = sscript.interp.staticVariables.get(funcName);
+        else
+            func = sscript.get(funcName);
+
+        if (func != null && Reflect.isFunction(func))
+            return Reflect.callMethod(null, func, parameters);
+
+        return null;
+    }
+
+    public override function get(val:String):Dynamic {
+        if (sscript == null)
+            return null;
+
+        if (sscript.interp.allowPublicVariables && sscript.interp.publicVarNames.exists(val)
+            && sscript.interp.publicVariables.exists(val))
+            return sscript.interp.publicVariables.get(val);
+
+        if (sscript.interp.allowStaticVariables && sscript.interp.staticVarNames.exists(val)
+            && sscript.interp.staticVariables.exists(val))
+            return sscript.interp.staticVariables.get(val);
+
+        return sscript.get(val);
+    }
+
+    public override function set(val:String, value:Dynamic) {
+        if (sscript == null)
+            return;
+
+        if (sscript.interp.allowPublicVariables && sscript.interp.publicVarNames.exists(val)
+            && sscript.interp.publicVariables != null) {
+            sscript.interp.publicVariables.set(val, value);
+            return;
+        }
+
+        if (sscript.interp.allowStaticVariables && sscript.interp.staticVarNames.exists(val)
+            && sscript.interp.staticVariables != null) {
+            sscript.interp.staticVariables.set(val, value);
+            return;
+        }
+
+        sscript.set(val, value);
+    }
+
+    override public function destroy() {
+        if (sscript != null) {
+            sscript.interp.unregisterScriptScope();
+            sscript.destroy();
+            sscript = null;
+        }
+        super.destroy();
+    }
+
+    // --- Static utilities ---
+
+    public static var classStatics:Map<String, Map<String, Dynamic>> = [];
+    public var dottedName:String;
+    public var constructorArgs:Array<Dynamic> = null;
+
+    public static function normalizeScriptPath(p:String):String {
+        if (p == null)
+            return "Script";
+
+        p = haxe.io.Path.withoutExtension(p);
+        p = p.replace("\\", "/");
+
+        while (p.startsWith("/"))
+            p = p.substr(1);
+        if (p.startsWith("assets/"))
+            p = p.substr(7);
+        if (p.startsWith("scripts/"))
+            p = p.substr(8);
+        if (p.startsWith("script/"))
+            p = p.substr(7);
+        if (p.startsWith("source/"))
+            p = p.substr(7);
+
+        p = p.replace("/", ".");
+
+        if (p == "")
+            p = "Script";
+
+        return p;
+    }
+
+    static function instantiateByPath(dotted:String, source:String, args:Array<Dynamic>):Dynamic {
+        var script:Script = Script.create(source);
+        if (script is DummyScript)
+            return null;
+
+        if (script is HScript) {
+            var hs:HScript = cast script;
+            hs.constructorArgs = args;
+        }
+
+        script.load();
+
+        if (script is HScript) {
+            var hs:HScript = cast script;
+            if (hs.sscript != null && hs.sscript.interp.scriptScope != null)
+                return hs.sscript.interp.scriptScope;
+            return Interp.scriptClasses.get(hs.baseName);
+        }
+
+        return script;
+    }
+
+    public override function getScriptHandle():Dynamic {
+        if (sscript != null && sscript.interp.scriptScope != null)
+            return sscript.interp.scriptScope;
+        return Interp.scriptClasses.get(baseName);
+    }
+
+    private function importScriptFile(path:String):Dynamic {
+        var resolved:String = HScript.importScriptPathHandler != null ? HScript.importScriptPathHandler(path) : path;
+        var script:Script = Script.create(resolved);
+
+        if (script is DummyScript)
+            return null;
+
+        script.ownerPack = ownerPack;
+        if (ownerPack != null && !ownerPack.contains(script.path))
+            ownerPack.add(script);
+
+        script.load();
+
+        if (script is HScript) {
+            var hs:HScript = cast script;
+            if (hs.sscript != null && hs.sscript.interp.scriptScope != null)
+                return hs.sscript.interp.scriptScope;
+            return Interp.scriptClasses.get(hs.baseName);
+        }
+
+        return script;
+    }
+
+    public override function setPublicMap(map:Map<String, Dynamic>) {}
+    public override function setStaticMap(map:Map<String, Dynamic>) {}
+
+    public var baseName:String;
+
+    public static var importScriptBasePath:String = "scripts/";
+    public static var importScriptPathHandler:String->String = function(path:String):String {
+        if (path == null)
+            return null;
+        if (path.indexOf("scripts/") == 0 || path.indexOf("source/") == 0)
+            return path;
+        return HScript.importScriptBasePath + path;
+    };
+}
+
+class Script extends FlxBasic implements IFlxDestroyable {
+    public var sourcePath:String;
+    public var ownerPack:ScriptPack;
+
+    public function setPublicMap(map:Map<String, Dynamic>) {}
+    public function setStaticMap(map:Map<String, Dynamic>) {}
+
+    public function getScriptHandle():Dynamic {
+        return null;
+    }
+
+    public static var staticVariables:Map<String, Dynamic> = [];
+
+    public function event<T:CancellableEvent>(func:String, event:T):T {
+        call(func, [event]);
+        return event;
+    }
+
+    public static function getDefaultVariables(?script:Script):Map<String, Dynamic> {
+        return [
+            /* Extends Supported Classes */
+            "ScriptedSprite" => ScriptedSprite,
+            "ScriptedSpriteGroup" => ScriptedSpriteGroup,
+            "ScriptedState" => ScriptedState,
+            "ScriptedSubState" => ScriptedSubState,
+
+            /* Others */
+            "Controls" => Controls,
+            "DialogueManager" => DialogueManager,
+            "GamePrefs" => GamePrefs,
+            "ItemManager" => ItemManager,
+            "Lang" => Lang,
+            "Objective" => Objective,
+            "ObjectiveManager" => ObjectiveManager,
+            "RoomManager" => RoomManager,
+            "SaveManager" => SaveManager,
+            "StateBackend" => StateBackend,
+            "SubStateBackend" => SubStateBackend,
+            "Character" => Character,
+            "Player" => Player,
+            "TitleMenu" => TitleMenu,
+            "BaseRoom" => BaseRoom,
+            "Inventory" => Inventory,
+            "Language" => Language,
+            "Objectives" => Objectives,
+            "Obtain" => Obtain,
+            "Pause" => Pause,
+            "SaveLoad" => SaveLoad,
+            "Settings" => Settings,
+            "DialogBox" => DialogBox,
+            "DialogSelection" => DialogSelection,
+            "File" => io.File,
+            "FileSystem" => io.FileSystem,
+            "LilyAssets" => io.LilyAssets,
+            "FlxG" => FlxG,
+            "FlxSprite" => FlxSprite,
+            "FlxSpriteGroup" => flixel.group.FlxSpriteGroup,
+            "FlxGamepad" => flixel.input.gamepad.FlxGamepad,
+            "FlxCamera" => FlxCamera,
+            "FlxTween" => FlxTween,
+            "FlxEase" => FlxEase,
+            "FlxText" => FlxText,
+            "FlxGroup" => FlxGroup,
+            "FlxColor" => getMacroAbstractClass("flixel.util.FlxColor"),
+            "FlxTypedGroup" => FlxTypedGroup,
+            "Math" => Math,
+            "Std" => Std,
+            "StringTools" => StringTools,
+            "FlxKey" => getMacroAbstractClass("flixel.input.keyboard.FlxKey"),
+            "FlxTextBorderStyle" => flixel.text.FlxTextBorderStyle,
+            "Json" => haxe.Json,
+            "Map" => getMacroAbstractClass("haxe.ds.Map"),
+            "IntMap" => haxe.ds.IntMap,
+            "StringMap" => haxe.ds.StringMap
+        ];
+    }
+
+    public static function getDefaultPreprocessors():Map<String, Dynamic> {
+        var defines = macros.DefineMacro.defines;
+        return defines;
+    }
+
+    @:noUsing public static inline function getMacroAbstractClass(className:String) {
+        return Type.resolveClass('${className}_HSC');
+    }
+
+    public static var scriptExtensions:Array<String> = ["hx", "hscript", "hsc", "hxs", "pack"];
+    public static var curScript:Script = null;
+
+    public var fileName:String;
+    public var extension:String;
+    public var path:String = null;
+    private var rawPath:String = null;
+    private var didLoad:Bool = false;
+    public var remappedNames:Map<String, String> = [];
+
+    public static function create(path:String):Script {
+        var originalPath = path;
+        path = LilyAssets.getPath(path);
+
+        if (FileSystem.exists(path)) {
+            return switch (Path.extension(path).toLowerCase()) {
+                case "hx" | "hscript" | "hsc" | "hxs":
+                    new HScript(originalPath);
+                case "pack":
+                    var arr = File.getContent(path).split("________PACKSEP________");
+                    fromString(arr[1], arr[0]);
+                default:
+                    new DummyScript(originalPath);
+            }
+        }
+        return new DummyScript(originalPath);
+    }
+
+    public static function fromString(code:String, path:String):Script {
+        return switch (Path.extension(path).toLowerCase()) {
+            case "hx" | "hscript" | "hsc" | "hxs":
+                new HScript(path).loadFromString(code);
+            default:
+                new DummyScript(path).loadFromString(code);
+        }
+    }
+
+    public function new(path:String) {
+        super();
+        this.sourcePath = path;
+        path = LilyAssets.getPath(path);
+        rawPath = path;
+        fileName = Path.withoutDirectory(path);
+        extension = Path.extension(path);
+        this.path = path;
+
+        onCreate(path);
+
+        for (k => e in getDefaultVariables(this))
+            set(k, e);
+
+        set("disableScript", () -> {
+            active = false;
+        });
+
+        var scriptHandle:Dynamic = getScriptHandle();
+        set("__script__", scriptHandle != null ? scriptHandle : this);
+    }
+
+    public function load() {
+        if (didLoad)
+            return;
+        var oldScript = curScript;
+        curScript = this;
+        onLoad();
+        curScript = oldScript;
+        didLoad = true;
+    }
+
+    public function reload() {}
+
+    public function trace(v:Dynamic) {
+        var fileName = this.fileName;
+        if (remappedNames.exists(fileName))
+            fileName = remappedNames.get(fileName);
+        trace('${fileName}: ' + Std.string(v));
+    }
+
+    public function call(func:String, ?parameters:Array<Dynamic>):Dynamic {
+        var oldScript = curScript;
+        curScript = this;
+        var result = onCall(func, parameters == null ? [] : parameters);
+        curScript = oldScript;
+        return result;
+    }
+
+    public function loadFromString(code:String) {
+        return this;
+    }
+
+    public function setParent(variable:Dynamic) {}
+    public function get(variable:String):Dynamic {
+        return null;
+    }
+    public function set(variable:String, value:Dynamic):Void {}
+    public function setupPlayState():Void {}
+
+    public function error(text:String, ?additionalInfo:Dynamic):Void {
+        var fileName = this.fileName;
+        if (remappedNames.exists(fileName))
+            fileName = remappedNames.get(fileName);
+        trace(fileName + text);
+    }
+
+    override public function toString():String {
+        return FlxStringUtil.getDebugString(didLoad ? [
+            LabelValuePair.weak("path", path),
+            LabelValuePair.weak("active", active),
+        ] : [
+            LabelValuePair.weak("path", path),
+            LabelValuePair.weak("active", active),
+            LabelValuePair.weak("loaded", didLoad),
+        ]);
+    }
+
+    private function onCall(func:String, parameters:Array<Dynamic>):Dynamic {
+        return null;
+    }
+
+    public function onCreate(path:String) {}
+    public function onLoad() {}
+}
+
+class DummyScript extends Script {
+    public var variables:Map<String, Dynamic> = [];
+
+    public override function get(v:String) {
+        return variables.get(v);
+    }
+
+    public override function set(v:String, v2:Dynamic) {
+        return variables.set(v, v2);
+    }
+
+    public override function onCall(method:String, parameters:Array<Dynamic>):Dynamic {
+        var func = variables.get(method);
+        if (Reflect.isFunction(func))
+            return (parameters != null && parameters.length > 0) ? Reflect.callMethod(null, func, parameters) : func();
+        return null;
+    }
+}
+
+@:access(CancellableEvent)
+class ScriptPack extends Script {
+    public var scripts:Array<Script> = [];
+    public var additionalDefaultVariables:Map<String, Dynamic> = [];
+    public var publicVariables:Map<String, Dynamic> = [];
+    public var parent:Dynamic = null;
+
+    public override function load() {
+        for (e in scripts)
+            e.load();
+    }
+
+    public function contains(path:String) {
+        for (e in scripts)
+            if (e.path == path)
+                return true;
+        return false;
+    }
+
+    public function new(name:String) {
+        additionalDefaultVariables["importScript"] = importScript;
+        super(name);
+        packScope = new ScriptPackScope(this);
+        set("__script__", packScope);
+    }
+
+    public override function getScriptHandle():Dynamic {
+        return packScope;
+    }
+
+    public function getByPath(name:String) {
+        for (s in scripts)
+            if (s.path == name)
+                return s;
+        return null;
+    }
+
+    public function getByName(name:String) {
+        for (s in scripts)
+            if (s.fileName == name)
+                return s;
+        return null;
+    }
+
+    public function importScript(path:String):Dynamic {
+        var resolved:String = HScript.importScriptPathHandler != null ? HScript.importScriptPathHandler(path) : 'scripts/$path';
+        if (resolved.indexOf(".") == -1)
+            resolved += ".hx";
+
+        var script = Script.create(resolved);
+        if (script is DummyScript)
+            throw 'Script at ${path} does not exist.';
+
+        add(script);
+        script.load();
+
+        if (script is HScript) {
+            var hs:HScript = cast script;
+            if (hs.sscript != null && hs.sscript.interp.scriptScope != null)
+                return hs.sscript.interp.scriptScope;
+            return Interp.scriptClasses.get(hs.baseName);
+        }
+        return script;
+    }
+
+    public override function call(func:String, ?parameters:Array<Dynamic>):Dynamic {
+        for (e in scripts)
+            if (e.active)
+                e.call(func, parameters);
+        return null;
+    }
+
+    override public function event<T:CancellableEvent>(func:String, event:T):T {
+        for (e in scripts) {
+            if (!e.active)
+                continue;
+            e.call(func, [event]);
+            if (event.cancelled && !event.__continueCalls)
+                break;
+        }
+        return event;
+    }
+
+    public override function get(val:String):Dynamic {
+        if (publicVariables.exists(val))
+            return publicVariables.get(val);
+        if (staticVariables.exists(val))
+            return staticVariables.get(val);
+        for (e in scripts) {
+            var v = e.get(val);
+            if (v != null)
+                return v;
+        }
+        return null;
+    }
+
+    public override function reload() {
+        for (e in scripts)
+            e.reload();
+    }
+
+    public override function set(val:String, value:Dynamic) {
+        publicVariables.set(val, value);
+        for (e in scripts)
+            e.set(val, value);
+    }
+
+    public override function setParent(parent:Dynamic) {
+        this.parent = parent;
+        for (e in scripts)
+            e.setParent(parent);
+    }
+
+    public override function destroy() {
+        super.destroy();
+        for (e in scripts)
+            e.destroy();
+    }
+
+    public override function onCreate(path:String) {}
+
+    public function add(script:Script) {
+        scripts.push(script);
+        __configureNewScript(script);
+    }
+
+    public function remove(script:Script) {
+        scripts.remove(script);
+    }
+
+    public function insert(pos:Int, script:Script) {
+        scripts.insert(pos, script);
+        __configureNewScript(script);
+    }
+
+    private function __configureNewScript(script:Script) {
+        script.ownerPack = this;
+        if (parent != null)
+            script.setParent(parent);
+        for (k => e in additionalDefaultVariables)
+            script.set(k, e);
+    }
+
+    override public function toString():String {
+        return FlxStringUtil.getDebugString([
+            LabelValuePair.weak("parent", FlxStringUtil.getClassName(parent, true)),
+            LabelValuePair.weak("total", scripts.length),
+        ]);
+    }
+
+    public var staticVariables:Map<String, Dynamic> = [];
+    public var packScope:ScriptPackScope;
+}
+
+#if GLOBAL_SCRIPT
+class GlobalScript {
+    public static var scripts:ScriptPack;
+    private static var initialized:Bool = false;
+
+    public static function init() {
+        if (initialized)
+            return;
+        initialized = true;
+        onSetupScript();
+
+        FlxG.signals.focusGained.add(function() call("focusGained"));
+        FlxG.signals.focusLost.add(function() call("focusLost"));
+        FlxG.signals.gameResized.add(function(w:Int, h:Int) call("gameResized", [w, h]));
+        FlxG.signals.postDraw.add(function() call("postDraw"));
+        FlxG.signals.postGameReset.add(function() call("postGameReset"));
+        FlxG.signals.postGameStart.add(function() call("postGameStart"));
+        FlxG.signals.postStateSwitch.add(function() call("postStateSwitch"));
+        FlxG.signals.postUpdate.add(function() call("postUpdate", [FlxG.elapsed]));
+        FlxG.signals.preDraw.add(function() call("preDraw"));
+        FlxG.signals.preGameReset.add(function() call("preGameReset"));
+        FlxG.signals.preGameStart.add(function() call("preGameStart"));
+        FlxG.signals.preStateCreate.add(function(state:FlxState) call("preStateCreate", [state]));
+        FlxG.signals.preStateSwitch.add(function() call("preStateSwitch", []));
+        FlxG.signals.preUpdate.add(function() {
+            call("preUpdate", [FlxG.elapsed]);
+            call("update", [FlxG.elapsed]);
+        });
+    }
+
+    public static function onSetupScript() {
+        destroy();
+        scripts = new ScriptPack("GlobalScript");
+
+        var path = 'scripts/Global.hx';
+        var script = Script.create(path);
+        if (!(script is DummyScript)) {
+            script.remappedNames.set(script.fileName, '${script.fileName}');
+            scripts.add(script);
+            script.load();
+        }
+    }
+
+    public static function event<T:CancellableEvent>(name:String, event:T):T {
+        if (scripts != null)
+            scripts.event(name, event);
+        return event;
+    }
+
+    public static inline function call(name:String, ?args:Array<Dynamic>)
+        if (scripts != null)
+            scripts.call(name, args);
+
+    public static inline function destroy()
+        if (scripts != null) {
+            call("destroy");
+            scripts = FlxDestroyUtil.destroy(scripts);
+        }
+}
+#end
+
+class ScriptPackScope implements IHScriptCustomAccessBehaviour {
+    public var __allowSetGet:Bool = true;
+    public var pack:ScriptPack;
+
+    public function new(pack:ScriptPack) {
+        this.pack = pack;
+    }
+
+    public function hget(f:String):Dynamic {
+        if (f == "scripts") return pack.scripts;
+        if (f == "publics") return pack.publicVariables;
+        if (f == "statics") return pack.staticVariables;
+        if (pack.publicVariables.exists(f)) return pack.publicVariables.get(f);
+        if (pack.staticVariables.exists(f)) return pack.staticVariables.get(f);
+
+        for (s in pack.scripts) {
+            if (s is HScript) {
+                var hs:HScript = cast s;
+                if (hs.baseName == f) {
+                    if (hs.sscript != null && hs.sscript.interp.scriptScope != null)
+                        return hs.sscript.interp.scriptScope;
+                    return Interp.scriptClasses.get(f);
+                }
+            }
+        }
+        return null;
+    }
+
+    public function hset(f:String, v:Dynamic):Dynamic {
+        if (pack.publicVariables.exists(f)) {
+            pack.publicVariables.set(f, v);
+            return v;
+        }
+        if (pack.staticVariables.exists(f)) {
+            pack.staticVariables.set(f, v);
+            return v;
+        }
+        invalidAccess(f);
+        return v;
+    }
+
+    function invalidAccess(f:String):Void {
+        #if hscriptPos
+        throw new Error(EInvalidAccess(f), 0, 0, pack.fileName, 0);
+        #else
+        throw EInvalidAccess(f);
+        #end
+    }
+
+    public function __callGetter(f:String):Dynamic return hget(f);
+    public function __callSetter(f:String, val:Dynamic):Dynamic return hset(f, val);
+}
+#end

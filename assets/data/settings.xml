@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+    <menu id="main">
+        <category label="system.settings.ui.language" target="language" />
+        <category label="system.settings.ui.controls" target="controls" />
+        <category label="system.settings.ui.graphics" target="graphics" />
+        <category label="system.settings.ui.graphics" target="graphics" />
+        <category label="system.settings.ui.graphics" target="graphics" />
+        <category label="system.settings.ui.graphics" target="graphics" />
+        <category label="system.settings.ui.graphics" target="graphics" />
+        <category label="system.settings.ui.graphics" target="graphics" />
+        <category label="system.settings.ui.graphics" target="graphics" />
+        <category label="system.settings.ui.graphics" target="graphics" />
+        <category label="system.settings.ui.graphics" target="graphics" />
+        <category label="system.settings.ui.graphics" target="graphics" />
+    </menu>
+
+    <menu id="graphics" width="800" height="900">
+        <option type="int" min="5" max="120" default="60" label="system.settings.game.graphics.framerate" variable="framerate">
+            import engine.backend.saves.GamePrefs;
+            import flixel.FlxG;
+            
+            var newFPS:Int = GamePrefs.options.get("framerate");
+            FlxG.drawFramerate = newFPS;
+        </option>
+    </menu>
+
+    <menu id="controls" width="800" height="900">
+        <option type="keybind" label="system.settings.game.controls.move_up" variable="UP" />
+        <option type="keybind" label="system.settings.game.controls.move_down" variable="DOWN" />
+        <option type="keybind" label="system.settings.game.controls.move_left" variable="LEFT" />
+        <option type="keybind" label="system.settings.game.controls.move_right" variable="RIGHT" />
+        <option type="keybind" label="system.settings.game.controls.accept" variable="ACCEPT" />
+        <option type="keybind" label="system.settings.game.controls.cancel" variable="CANCEL" />
+        <option type="keybind" label="system.settings.game.controls.run" variable="RUN" />
+        <option type="keybind" label="system.settings.game.controls.menu" variable="MENU" />
+    </menu>
+</settings>

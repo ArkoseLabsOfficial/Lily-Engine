@@ -354,7 +354,6 @@ class mobile.openfl.controls.InputHandler
 class mobile.io.FileSystem
 class mobile.io.File
 class mobile.Config
-class macros.DefineMacro
 class lime.utils._UInt8ClampedArray.UInt8ClampedArray_Impl_
 class lime.utils._UInt8Array.UInt8Array_Impl_
 class lime.utils._UInt32Array.UInt32Array_Impl_
@@ -688,9 +687,12 @@ class lime._internal.backend.native.GamepadEventInfo
 class lime._internal.backend.native.DropEventInfo
 class lime._internal.backend.native.ClipboardEventInfo
 class lime._internal.backend.native.ApplicationEventInfo
+class lang.LangText
+class lang.Lang
 class io.LilyAssets
 class io.FileSystem
 class io.File
+class hxdiscord_rpc.Types
 class hscript.utils.UsingHandler
 class hscript.utils.UsingEntry
 class hscript.utils.UnsafeReflect
@@ -828,6 +830,22 @@ class sys.thread.EventLoop
 class sys.thread.Mutex
 class haxe._CallStack.CallStack_Impl_
 enum haxe.StackItem
+class godot.nodes.TileMap
+class godot.nodes.PathFollow2D
+class godot.nodes.Path2D
+class godot.nodes.Light2D
+class godot.nodes.Curve2D
+class godot.nodes.CollisionShape2D
+class godot.nodes.CollisionPolygon2D
+class godot.nodes.Area2D
+class godot.nodes.AnimationPlayer
+class godot.nodes.AnimationData
+class godot.nodes.TrackData
+class godot.TscnParser
+class godot.TresParser
+class godot.Scene
+class godot.GodotConverter
+class godot.Config
 class flixel.util.typeLimit.OneOfTwo_HSC
 class flixel.util.typeLimit.OneOfThree_HSC
 class flixel.util.typeLimit.OneOfFour_HSC
@@ -1048,6 +1066,7 @@ class flixel.input.mouse._FlxMouse.GraphicCursor
 class flixel.input.keyboard.FlxKeyboard_HSX
 class flixel.input.keyboard.FlxKeyboard
 class flixel.input.keyboard.FlxKeyList
+class flixel.input.keyboard.FlxKey_HSC
 class flixel.input.keyboard._FlxKey.FlxKey_Impl_
 class flixel.input.gamepad.mappings.XInputMapping_HSX
 class flixel.input.gamepad.mappings.XInputMapping
@@ -1298,7 +1317,6 @@ class lime.math.Vector2
 class flixel.addons.text.FlxTypeText_HSX
 class flixel.addons.text.TypeSound_HSX
 class flixel.addons.text.FlxTypeText
-class flixel.text.FlxText
 class flixel.addons.text.TypeSound
 class openfl.media.Sound
 class flixel.FlxSubState_HSX
@@ -1339,53 +1357,76 @@ class lime.math._Matrix3.Matrix3_Impl_
 class flixel.math.FlxBasePoint
 class flixel.FlxBasic_HSX
 interface flixel.IFlxBasic
+class engine.ui.SpecialNinePatch_HSX
 class engine.ui.SpecialNinePatch
+class engine.ui.SimpleVerticalMenu_HSX
+class engine.ui.MenuVisualEntry_HSX
+class engine.ui.MenuFrameNode_HSX
 class engine.ui.MenuFrameNode
+class engine.ui.DialogSelection_HSX
 class engine.ui.DialogSelection
+class engine.ui.DialogBox_HSX
 class engine.ui.DialogBox
+class engine.substates.SettingsVisualEntry_HSX
+class engine.substates.ClipMask_HSX
+class engine.substates.Settings_HSX
+class engine.substates.SettingsMenu_HSX
 class engine.substates.SettingsVisualEntry
+class engine.ui.MenuVisualEntry
+class engine.substates.SettingsMenu
 class engine.substates.Settings
+class engine.substates.ClipMask
+class engine.substates.SaveLoadSlotEntry_HSX
+class engine.substates.SaveLoad_HSX
 class engine.substates.SaveLoadSlotEntry
 class engine.substates.SaveLoad
-class engine.substates.PauseMenuVisualEntry
+class engine.substates.Pause_HSX
 class engine.substates.Pause
-class engine.substates.Obtain
+class engine.substates.Objectives_HSX
 class engine.substates.Objectives
-class engine.substates.Language
-class engine.substates.StartupLanguage
+class engine.substates.ModSelector_HSX
+class engine.substates.ModSelector
+class engine.substates.LanguageMenu_HSX
+class engine.substates.Language_HSX
+class engine.substates.LanguageMenu
 class engine.ui.SimpleVerticalMenu
+class engine.substates.Language
+class engine.substates.InventoryMenuEntry_HSX
+class engine.substates.Inventory_HSX
 class engine.substates.InventoryMenuEntry
 class engine.substates.Inventory
-class engine.states.MainMenuVisualEntry
-class engine.ui.MenuVisualEntry
+class engine.states.TitleMenu_HSX
 class engine.states.TitleMenu
+class engine.states.MainState_HSX
+class engine.states.MainState
+class engine.states.BaseRoom_HSX
 class engine.states.BaseRoom
-class engine.scripting.events.DialogSelectionEvent
-class engine.scripting.events.DialogEntryEvent
-class engine.scripting.events.DialogJumpEvent
 class engine.scripting.events.CancellableEvent
+class engine.scripting.ScriptedSubState_HSX
 class engine.scripting.ScriptedSubState
+class engine.scripting.ScriptedState_HSX
 class engine.scripting.ScriptedState
+class engine.scripting.ScriptedSpriteGroup_HSX
 class engine.scripting.ScriptedSpriteGroup
-class flixel.group.FlxTypedSpriteGroup
+class engine.scripting.ScriptedSprite_HSX
 class engine.scripting.ScriptedSprite
-class engine.scripting.ScriptPack_HSX
-class engine.scripting.HScript_HSX
-class engine.scripting.DummyScript_HSX
-class engine.scripting.Script_HSX
-interface hscript.IHScriptCustomClassBehaviour
-interface hscript.IHScriptCustomAccessBehaviour
-interface hscript.IHScriptCustomBehaviour
+class engine.scripting.ScriptPackScope
+class engine.scripting.GlobalScript
 class engine.scripting.ScriptPack
 class engine.scripting.DummyScript
 class engine.scripting.HScript
 class engine.scripting.Script
-class engine.scripting.EventManager
+class engine.objects.Player_HSX
 class engine.objects.Player
-class engine.objects.Follower
-class engine.objects.CollisionBlock
-class engine.objects.CharacterEntity
-class engine.objects.WorldObject
+class engine.objects.ObjectivePopUp_HSX
+class engine.objects.ObjectivePopUp
+class flixel.text.FlxText
+class engine.objects.Character_HSX
+class engine.objects.Character
+class godot.nodes.Sprite
+class godot.nodes.Node2D
+class godot.nodes.Node
+class flixel.group.FlxTypedSpriteGroup
 class flixel.FlxSprite
 class flixel.FlxObject
 class flixel.math.FlxRect
@@ -1394,16 +1435,21 @@ interface flixel.util.IFlxPool
 interface flixel.util.IFlxPooled
 enum engine.objects.CharacterState
 enum engine.objects.FacingDirection
+class engine.backend.ui.SubStateBackend_HSX
+class engine.backend.ui.StateBackend_HSX
 class engine.backend.ui.StateBackend
+class engine.backend.save.SaveManager_HSX
 class engine.backend.save.SaveManager
 class engine.backend.save.GamePrefs
-class engine.backend.parser.TmxParser
-class engine.backend.parser.SimpleParser
+class engine.backend.game.RoomManager_HSX
 class engine.backend.game.RoomManager
+class engine.backend.game.ObjectiveManager_HSX
 class engine.backend.game.ObjectiveManager
-class engine.backend.game.LanguageManager
+class engine.backend.game.ItemManager_HSX
+class engine.backend.game.ItemData_HSX
 class engine.backend.game.ItemManager
 class engine.backend.game.ItemData
+class engine.backend.game.DialogueManager_HSX
 class engine.backend.game.DialogueManager
 class engine.backend.ui.SubStateBackend
 class flixel.FlxSubState
@@ -1412,8 +1458,15 @@ class flixel.group.FlxTypedContainer
 class flixel.group.FlxTypedGroup
 class flixel.FlxBasic
 interface flixel.util.IFlxDestroyable
+class engine.backend.Objective_HSX
 class engine.backend.Objective
+class engine.backend.Game_HSX
+interface hscript.IHScriptCustomClassBehaviour
+interface hscript.IHScriptCustomAccessBehaviour
+interface hscript.IHScriptCustomBehaviour
 class engine.backend.Game
+class engine.backend.Flags
+class engine.backend.Discord
 class engine.backend.Controls
 class cpp.vm.WeakRef
 class cpp.vm.Unsafe
@@ -1424,7 +1477,6 @@ class cpp.vm.Debugger
 class cpp.vm.ThreadInfo
 class cpp.vm.StackFrame
 class cpp.vm.Parameter
-class cpp.cppia.Host
 class cpp.Lib
 class cpp.Int64Map
 class cpp._Int64.Int64_Impl_
@@ -1495,6 +1547,7 @@ class haxe.io.Bytes
 class ManifestResources
 class Lambda
 class IntIterator
+class _EnumValue.EnumValue_Impl_
 class EReg
 class DateTools
 class Date
@@ -1520,6 +1573,7 @@ class cpp.Prime
 class lime.app.Module
 interface lime.app.IModule
 file /usr/share/haxe/std/DateTools.hx /usr/share/haxe/std/DateTools.hx
+file /usr/share/haxe/std/EnumValue.hx /usr/share/haxe/std/EnumValue.hx
 file /usr/share/haxe/std/IntIterator.hx /usr/share/haxe/std/IntIterator.hx
 file /usr/share/haxe/std/Lambda.hx /usr/share/haxe/std/Lambda.hx
 file /usr/share/haxe/std/StringTools.hx /usr/share/haxe/std/StringTools.hx
@@ -1571,7 +1625,6 @@ file /usr/share/haxe/std/cpp/_std/sys/thread/Mutex.hx /usr/share/haxe/std/cpp/_s
 file /usr/share/haxe/std/cpp/_std/sys/thread/Semaphore.hx /usr/share/haxe/std/cpp/_std/sys/thread/Semaphore.hx
 file /usr/share/haxe/std/cpp/_std/sys/thread/Thread.hx /usr/share/haxe/std/cpp/_std/sys/thread/Thread.hx
 file /usr/share/haxe/std/cpp/_std/sys/thread/Tls.hx /usr/share/haxe/std/cpp/_std/sys/thread/Tls.hx
-file /usr/share/haxe/std/cpp/cppia/Host.hx /usr/share/haxe/std/cpp/cppia/Host.hx
 file /usr/share/haxe/std/cpp/vm/Debugger.hx /usr/share/haxe/std/cpp/vm/Debugger.hx
 file /usr/share/haxe/std/cpp/vm/ExecutionTrace.hx /usr/share/haxe/std/cpp/vm/ExecutionTrace.hx
 file /usr/share/haxe/std/cpp/vm/Gc.hx /usr/share/haxe/std/cpp/vm/Gc.hx
@@ -1637,44 +1690,42 @@ file ApplicationMain.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/export/rel
 file Main.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/Main.hx
 file ManifestResources.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/export/release/linux/haxe/ManifestResources.hx
 file engine/backend/Controls.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/backend/Controls.hx
+file engine/backend/Discord.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/backend/Discord.hx
+file engine/backend/Flags.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/backend/Flags.hx
 file engine/backend/Game.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/backend/Game.hx
 file engine/backend/Objective.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/backend/Objective.hx
 file engine/backend/game/DialogueManager.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/backend/game/DialogueManager.hx
 file engine/backend/game/ItemManager.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/backend/game/ItemManager.hx
-file engine/backend/game/LanguageManager.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/backend/game/LanguageManager.hx
 file engine/backend/game/ObjectiveManager.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/backend/game/ObjectiveManager.hx
 file engine/backend/game/RoomManager.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/backend/game/RoomManager.hx
-file engine/backend/parser/SimpleParser.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/backend/parser/SimpleParser.hx
-file engine/backend/parser/TmxParser.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/backend/parser/TmxParser.hx
 file engine/backend/save/GamePrefs.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/backend/save/GamePrefs.hx
 file engine/backend/save/SaveManager.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/backend/save/SaveManager.hx
 file engine/backend/ui/StateBackend.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/backend/ui/StateBackend.hx
 file engine/backend/ui/SubStateBackend.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/backend/ui/SubStateBackend.hx
-file engine/objects/CharacterEntity.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/objects/CharacterEntity.hx
-file engine/objects/CollisionBlock.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/objects/CollisionBlock.hx
-file engine/objects/Follower.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/objects/Follower.hx
+file engine/objects/Character.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/objects/Character.hx
+file engine/objects/ObjectivePopUp.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/objects/ObjectivePopUp.hx
 file engine/objects/Player.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/objects/Player.hx
-file engine/objects/WorldObject.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/objects/WorldObject.hx
-file engine/scripting/EventManager.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/scripting/EventManager.hx
 file engine/scripting/HScript.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/scripting/HScript.hx
 file engine/scripting/ScriptedSprite.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/scripting/ScriptedSprite.hx
 file engine/scripting/ScriptedSpriteGroup.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/scripting/ScriptedSpriteGroup.hx
 file engine/scripting/ScriptedState.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/scripting/ScriptedState.hx
 file engine/scripting/ScriptedSubState.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/scripting/ScriptedSubState.hx
 file engine/scripting/events/CancellableEvent.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/scripting/events/CancellableEvent.hx
-file engine/scripting/events/DialogEvents.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/scripting/events/DialogEvents.hx
 file engine/states/BaseRoom.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/states/BaseRoom.hx
+file engine/states/MainState.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/states/MainState.hx
 file engine/states/TitleMenu.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/states/TitleMenu.hx
 file engine/substates/Inventory.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/substates/Inventory.hx
 file engine/substates/Language.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/substates/Language.hx
+file engine/substates/ModSelector.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/substates/ModSelector.hx
 file engine/substates/Objectives.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/substates/Objectives.hx
-file engine/substates/Obtain.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/substates/Obtain.hx
 file engine/substates/Pause.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/substates/Pause.hx
 file engine/substates/SaveLoad.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/substates/SaveLoad.hx
 file engine/substates/Settings.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/substates/Settings.hx
 file engine/ui/DialogBox.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/ui/DialogBox.hx
 file engine/ui/DialogSelection.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/ui/DialogSelection.hx
-file engine/ui/LacieUIExperimental.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/ui/LacieUIExperimental.hx
+file engine/ui/MenuFrameNode.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/ui/MenuFrameNode.hx
+file engine/ui/MenuVisualEntry.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/ui/MenuVisualEntry.hx
+file engine/ui/SimpleVerticalMenu.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/ui/SimpleVerticalMenu.hx
 file engine/ui/SpecialNinePatch.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/engine/ui/SpecialNinePatch.hx
 file flixel/FlxBasic.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/flixel/git/flixel/FlxBasic.hx
 file flixel/FlxCamera.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/flixel/git/flixel/FlxCamera.hx
@@ -1859,7 +1910,7 @@ file flixel/system/scaleModes/BaseScaleMode.hx /home/arkoselabs/Desktop/Projeler
 file flixel/system/scaleModes/RatioScaleMode.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/flixel/git/flixel/system/scaleModes/RatioScaleMode.hx
 file flixel/system/ui/FlxSoundTray.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/flixel/git/flixel/system/ui/FlxSoundTray.hx
 file flixel/system/ui/FlxSystemButton.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/flixel/git/flixel/system/ui/FlxSystemButton.hx
-file flixel/text/FlxText.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/flixel/git/flixel/text/FlxText.hx
+file flixel/text/FlxText.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/flixel/text/FlxText.hx
 file flixel/tile/FlxBaseTilemap.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/flixel/git/flixel/tile/FlxBaseTilemap.hx
 file flixel/tile/FlxTileblock.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/flixel/git/flixel/tile/FlxTileblock.hx
 file flixel/tweens/FlxEase.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/flixel/git/flixel/tweens/FlxEase.hx
@@ -1899,25 +1950,44 @@ file flixel/util/FlxStringUtil.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/
 file flixel/util/FlxTimer.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/flixel/git/flixel/util/FlxTimer.hx
 file flixel/util/helpers/FlxRange.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/flixel/git/flixel/util/helpers/FlxRange.hx
 file flixel/util/typeLimit/NextState.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/flixel/git/flixel/util/typeLimit/NextState.hx
+file godot/Config.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/godot/Config.hx
+file godot/GodotConverter.hx /home/arkoselabs/Desktop/Projeler/Godot-Scene-Loader/src/godot/GodotConverter.hx
+file godot/Scene.hx /home/arkoselabs/Desktop/Projeler/Godot-Scene-Loader/src/godot/Scene.hx
+file godot/TresParser.hx /home/arkoselabs/Desktop/Projeler/Godot-Scene-Loader/src/godot/TresParser.hx
+file godot/TscnParser.hx /home/arkoselabs/Desktop/Projeler/Godot-Scene-Loader/src/godot/TscnParser.hx
+file godot/nodes/AnimationPlayer.hx /home/arkoselabs/Desktop/Projeler/Godot-Scene-Loader/src/godot/nodes/AnimationPlayer.hx
+file godot/nodes/Area2D.hx /home/arkoselabs/Desktop/Projeler/Godot-Scene-Loader/src/godot/nodes/Area2D.hx
+file godot/nodes/CollisionPolygon2D.hx /home/arkoselabs/Desktop/Projeler/Godot-Scene-Loader/src/godot/nodes/CollisionPolygon2D.hx
+file godot/nodes/CollisionShape2D.hx /home/arkoselabs/Desktop/Projeler/Godot-Scene-Loader/src/godot/nodes/CollisionShape2D.hx
+file godot/nodes/Curve2D.hx /home/arkoselabs/Desktop/Projeler/Godot-Scene-Loader/src/godot/nodes/Curve2D.hx
+file godot/nodes/Light2D.hx /home/arkoselabs/Desktop/Projeler/Godot-Scene-Loader/src/godot/nodes/Light2D.hx
+file godot/nodes/Node.hx /home/arkoselabs/Desktop/Projeler/Godot-Scene-Loader/src/godot/nodes/Node.hx
+file godot/nodes/Node2D.hx /home/arkoselabs/Desktop/Projeler/Godot-Scene-Loader/src/godot/nodes/Node2D.hx
+file godot/nodes/Path2D.hx /home/arkoselabs/Desktop/Projeler/Godot-Scene-Loader/src/godot/nodes/Path2D.hx
+file godot/nodes/PathFollow2D.hx /home/arkoselabs/Desktop/Projeler/Godot-Scene-Loader/src/godot/nodes/PathFollow2D.hx
+file godot/nodes/Sprite.hx /home/arkoselabs/Desktop/Projeler/Godot-Scene-Loader/src/godot/nodes/Sprite.hx
+file godot/nodes/TileMap.hx /home/arkoselabs/Desktop/Projeler/Godot-Scene-Loader/src/godot/nodes/TileMap.hx
 file haxe/Timer.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/lime/git/src/haxe/Timer.hx
 file haxe/io/Bytes.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/lime/git/src/haxe/io/Bytes.hx
-file hscript/CustomClass.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/ShadowScript/git/hscript/CustomClass.hx
-file hscript/CustomClassHandler.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/ShadowScript/git/hscript/CustomClassHandler.hx
-file hscript/Expr.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/ShadowScript/git/hscript/Expr.hx
-file hscript/HEnum.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/ShadowScript/git/hscript/HEnum.hx
-file hscript/Interp.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/ShadowScript/git/hscript/Interp.hx
-file hscript/Parser.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/ShadowScript/git/hscript/Parser.hx
-file hscript/Printer.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/ShadowScript/git/hscript/Printer.hx
-file hscript/Property.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/ShadowScript/git/hscript/Property.hx
-file hscript/SScript.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/ShadowScript/git/hscript/SScript.hx
-file hscript/Tools.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/ShadowScript/git/hscript/Tools.hx
-file hscript/macros/ClassExtendMacro.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/ShadowScript/git/hscript/macros/ClassExtendMacro.hx
-file hscript/macros/DefinesMacro.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/ShadowScript/git/hscript/macros/DefinesMacro.hx
-file hscript/utils/UnsafeReflect.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/ShadowScript/git/hscript/utils/UnsafeReflect.hx
-file hscript/utils/UsingHandler.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/ShadowScript/git/hscript/utils/UsingHandler.hx
+file hscript/CustomClass.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/LilyScript/git/hscript/CustomClass.hx
+file hscript/CustomClassHandler.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/hscript/CustomClassHandler.hx
+file hscript/Expr.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/hscript/Expr.hx
+file hscript/HEnum.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/LilyScript/git/hscript/HEnum.hx
+file hscript/Interp.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/hscript/Interp.hx
+file hscript/Parser.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/hscript/Parser.hx
+file hscript/Printer.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/hscript/Printer.hx
+file hscript/Property.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/LilyScript/git/hscript/Property.hx
+file hscript/SScript.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/hscript/SScript.hx
+file hscript/Tools.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/LilyScript/git/hscript/Tools.hx
+file hscript/macros/ClassExtendMacro.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/LilyScript/git/hscript/macros/ClassExtendMacro.hx
+file hscript/macros/DefinesMacro.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/LilyScript/git/hscript/macros/DefinesMacro.hx
+file hscript/utils/UnsafeReflect.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/LilyScript/git/hscript/utils/UnsafeReflect.hx
+file hscript/utils/UsingHandler.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/LilyScript/git/hscript/utils/UsingHandler.hx
 file io/File.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/io/File.hx
 file io/FileSystem.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/io/FileSystem.hx
 file io/LilyAssets.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/io/LilyAssets.hx
+file lang/Lang.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/lang/Lang.hx
+file lang/LangText.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/lang/LangText.hx
 file lime/_internal/backend/native/NativeApplication.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/lime/git/src/lime/_internal/backend/native/NativeApplication.hx
 file lime/_internal/backend/native/NativeAudioSource.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/lime/git/src/lime/_internal/backend/native/NativeAudioSource.hx
 file lime/_internal/backend/native/NativeCFFI.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/lime/git/src/lime/_internal/backend/native/NativeCFFI.hx
@@ -2173,8 +2243,7 @@ file lime/utils/UInt16Array.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.ha
 file lime/utils/UInt32Array.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/lime/git/src/lime/utils/UInt32Array.hx
 file lime/utils/UInt8Array.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/lime/git/src/lime/utils/UInt8Array.hx
 file lime/utils/UInt8ClampedArray.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/lime/git/src/lime/utils/UInt8ClampedArray.hx
-file macros/DefineMacro.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/macros/DefineMacro.hx
-file mobile/Config.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/mobile-controls/git/src/mobile/Config.hx
+file mobile/Config.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/source/mobile/Config.hx
 file mobile/io/File.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/mobile-controls/git/src/mobile/io/File.hx
 file mobile/io/FileSystem.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/mobile-controls/git/src/mobile/io/FileSystem.hx
 file mobile/openfl/controls/Button.hx /home/arkoselabs/Desktop/Projeler/Lily-Engine/.haxelib/mobile-controls/git/src/mobile/openfl/controls/Button.hx

@@ -1,107 +1,174 @@
 package engine.substates;
 
-class StartupLanguage extends SimpleVerticalMenu {
-    var extraLanguages:Bool;
-    var languageContainer:Language;
-
-    public function new(extraLanguages:Bool, languageContainer:Language) {
-        super();
-        this.extraLanguages = extraLanguages;
-        this.languageContainer = languageContainer;
-
-        this.itemWidth = 792;
-        this.itemFontSize = 36;
-        
-        buildEntries();
-    }
-
-    public function buildEntries():Void {
-        entries = [];
-        var langs = extraLanguages ? Game.instance.language.getUnofficialLanguages() : Game.instance.language.officialLanguages;
-        
-        for (lang in langs) {
-            var caption = Game.instance.language.getCaption("system.settings.language." + lang);
-            if (caption == "system.settings.language." + lang)
-                caption = lang;
-            
-            addEntry(caption, function() {
-                languageContainer.closeMenu();
-                LilyAssets.play(LilyAssets.CONFIRM);
-                Game.instance.language.loadLanguage(lang);
-            });
-        }
-        
-        if (!extraLanguages && Game.instance.language.getUnofficialLanguages().length > 0) {
-            addEntry(Game.instance.language.getCaption("system.settings.language.more"), function() {
-                LilyAssets.play(LilyAssets.CONFIRM);
-                if (languageContainer.frame != null) {
-                    languageContainer.frame.setTitle(Game.instance.language.getCaption("system.settings.language.unofficial"));
-                }
-                var newMenu = new StartupLanguage(true, languageContainer);
-                languageContainer.setMenu(newMenu);
-            });
-        }
-        buildVisualList(72);
-    }
-
-    override public function handleInput():Void {
-        super.handleInput();
-        if (Controls.CANCEL) {
-            LilyAssets.play(LilyAssets.CANCEL);
-            if (extraLanguages) {
-                if (languageContainer.frame != null) {
-                    languageContainer.frame.setTitle(Game.instance.language.getCaption("system.settings.language.select"));
-                }
-                var newMenu = new StartupLanguage(false, languageContainer);
-                languageContainer.setMenu(newMenu);
-            } else {
-                languageContainer.closeMenu();
-            }
-        }
-    }
-}
+import lang.Lang;
+import lang.LangText;
+import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.util.FlxTimer;
+import io.LilyAssets;
+import engine.substates.Settings.ClipMask;
 
 class Language extends SubStateBackend {
-    public var frame:MenuFrameNode;
-    public var currentMenu:SimpleVerticalMenu;
-    public var onClose:Void->Void;
+	public var frame:MenuFrameNode;
+	public var onClose:Void->Void;
 
-    var frameWidth:Float = 900;
-    var frameHeight:Float = 400;
+	var frameWidth:Float = 900;
+	var baseFrameHeight:Float = 550;
+	var optionGap:Float = 72;
+	var headerOffset:Float = 180;
 
-    public function new(?onClose:Void->Void) {
-        super();
-        this.onClose = onClose;
-    }
+	public var languageMenu:LanguageMenu;
 
-    override public function create():Void {
-        super.create();
-        var overlay = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xB3000000);
-        add(overlay);
+	public function new(?onClose:Void->Void) {
+		super();
+		this.onClose = onClose;
+	}
 
-        var px = (FlxG.width - frameWidth) / 2;
-        var py = (FlxG.height - frameHeight) / 2;
-        frame = new MenuFrameNode(px, py, frameWidth, frameHeight, 2);
-        frame.setTitle(Game.instance.language.getCaption("system.settings.language.select"));
-        frame.divider = new FlxSprite(0, 0, LilyAssets.image("img/ui/divider_md"));
-        add(frame);
+	override public function create():Void {
+		super.create();
 
-        var startupMenu = new StartupLanguage(false, this);
-        setMenu(startupMenu);
-    }
+		var overlay = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xB3000000);
+		add(overlay);
 
-    public function setMenu(menu:SimpleVerticalMenu):Void {
-        if (currentMenu != null)
-            remove(currentMenu);
-        currentMenu = menu;
-        menu.x = frame.x + 50;
-        menu.y = frame.y + 160;
-        add(menu);
-    }
+		var langs = Lang.getAvailableLanguages();
+		var contentHeight = langs.length * optionGap;
 
-    public function closeMenu():Void {
-        if (onClose != null)
-            onClose();
-        close();
-    }
+		var targetHeight = Math.min(contentHeight + headerOffset, baseFrameHeight);
+		var viewHeight = targetHeight - headerOffset;
+
+		var px = (FlxG.width - frameWidth) / 2;
+		var py = (FlxG.height - targetHeight) / 2;
+
+		frame = new MenuFrameNode(px, py, frameWidth, targetHeight, 2);
+		frame.setTitle("system.settings.language.select");
+		frame.divider = new FlxSprite(0, 0, io.LilyAssets.image("ui/dividers/divider_md"));
+		add(frame);
+
+		var entryWidth = frameWidth - 108;
+		var menuBaseY = Math.floor(frame.y + (targetHeight - viewHeight) / 2 + 15);
+
+		languageMenu = new LanguageMenu(this);
+		languageMenu.itemWidth = entryWidth;
+		languageMenu.itemFontSize = 36;
+		languageMenu.optionGap = optionGap;
+		languageMenu.baseY = menuBaseY;
+		languageMenu.viewHeight = viewHeight;
+		languageMenu.x = Math.floor(frame.x + (frameWidth - entryWidth) / 2);
+		languageMenu.y = menuBaseY;
+
+		languageMenu.clipMask = new ClipMask(frame.x, menuBaseY, frameWidth, viewHeight);
+
+		frame.addMenu(languageMenu);
+
+		buildEntries(langs);
+
+		new FlxTimer().start(0.1, function(_) {
+			if (languageMenu != null)
+				languageMenu.canInput = true;
+		});
+	}
+
+	function buildEntries(langs:Array<String>):Void {
+		if (languageMenu == null)
+			return;
+
+		languageMenu.entries = [];
+
+		for (langItem in langs) {
+			var language = langItem;
+			var caption = language;
+
+			var rawText:String = null;
+			if (LilyAssets.fileExists(Flags.languageFolder + language + ".json")) {
+				rawText = LilyAssets.getTextFromFile(Flags.languageFolder + language + ".json");
+			}
+
+			if (rawText != null) {
+				try {
+					var parsed = haxe.Json.parse(rawText);
+					if (parsed != null && parsed.name != null) {
+						caption = parsed.name;
+					}
+				} catch (e:Dynamic) {
+					FlxG.log.error("Failed to parse language json for: " + language);
+				}
+			}
+
+			languageMenu.addEntry(caption, function() {
+				Lang.setLanguage(language);
+				closeMenu();
+			});
+		}
+
+		languageMenu.buildVisualList(optionGap);
+	}
+
+	override public function update(elapsed:Float):Void {
+		super.update(elapsed);
+
+		if (languageMenu == null || !languageMenu.canInput)
+			return;
+
+		if (Controls.CANCEL) {
+			io.LilyAssets.play(io.LilyAssets.CANCEL);
+			closeMenu();
+		}
+	}
+
+	public function closeMenu():Void {
+		if (onClose != null)
+			onClose();
+
+		LangText.refreshAll();
+		GamePrefs.saveSettings();
+		close();
+	}
+}
+
+class LanguageMenu extends SimpleVerticalMenu {
+	public var optionGap:Float = 72;
+	public var clipMask:ClipMask;
+	public var baseY:Float = 0;
+	public var viewHeight:Float = 0;
+	public var scrollY:Float = 0;
+	public var scrollLerp:Float = 0;
+	public var parentState:Language;
+
+	public function new(parent:Language) {
+		super();
+		this.parentState = parent;
+		this.canInput = false;
+	}
+
+	override public function highlightSelection():Void {
+		super.highlightSelection();
+
+		if (viewHeight > 0) {
+			var selectedY = selection * optionGap;
+			if (selectedY < scrollY) {
+				scrollY = selectedY;
+			} else if (selectedY + optionGap > scrollY + viewHeight) {
+				scrollY = selectedY + optionGap - viewHeight;
+			}
+
+			var maxScroll = Math.max(0, visualItems.length * optionGap - viewHeight);
+			if (scrollY > maxScroll)
+				scrollY = maxScroll;
+			if (scrollY < 0)
+				scrollY = 0;
+		}
+	}
+
+	override public function update(elapsed:Float):Void {
+		super.update(elapsed);
+
+		if (viewHeight > 0 && baseY != 0) {
+			scrollLerp += (scrollY - scrollLerp) * (elapsed * 10);
+			this.y = baseY - scrollLerp;
+
+			if (clipMask != null) {
+				clipMask.apply(this);
+			}
+		}
+	}
 }

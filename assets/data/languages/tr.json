@@ -1,0 +1,84 @@
+{
+  "name": "Türkçe ArkoseLabs Tarafından",
+  "system.settings.language": {
+    "select": "Dil Seç",
+    "more": "Dahası...",
+    "unofficial": "unofficial translations"
+  },
+  "system.menu.translator.credit": "Official Translation",
+  "system.settings.game": {
+    "controls.move_up": "Yukarı",
+    "controls.move_down": "Aşağı",
+    "controls.move_left": "Sol",
+    "controls.move_right": "Sağ",
+    "controls.accept": "Kabul",
+    "controls.cancel": "İptal",
+    "controls.run": "Koş",
+    "controls.menu": "Menü",
+    "graphics.fpscap": "FPS Cap",
+    "graphics.renderscale": "Render Scale",
+    "graphics.uiopacity": "UI Opacity",
+    "gameplay.autosave": "Auto-Save",
+    "gameplay.difficulty": "Zorluk",
+    "graphics.framerate": "Framerate"
+  },
+  "system.settings.ui": {
+    "language": "Dil",
+    "gameplay": "Oynanış",
+    "graphics": "Grafik",
+    "controls": "Kontroller",
+    "back": "Geri",
+    "waiting": "? Bekleniyor ?"
+  },
+  "system.mods.ui": {
+    "title": "Mod Seçin",
+    "disable": "Devre Dışı Bırak"
+  },
+  "system.menu": {
+    "pause.text": "Lily Engine 0.1.0 Alpha",
+    "inventory": "Envanter",
+    "objectives": "Görevler",
+    "objectives.empty": "Görev Yok",
+    "settings": "Ayarlar",
+    "load": "Yükle",
+    "save": "Kaydet",
+    "newgame": "Yeni Oyun",
+    "mods": "Modlar",
+    "debugroom": "Debug Odası",
+    "website.translator": "Itch.io Sayfası",
+    "quit": "Çıkış",
+    "loadgame": "Oyun Yükle",
+    "savegame": "Oyunu Kaydet",
+    "file": "Dosya",
+    "tip": "[Z] Seç/[X] İptal",
+    "items": "Eşyalar",
+    "obtained": "Elde Edildi"
+  },
+  "game.item.name": {
+      "knife": "Bıçak"
+  },
+  "game.item.desc": {
+    "knife": "Baya Kesin Bir Pıçak."
+  },
+  "objectives.name": {
+    "test": "Test Objective"
+  },
+  "objectives.desc": {
+    "test": "Learn the basic controls"
+  },
+  "ch1.dialog.cafe.buy.whatshould": "(What should i buy...)",
+  "ch1.dialog.cafe.buy.food1": "Pie",
+  "ch1.dialog.cafe.buy.food2": "Desert Eagle",
+  "ch1.dialog.cafe.buy.food3": "Apple",
+  "ch1.dialog.cafe.buy.illbuy": "I'll buy {0}",
+  "ch1.dialog.outside.hiro.1": "(Bu hiro.)",
+  "ch1.dialog.outside.hiro.2": "(Ne okuyor merak ediyorum.)",
+  "ch1.dialog.outside.hiro.3": "(Muhtemelen onu rahatsız etmemeliyim.)",
+  "ch1.dialog.outside.hiro.4": "(Bana hep iyi davranıyor, ama bazen molaya ihiyacı olduğuna eminim.)",
+  "ch1.dialog.outside.hiro.5": "...",
+  "ch1.dialog.outside.hiro.6": "Görünüşe göre bir sapığım var.",
+  "ch1.dialog.outside.hiro.7": "Ah, hayır, sadece geçiyordum.",
+  "ch1.dialog.outside.hiro.8": "Otur, otur!",
+  "ch1.dialog.outside.hiro.9": "Um... tamam.",
+  "ch1.dialog.outside.hiro.10": "Şunu dinle:"
+}

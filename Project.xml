@@ -46,6 +46,7 @@
 	<classpath name="source" />
 
 	<assets path='assets'/>
+	<assets path='mods'/>
 	<haxedef name="mobile_controls_allow_mouse_clicks" if="desktop"/>
 
 	<!-- _______________________________ Defines _______________________________ -->
@@ -53,8 +54,8 @@
 	<!-- Comment this out to disable abstract support in hscript. !-->
 	<haxedef name="HSCRIPT_ABSTRACT_SUPPORT" unless="STRIPPED_COMPILE" />
 	<define name="FEATURE_HSCRIPT" />
-	<define name="FEATURE_TOUCH_CONTROLS" />
-	<haxedef name="scriptable" if="android || linux"/>
+	<define name="FEATURE_TOUCH_CONTROLS" unless="html5 || desktop"/>
+	<define name="FEATURE_DISCORD_RPC" if="desktop" />
 
 	<haxedef name="FLX_RENDER_TILE" if="html5"/>
 
@@ -63,15 +64,18 @@
 	<haxelib name="flixel" />
 	<haxelib name="flixel-addons" />
     <haxelib name="flixel-ui" />
-	<haxelib name="ShadowScript" if="FEATURE_HSCRIPT"/>
-	<haxelib name="mobile-controls" />
+	<haxelib name="LilyScript" if="FEATURE_HSCRIPT"/>
+	<haxelib name="mobile-controls" if="FEATURE_TOUCH_CONTROLS"/>
+	<haxelib name="GodotSceneLoader" />
 	<haxedef name="openflPos" />
 	<haxedef name="hscriptPos" />
-	<assets path="mobile" embed="false" />
+	<haxelib name="hxdiscord_rpc" if="FEATURE_DISCORD_RPC"/>
 
 	<!-- Comment this out to prevent extending classes in hscript.
 		 Reduces compilation time at the cost of limited HScript flexibility. !-->
 	<define name="CUSTOM_CLASSES" />
+
+	<define name="GLOBAL_SCRIPT" />
 
 	<!-- Comment this out to disable abstract support in hscript. !-->
 	<haxedef name="HSCRIPT_ABSTRACT_SUPPORT" />
@@ -107,7 +111,7 @@
 	<haxeflag name="-D" value="HXCPP_DEBUGGER" if="debug"/>
 	<haxeflag name="-debug" if="debug"/>
 
-	<haxedef name="DISABLE_AUDIO_FOCUS" if="android" /> <!-- Disable the fucking audio focus -->>
+	<haxedef name="DISABLE_AUDIO_FOCUS" if="android" /> <!-- Disable the fucking audio focus -->
 
 	<haxedef name="openfl_dpi_aware" />
 
@@ -123,8 +127,8 @@
 	<haxedef name="lime_use_old_deltatime" />
 	<haxedef name="lime_disable_motion_sensors" />
 
-	<icon path="placeholders/icon.png" size='16'/>
-	<icon path="placeholders/icon.png" size='32'/>
-	<icon path="placeholders/icon.png" size='64'/>
-	<icon path="placeholders/icon.png" />
+	<icon path="assets/images/icons/game_round.png" size='16'/>
+	<icon path="assets/images/icons/game_round.png" size='32'/>
+	<icon path="assets/images/icons/game_round.png" size='64'/>
+	<icon path="assets/images/icons/game_round.png" />
 </project>

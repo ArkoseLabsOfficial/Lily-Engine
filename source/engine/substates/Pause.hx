@@ -1,18 +1,12 @@
 package engine.substates;
 
-class Pause extends SubStateBackend {
-	var menuItems:Array<String> = [
-		"system.menu.inventory",
-		"system.menu.objectives",
-		"system.menu.settings",
-		"system.menu.load",
-		"system.menu.quit"
-	];
-	var visualItems:Array<PauseMenuVisualEntry> = [];
-	var optionContainer:FlxSpriteGroup;
-	var selectedIndex:Int = 0;
+import lang.LangText;
 
+class Pause extends SubStateBackend {
+	var pauseMenu:SimpleVerticalMenu;
 	var isAnimating:Bool = true;
+
+	public var canInput:Bool = false;
 
 	public function new() {
 		super();
@@ -20,6 +14,9 @@ class Pause extends SubStateBackend {
 
 	override public function create():Void {
 		super.create();
+
+		persistentUpdate = true;
+		Game.paused = true;
 
 		var pauseBG = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xAA000000);
 		pauseBG.scrollFactor.set(0, 0);
@@ -37,24 +34,35 @@ class Pause extends SubStateBackend {
 		bottomFrame.nodeFrame.texture = "ui/frames/frame_menu_2b";
 		add(bottomFrame);
 
-		optionContainer = new FlxSpriteGroup();
-		var startY:Float = 60;
-		var cellSpacing:Float = 55;
+		pauseMenu = new SimpleVerticalMenu();
+		pauseMenu.canInput = false;
 
-		for (i in 0...menuItems.length) {
-			var entryY = startY + (i * cellSpacing);
-			var entry = new PauseMenuVisualEntry(20, entryY, menuItems[i], 440, cellSpacing);
-			visualItems.push(entry);
-			optionContainer.add(entry);
-		}
+		pauseMenu.addEntry("system.menu.inventory", function() {
+			openSubState(new Inventory());
+		});
+		pauseMenu.addEntry("system.menu.objectives", function() {
+			openSubState(new Objectives());
+		});
+		pauseMenu.addEntry("system.menu.settings", function() {
+			openSubState(new Settings("main", true));
+		});
+		pauseMenu.addEntry("system.menu.load", function() {
+			openSubState(new SaveLoad(false, false));
+		});
+		pauseMenu.addEntry("system.menu.quit", function() {
+			StateBackend.switchState(new TitleMenu());
+		});
 
-		add(optionContainer);
+		pauseMenu.itemWidth = 440;
+		pauseMenu.itemFontSize = 32;
+		pauseMenu.buildVisualList(55);
+		pauseMenu.x = 20;
+		pauseMenu.y = 60;
+		add(pauseMenu);
 
-		var chapterText = new FlxText(20, 660, 440, Game.instance.language.getCaption("system.menu.pause.text"), 32);
+		var chapterText = new LangText(20, 660, 440, "system.menu.pause.text", null, 32);
 		chapterText.alignment = CENTER;
 		add(chapterText);
-
-		updateHighlight();
 
 		#if FEATURE_TOUCH_CONTROLS
 		Game.mobileC.addDPad("FULL");
@@ -65,18 +73,14 @@ class Pause extends SubStateBackend {
 		var duration:Float = 0.15;
 
 		mainFrame.x -= slideOffset;
-		optionContainer.x -= slideOffset;
-
+		pauseMenu.x -= slideOffset;
 		chapterFrame.x -= slideOffset;
 		chapterText.x -= slideOffset;
-
 		bottomFrame.x -= slideOffset;
 
 		FlxTween.tween(pauseBG, {alpha: 1}, duration);
-
 		FlxTween.tween(mainFrame, {x: mainFrame.x + slideOffset}, duration, {ease: FlxEase.quadOut});
-		FlxTween.tween(optionContainer, {x: optionContainer.x + slideOffset}, duration, {ease: FlxEase.quadOut});
-
+		FlxTween.tween(pauseMenu, {x: pauseMenu.x + slideOffset}, duration, {ease: FlxEase.quadOut});
 		FlxTween.tween(chapterFrame, {x: chapterFrame.x + slideOffset}, duration, {ease: FlxEase.quadOut, startDelay: 0.08});
 		FlxTween.tween(chapterText, {x: chapterText.x + slideOffset}, duration, {ease: FlxEase.quadOut, startDelay: 0.08});
 
@@ -85,82 +89,41 @@ class Pause extends SubStateBackend {
 			startDelay: 0.16,
 			onComplete: function(twn:FlxTween) {
 				isAnimating = false;
+				canInput = true;
+				if (pauseMenu != null)
+					pauseMenu.canInput = true;
 			}
 		});
+	}
+
+	override public function openSubState(SubState:FlxSubState):Void {
+		canInput = false;
+		if (pauseMenu != null)
+			pauseMenu.canInput = false;
+		super.openSubState(SubState);
+	}
+
+	override public function closeSubState():Void {
+		canInput = true;
+		if (pauseMenu != null)
+			pauseMenu.canInput = true;
+		super.closeSubState();
 	}
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		if (isAnimating)
+		if (isAnimating || !canInput)
 			return;
 
-		if (Controls.UP_P) {
-			LilyAssets.play(LilyAssets.NAVIGATE);
-			selectedIndex--;
-			if (selectedIndex < 0)
-				selectedIndex = menuItems.length - 1;
-			updateHighlight();
-		} else if (Controls.DOWN_P) {
-			LilyAssets.play(LilyAssets.NAVIGATE);
-			selectedIndex++;
-			if (selectedIndex >= menuItems.length)
-				selectedIndex = 0;
-			updateHighlight();
-		}
-
-		if (Controls.ACCEPT) {
-			LilyAssets.play(LilyAssets.CONFIRM);
-			selectCurrentItem();
-		}
-
-		if (Controls.CANCEL) {
+		if (Controls.CANCEL && pauseMenu.canInput) {
 			LilyAssets.play(LilyAssets.CANCEL);
 			close();
 		}
 	}
 
-	private function updateHighlight():Void {
-		for (i in 0...visualItems.length) {
-			visualItems[i].setHighlight(i == selectedIndex);
-		}
-	}
-
-	private function selectCurrentItem():Void {
-		switch (selectedIndex) {
-			case 0:
-				openSubState(new Inventory());
-			case 1:
-				openSubState(new Objectives());
-			case 2:
-				openSubState(new Settings("main", true));
-			case 3:
-				openSubState(new SaveLoad(false, false));
-			case 4:
-				StateBackend.switchState(new engine.states.TitleMenu());
-		}
-	}
-}
-
-class PauseMenuVisualEntry extends MenuVisualEntry {
-	public var optionLabel:FlxText;
-
-	public function new(X:Float, Y:Float, transKey:String, textWidth:Float, cellHeight:Float) {
-		super(X, Y, "", textWidth, cellHeight);
-
-		bg.makeGraphic(240, 36, FlxColor.TRANSPARENT);
-		bg.x = this.x + 115;
-		bg.y = this.y + 8;
-
-		optionLabel = new FlxText(0, 0, textWidth, Game.instance.language.getCaption(transKey), 32);
-		optionLabel.alignment = CENTER;
-		add(optionLabel);
-
-		optionLabel.x = this.x;
-		optionLabel.y = this.y + (cellHeight - optionLabel.height) / 2;
-	}
-
-	override public function setHighlight(isActive:Bool):Void {
-		bg.makeGraphic(Std.int(bg.width), Std.int(bg.height), isActive ? 0x66FFFFFF : FlxColor.TRANSPARENT);
+	override public function close():Void {
+		Game.paused = false;
+		super.close();
 	}
 }

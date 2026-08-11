@@ -291,7 +291,6 @@ class ScriptClassInstance extends BaseScriptClass {
 						+ "." + name + "'";
 				}
 
-				// make sure mandatory args are forced
 				var args2 = [];
 				var extraParams = args.length - minParams;
 				var pos = 0;

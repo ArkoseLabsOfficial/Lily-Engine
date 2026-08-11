@@ -6,11 +6,21 @@ import macros.*;
 import mobile.*;
 #end
 import engine.objects.*;
-import engine.scripting.*;
-import engine.scripting.events.*;
 import engine.states.*;
 import engine.substates.*;
 import engine.ui.*;
+
+
+/* Scripting */
+import engine.scripting.HScript;
+import engine.scripting.ScriptedState;
+import engine.scripting.ScriptedSubState;
+import engine.scripting.*;
+import engine.scripting.events.*;
+
+/* Language */
+import lang.Lang;
+import lang.LangText;
 
 /* Objective */
 import engine.backend.Objective.ObjectiveData;
@@ -24,9 +34,9 @@ import engine.backend.*;
 
 /* UI */
 import engine.ui.*;
-import engine.ui.LacieUIExperimental.MenuFrameNode;
-import engine.ui.LacieUIExperimental.MenuVisualEntry;
-import engine.ui.LacieUIExperimental.SimpleVerticalMenu;
+import engine.ui.MenuFrameNode;
+import engine.ui.MenuVisualEntry;
+import engine.ui.SimpleVerticalMenu;
 import engine.ui.SpecialNinePatch;
 
 #if FEATURE_HSCRIPT
@@ -47,6 +57,7 @@ import io.FileSystem;
 import io.LilyAssets;
 
 /* Flixel */
+import flixel.util.typeLimit.OneOfTwo;
 import flixel.util.FlxCollision;
 import flixel.FlxBasic;
 import flixel.FlxCamera;
@@ -81,7 +92,13 @@ import flixel.system.FlxAssets;
 import flixel.util.FlxSave;
 import flixel.graphics.frames.FlxImageFrame;
 
+#if GodotSceneLoader
+import godot.*;
+import godot.nodes.*;
+#end
+
 /* Haxe */
+import haxe.DynamicAccess;
 import haxe.xml.Access;
 import haxe.Json;
 
