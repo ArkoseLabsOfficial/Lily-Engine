@@ -47,6 +47,13 @@
       "url": "https://github.com/ArkoseLabsOfficial/LilyScript"
     },
     {
+      "name": "GodotSceneLoader",
+      "type":"git",
+      "dir": null,
+      "ref": null,
+      "url": "https://github.com/ArkoseLabsOfficial/Godot-Scene-Loader"
+    },
+    {
       "name": "mobile-controls",
       "type":"git",
       "dir": null,
