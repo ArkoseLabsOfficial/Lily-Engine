@@ -77,17 +77,17 @@ class SpecialNinePatch extends FlxSpriteGroup {
 
 		if (bgTexture != null && bgTexture != "") {
 			var bgSprite = new FlxSprite(0, 0);
-			var bgGraphic = LilyAssets.image(bgTexture);
+			var bgGraphic = Assets.getBitmapData(bgTexture);
 
 			if (bgGraphic != null) {
 				var finalBgBmp = new BitmapData(targetWidth, targetHeight, true, 0x00000000);
 
 				var bgMat = new Matrix();
 				bgMat.scale(targetWidth / bgGraphic.width, targetHeight / bgGraphic.height);
-				finalBgBmp.draw(bgGraphic.bitmap, bgMat, null, null, null, true);
+				finalBgBmp.draw(bgGraphic, bgMat, null, null, null, true);
 
 				if (bgMaskTexture != null && bgMaskTexture != "") {
-					var maskGraphic = LilyAssets.image(bgMaskTexture);
+					var maskGraphic = Assets.getBitmapData(bgMaskTexture);
 					if (maskGraphic != null) {
 						var maskBmp = new BitmapData(targetWidth, targetHeight, true, 0x00000000);
 
@@ -126,7 +126,7 @@ class SpecialNinePatch extends FlxSpriteGroup {
 							mat.scale(sx, sy);
 							mat.translate(px - (rx * sx), py - (ry * sy));
 
-							maskBmp.draw(maskGraphic.bitmap, mat, null, null, new Rectangle(px, py, dw, dh), true);
+							maskBmp.draw(maskGraphic, mat, null, null, new Rectangle(px, py, dw, dh), true);
 						}
 
 						drawMaskPiece(0, 0, patchMarginLeft, patchMarginTop, w0, h0, x0, y0);
@@ -153,7 +153,7 @@ class SpecialNinePatch extends FlxSpriteGroup {
 		}
 
 		if (decorBgTexture != null && decorBgTexture != "") {
-			var bmp = LilyAssets.image(decorBgTexture);
+			var bmp = Assets.getBitmapData(decorBgTexture);
 			if (bmp != null) {
 				var decorBg = new FlxSprite(0, 0);
 				decorBg.loadGraphic(bmp);
@@ -166,7 +166,7 @@ class SpecialNinePatch extends FlxSpriteGroup {
 		}
 
 		if (texture != null && texture != "") {
-			var g = LilyAssets.image(texture);
+			var g = Assets.getBitmapData(texture);
 			if (g != null) {
 				var finalTexBmp = new BitmapData(targetWidth, targetHeight, true, 0x00000000);
 
@@ -204,7 +204,7 @@ class SpecialNinePatch extends FlxSpriteGroup {
 					mat.scale(sx, sy);
 					mat.translate(px - (rx * sx), py - (ry * sy));
 
-					finalTexBmp.draw(g.bitmap, mat, null, null, new Rectangle(px, py, dw, dh), true);
+					finalTexBmp.draw(g, mat, null, null, new Rectangle(px, py, dw, dh), true);
 				}
 
 				addF(0, 0, patchMarginLeft, patchMarginTop, w0, h0, x0, y0);
@@ -226,7 +226,7 @@ class SpecialNinePatch extends FlxSpriteGroup {
 		}
 
 		if (decorTexture != null && decorTexture != "") {
-			var bmp = LilyAssets.image(decorTexture);
+			var bmp = Assets.getBitmapData(decorTexture);
 			if (bmp != null) {
 				var decor = new FlxSprite(0, 0);
 				decor.loadGraphic(bmp);

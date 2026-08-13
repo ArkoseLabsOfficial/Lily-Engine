@@ -6,7 +6,7 @@ import godot.nodes.CollisionPolygon2D;
 import flixel.math.FlxRect;
 import flixel.math.FlxPoint;
 import flixel.FlxG;
-import engine.backend.game.RoomManager;
+import engine.backend.game.Room;
 
 class Player extends Character {
 	var walkSpeed:Float = 160;
@@ -100,10 +100,9 @@ class Player extends Character {
 	function checkCollision(targetX:Float, targetY:Float):Bool {
 		var pBox = getCollisionBoxAt(targetX, targetY);
 		var hit = false;
-		var room = RoomManager.instance;
 
-		if (room != null) {
-			var shapes = room.getNodesOfType(CollisionShape2D);
+		if (Game.room != null) {
+			var shapes = Game.room.scene.getNodesOfType(CollisionShape2D);
 			for (cShape in shapes) {
 				var sx = cShape.scale.x;
 				var sy = cShape.scale.y;
@@ -118,7 +117,7 @@ class Player extends Character {
 			}
 
 			if (!hit) {
-				var polys = room.getNodesOfType(CollisionPolygon2D);
+				var polys = Game.room.scene.getNodesOfType(CollisionPolygon2D);
 				for (cPoly in polys) {
 					if (checkPolygonCollision(pBox, cPoly)) {
 						hit = true;
@@ -128,7 +127,7 @@ class Player extends Character {
 			}
 
 			if (!hit) {
-				var entities = room.getNodesOfType(Character);
+				var entities = Game.room.scene.getNodesOfType(Character);
 				for (entity in entities) {
 					if (entity == null || entity == this || !entity.solidCollision)
 						continue;

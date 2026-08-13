@@ -84,8 +84,8 @@ class Character extends Sprite {
 		var fullPath = spriteName;
 		var xmlPath = fullPath + ".xml";
 
-		if (io.LilyAssets.fileExists(xmlPath)) {
-			var rawXml = io.LilyAssets.getTextFromFile(xmlPath);
+		if (Assets.exists(xmlPath)) {
+			var rawXml = Assets.getText(xmlPath);
 			if (rawXml.indexOf("<character") != -1) {
 				var xml = Xml.parse(StringTools.replace(rawXml, "<!DOCTYPE lily-engine-character>", "")).firstElement();
 
@@ -116,7 +116,7 @@ class Character extends Sprite {
 							});
 
 							if (!loadedFrames.exists(aSprite)) {
-								var atlas = io.LilyAssets.getSparrowAtlas(aSprite);
+								var atlas = Assets.getSparrowAtlas(aSprite);
 								if (atlas != null)
 									loadedFrames.set(aSprite, atlas);
 							}
@@ -132,12 +132,12 @@ class Character extends Sprite {
 				}
 			}
 		} else {
-			var baseXmlPath = 'images/$spriteName.xml';
+			var baseXmlPath = '${Flags.imageFolder}$spriteName.xml';
 
-			if (LilyAssets.fileExists(baseXmlPath))
-				visual.frames = LilyAssets.getSparrowAtlas(spriteName);
-			else if (LilyAssets.fileExists('images/$spriteName.png'))
-				visual.loadGraphic(LilyAssets.image(spriteName));
+			if (Assets.exists(baseXmlPath))
+				visual.frames = Assets.getSparrowAtlas(spriteName);
+			else if (Assets.imageExists(spriteName))
+				visual.loadGraphic(Assets.getImage(spriteName));
 
 			visual.updateHitbox();
 			var boxWidth = visual.width * 0.9;
@@ -155,9 +155,8 @@ class Character extends Sprite {
 		}
 
 		var scrPath = '$spriteName.hx';
-		if (LilyAssets.fileExists(scrPath)) {
+		if (Assets.exists(scrPath)) {
 			__script = Script.create(scrPath);
-			Game.instance.bindToScript(__script);
 			__script.set("this", this);
 			__script.set("char", this);
 			__script.load();

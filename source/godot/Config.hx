@@ -8,22 +8,20 @@ class Config {
         if (value.startsWith("assets/")) value = value.replace("assets/", "");
         if (value.startsWith("images/")) value = value.replace("images/", "");
         if (value.endsWith(".png")) {
-            if (value.endsWith(".png")) value = value.replace(".png", "");
-            return LilyAssets.image(value);
+            return Assets.getBitmapData(Flags.imageFolder + value);
         }
-        return LilyAssets.getTextFromFile(value);
+        return Assets.getText(value);
     }
 
     public static function exists(value:String) {
         if (value.startsWith("assets/")) value = value.replace("assets/", "");
         if (value.startsWith("images/")) value = value.replace("images/", "");
-        return LilyAssets.fileExists(value);
+        return Assets.exists(value);
     }
 
     public static function getBitmapData(value:String) {
         if (value.startsWith("assets/")) value = value.replace("assets/", "");
         if (value.startsWith("images/")) value = value.replace("images/", "");
-        if (value.endsWith(".png")) value = value.replace(".png", "");
-        return LilyAssets.image(value);
+        return Assets.getBitmapData(Flags.imageFolder + value);
     }
 }

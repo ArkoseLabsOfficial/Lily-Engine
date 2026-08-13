@@ -8,10 +8,6 @@ import flixel.FlxSprite;
 import openfl.Assets;
 import haxe.io.Bytes;
 import openfl.display.Bitmap;
-#if sys
-import sys.FileSystem as SysFileSystem;
-import sys.io.File as SysFile;
-#end
 import openfl.events.MouseEvent;
 
 #if FEATURE_TOUCH_CONTROLS
@@ -41,7 +37,7 @@ class Main extends Sprite {
 
 		// Custom Mouse Loading for Desktop Builds
 		#if desktop
-		var bitmapData = FileSystem.getBitmapData("assets/images/ui/cursor.png");
+		var bitmapData = Assets.getImage("ui/cursor");
         var customCursor = new Bitmap(bitmapData);
         addChild(customCursor);
 		stage.addEventListener(MouseEvent.MOUSE_MOVE, function(e:MouseEvent) {
@@ -54,6 +50,4 @@ class Main extends Sprite {
 		customCursor.scaleY = 0.13;
 		#end
     }
-
-	static var loadedFiles = new Map<String, Bool>();
 }

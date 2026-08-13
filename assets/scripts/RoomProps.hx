@@ -1,11 +1,10 @@
-package;
-
-import engine.backend.Game;
-import io.LilyAssets;
 import flixel.sound.FlxSound;
+import openfl.utils.Assets;
+importScript("PartyShortcuts");
 
 class RoomProps {
 	public static var music:FlxSound = null;
+	public static var lacie:CharacterShortcuts;
 
 	public var location:String = "Unknown";
 	public var party:Array<String> = [];
@@ -15,20 +14,21 @@ class RoomProps {
 		Game.save.location = location;
 
 		if (BGMusic != "" && BGMusic != null) {
-			var bgmAsset = LilyAssets.sound('bgm/$BGMusic');
-			if (bgmAsset != null) {
-				if (music != null) {
-					music.stop();
-					music.destroy();
-				}
-				music = new FlxSound();
-				music.loadEmbedded(bgmAsset, true);
-				FlxG.sound.list.add(music);
-				music.play();
+			if (music != null) {
+				music.stop();
+				music.destroy();
 			}
+			music = new FlxSound();
+			music.loadEmbedded('sounds/bgm/$BGMusic.ogg', true);
+			FlxG.sound.list.add(music);
+			music.play();
 		}
 
-		Game.objectives.addObjective("main_investigation");
-		Game.objectives.failObjective("main_investigation.explore_hall.open_drawer");
+
+		PartyShortcuts.createPartyChar("lacie");
+		Game.baseRoom.addFollower(Game.party[1], Game.party[0]);
+
+		PartyShortcuts.createPartyChar("lacie");
+		Game.baseRoom.addFollower(Game.party[2], Game.party[1]);
 	}
 }

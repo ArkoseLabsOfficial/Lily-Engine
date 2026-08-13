@@ -12,12 +12,13 @@ class Game {
 		return instance._paused;
 	}
 
-	public static var items(get, never):ItemManager;
-	public static var objectives(get, never):ObjectiveManager;
+	public static var items(get, never):Items;
+	public static var objectives(get, never):Objectives;
 	public static var language:Lang;
 	public static var save(get, never):SaveManager;
-	public static var room(get, never):RoomManager;
-	public static var player(get, never):Player;
+	public static var room(get, never):Room;
+	public static var baseRoom(get, never):BaseRoom;
+	public static var party(get, set):Array<Character>;
 
 	static inline function get_items()
 		return instance._items;
@@ -29,14 +30,20 @@ class Game {
 		return instance._save;
 
 	static inline function get_room()
-		return RoomManager.instance;
+		return Room.instance;
 
-	static inline function get_player()
-		return room != null ? room.player : null;
+	static inline function get_baseRoom()
+		return BaseRoom.instance;
+
+	static inline function get_party()
+		return baseRoom.party;
+
+	static inline function set_party(value:Array<Character>):Array<Character>
+		return baseRoom.party = value;
 
 	public var _paused:Bool = false;
-	public var _items:ItemManager;
-	public var _objectives:ObjectiveManager;
+	public var _items:Items;
+	public var _objectives:Objectives;
 	public var _save:SaveManager;
 
 	#if FEATURE_TOUCH_CONTROLS
@@ -47,42 +54,13 @@ class Game {
 	#end
 
 	public function init() {
-		_items = new ItemManager();
-		_objectives = new ObjectiveManager();
+		_items = new Items();
+		_objectives = new Objectives();
 		_save = new SaveManager();
 		_items.load();
 	}
 
 	public function new() {
 		instance = this;
-	}
-
-	public static function playDialogue(jsonPath:String, startId:String, ?onComplete:Void->Void):Void {
-		var dialogue = new DialogueManager(jsonPath, startId, onComplete);
-		FlxG.state.openSubState(dialogue);
-	}
-
-	public function bindToScript(script:Dynamic):Void {
-		if (script == null)
-			return;
-
-		script.set("setCameraTarget", function(id:String) {
-			if (room == null)
-				return;
-			var target:FlxObject = null;
-			if (id == "player")
-				target = player;
-			else if (room.currentScene != null) {
-				var node:Dynamic = room.currentScene.getNode(id);
-				if (Std.isOfType(node, FlxObject))
-					target = cast node;
-			}
-			if (target != null)
-				BaseRoom.instance.followTheObject(target, "NO_DEAD_ZONE", 1);
-		});
-	}
-
-	public static function resetState():Void {
-		instance = new Game();
 	}
 }

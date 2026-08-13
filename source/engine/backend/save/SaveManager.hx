@@ -5,7 +5,7 @@ import flixel.FlxG;
 import haxe.Timer;
 import engine.backend.Game;
 import engine.backend.save.GamePrefs;
-import engine.backend.game.RoomManager;
+import engine.backend.game.Room;
 
 typedef SavedItem = {id:String, amount:Int}
 typedef Position = {x:Float, y:Float}
@@ -130,12 +130,11 @@ class SaveManager {
 		save.bind("LilyEngine_Slot_" + slot);
 
 		var currentPlaytime = playtime + (Timer.stamp() - sessionStartTime);
-		var currentRoom = RoomManager.currentRoomName != null ? RoomManager.currentRoomName : room;
+		var currentRoom = room;
 
 		var currentPositions:Array<Position> = [];
-		if (RoomManager.instance != null && RoomManager.instance.player != null) {
-			currentPositions.push({x: RoomManager.instance.player.x, y: RoomManager.instance.player.y});
-			for (member in RoomManager.instance.partyMembers) {
+		if (Game.party != null) {
+			for (member in Game.party) {
 				currentPositions.push({x: member.x, y: member.y});
 			}
 		} else {

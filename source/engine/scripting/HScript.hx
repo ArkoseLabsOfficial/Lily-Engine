@@ -15,8 +15,6 @@ import lime.app.Application;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 import flixel.util.FlxStringUtil;
 import engine.scripting.events.CancellableEvent;
-import sys.FileSystem;
-import sys.io.File;
 import hscript.IHScriptCustomAccessBehaviour;
 
 using StringTools;
@@ -48,8 +46,8 @@ class HScript extends Script {
 		sscript.parser.preprocessorValues = Script.getDefaultPreprocessors();
 
 		try {
-			if (FileSystem.exists(rawPath))
-				code = File.getContent(rawPath);
+			if (Assets.exists(rawPath))
+				code = Assets.getText(rawPath);
 		} catch (e) {
 			FlxG.stage.window.alert('Error while reading $path: ${Std.string(e)}', "HScript");
 		}
@@ -207,7 +205,7 @@ class HScript extends Script {
 			return null;
 
 		var seperatedPath = path.split('.');
-		var script:Script = Script.create('scripts/' + seperatedPath[0] + '.hx');
+		var script:Script = Script.create(Flags.scriptFolder + seperatedPath[0] + '.hx');
 		script.active = false;
 
 		if (script is DummyScript) {
@@ -245,37 +243,50 @@ class Script extends FlxBasic implements IFlxDestroyable {
 
 	public static function getDefaultVariables(?script:Script):Map<String, Dynamic> {
 		return [
+			"Items" => Items,
+			"Objectives" => Objectives,
+			"Room" => Room,
+			"GamePrefs" => GamePrefs,
+			"StateBackend" => StateBackend,
+			"SubStateBackend" => SubStateBackend,
+			"Controls" => Controls,
+			#if FEATURE_DISCORD_RPC
+			"Discord" => Discord,
+			#end
+			"Flags" => Flags,
+			"Game" => Game,
+			"Objective" => Objective,
+			"Character" => Character,
+			"ObjectivePopUp" => ObjectivePopUp,
+			"Player" => Player,
 			"ScriptedSprite" => ScriptedSprite,
 			"ScriptedSpriteGroup" => ScriptedSpriteGroup,
 			"ScriptedState" => ScriptedState,
 			"ScriptedSubState" => ScriptedSubState,
-			"Controls" => Controls,
-			"DialogueManager" => DialogueManager,
-			"GamePrefs" => GamePrefs,
-			"ItemManager" => ItemManager,
-			"Lang" => Lang,
-			"Objective" => Objective,
-			"ObjectiveManager" => ObjectiveManager,
-			"RoomManager" => RoomManager,
-			"SaveManager" => SaveManager,
-			"StateBackend" => StateBackend,
-			"SubStateBackend" => SubStateBackend,
-			"Character" => Character,
-			"Player" => Player,
-			"TitleMenu" => TitleMenu,
 			"BaseRoom" => BaseRoom,
-			"Inventory" => Inventory,
-			"Language" => Language,
-			"Objectives" => Objectives,
-			"Obtain" => Obtain,
-			"Pause" => Pause,
-			"SaveLoad" => SaveLoad,
-			"Settings" => Settings,
+			"MainState" => MainState,
+			"TitleMenu" => TitleMenu,
+			"Inventory" => InventoryMenu,
+			"Language" => LanguageMenu,
+			"ModSelector" => ModSelectorMenu,
+			"ObjectivesMenu" => ObjectivesMenu,
+			"Pause" => PauseMenu,
+			"SaveLoad" => SaveLoadMenu,
+			"Settings" => SettingsMenu,
 			"DialogBox" => DialogBox,
 			"DialogSelection" => DialogSelection,
+			"MenuFrameNode" => MenuFrameNode,
+			"SimpleVerticalMenu" => SimpleVerticalMenu,
+			"SpecialNinePatch" => SpecialNinePatch,
+			#if sys
 			"File" => sys.io.File,
 			"FileSystem" => sys.FileSystem,
-			"LilyAssets" => io.LilyAssets,
+			#end
+			"Lang" => Lang,
+			"LangText" => LangText,
+			"Main" => Main,
+
+			// Flixel
 			"FlxG" => FlxG,
 			"FlxSprite" => FlxSprite,
 			"FlxSpriteGroup" => flixel.group.FlxSpriteGroup,
@@ -287,11 +298,16 @@ class Script extends FlxBasic implements IFlxDestroyable {
 			"FlxGroup" => FlxGroup,
 			"FlxColor" => getMacroAbstractClass("flixel.util.FlxColor"),
 			"FlxTypedGroup" => FlxTypedGroup,
+			"FlxKey" => getMacroAbstractClass("flixel.input.keyboard.FlxKey"),
+			"FlxTextBorderStyle" => flixel.text.FlxTextBorderStyle,
+
+			// OpenFL
+			"Assets" => Assets, // use the Assets class for accessing anything necessary.
+
 			"Math" => Math,
 			"Std" => Std,
 			"StringTools" => StringTools,
-			"FlxKey" => getMacroAbstractClass("flixel.input.keyboard.FlxKey"),
-			"FlxTextBorderStyle" => flixel.text.FlxTextBorderStyle,
+			
 			"Json" => haxe.Json,
 			"Map" => getMacroAbstractClass("haxe.ds.Map"),
 			"ObjectMap" => haxe.ds.ObjectMap,
@@ -323,14 +339,11 @@ class Script extends FlxBasic implements IFlxDestroyable {
 	public static function create(path:String):Script {
 		var originalPath = path;
 
-		var fullPath = LilyAssets.getPath(originalPath);
-		if (FileSystem.exists(fullPath)) {
+		var fullPath = Assets.getPath(originalPath);
+		if (Assets.exists(fullPath)) {
 			return switch (Path.extension(fullPath).toLowerCase()) {
 				case "hx" | "hscript" | "hsc" | "hxs":
 					new HScript(originalPath);
-				case "pack":
-					var arr = File.getContent(fullPath).split("________PACKSEP________");
-					fromString(arr[1], arr[0]);
 				default:
 					new DummyScript(originalPath);
 			}
@@ -347,13 +360,29 @@ class Script extends FlxBasic implements IFlxDestroyable {
 		}
 	}
 
+	static function safeWithoutDirectory(path:String) {
+		try {
+			return Path.withoutDirectory(path);
+		} catch(e:Dynamic) {
+			return null;
+		}
+	}
+
+	static function safeExtension(path:String) {
+		try {
+			return Path.extension(path);
+		} catch(e:Dynamic) {
+			return null;
+		}
+	}
+
 	public function new(path:String) {
 		super();
 		this.sourcePath = path;
-		path = LilyAssets.getPath(path);
+		path = Assets.getPath(path);
 		rawPath = path;
-		fileName = Path.withoutDirectory(path);
-		extension = Path.extension(path);
+		fileName = safeWithoutDirectory(path);
+		extension = safeExtension(path);
 		this.path = path;
 
 		onCreate(path);
@@ -603,7 +632,7 @@ class GlobalScript {
 		destroy();
 		scripts = new ScriptPack("GlobalScript");
 
-		var path = 'scripts/Global.hx';
+		var path = '${Flags.scriptFolder}Global.hx';
 		var script = Script.create(path);
 		if (!(script is DummyScript)) {
 			script.remappedNames.set(script.fileName, '${script.fileName}');

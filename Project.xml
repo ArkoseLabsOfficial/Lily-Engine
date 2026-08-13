@@ -47,7 +47,6 @@
 
 	<assets path='assets'/>
 	<assets path='mods'/>
-	<haxedef name="mobile_controls_allow_mouse_clicks" if="desktop"/>
 
 	<!-- _______________________________ Defines _______________________________ -->
 
@@ -56,6 +55,8 @@
 	<define name="FEATURE_HSCRIPT" />
 	<define name="FEATURE_TOUCH_CONTROLS" unless="html5 || desktop"/>
 	<define name="FEATURE_DISCORD_RPC" if="desktop" />
+
+	<haxedef name="lime_disable_assets_version" if="html5"/> <!-- I dont wanna deal wth these -->
 
 	<haxedef name="FLX_RENDER_TILE" if="html5"/>
 
@@ -127,6 +128,8 @@
 	<haxedef name="lime_use_old_deltatime" />
 	<haxedef name="lime_disable_motion_sensors" />
 
+	<haxedef name="SHARE_MOBILE_FILES" if="mobile"/>
+	
 	<icon path="assets/images/icons/game_round.png" size='16'/>
 	<icon path="assets/images/icons/game_round.png" size='32'/>
 	<icon path="assets/images/icons/game_round.png" size='64'/>

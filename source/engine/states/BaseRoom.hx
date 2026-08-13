@@ -8,7 +8,7 @@ typedef FollowerInfo = {
 }
 
 class BaseRoom extends StateBackend {
-	var room:RoomManager;
+	var room:Room;
 	var isFromLoad:Bool;
 	var roomName:String;
 
@@ -16,7 +16,7 @@ class BaseRoom extends StateBackend {
 
 	public static var instance:BaseRoom;
 
-	public var objectives:ObjectiveManager;
+	public var party:Array<Character> = [];
 	public var followers:Array<FollowerInfo> = [];
 
 	public function new(room:String = "bathroom", fromLoad:Bool = false) {
@@ -26,8 +26,8 @@ class BaseRoom extends StateBackend {
 	}
 
 	override function openSubState(SubState:FlxSubState) {
-		if (room != null && room.player != null)
-			room.player.canMove = false;
+		for (member in Game.party)
+			member.canMove = false;
 
 		#if FEATURE_TOUCH_CONTROLS
 		Game.mobileC.removeJoyStick();
@@ -38,8 +38,8 @@ class BaseRoom extends StateBackend {
 	}
 
 	override function closeSubState() {
-		if (room != null && room.player != null)
-			room.player.canMove = true;
+		for (member in Game.party)
+			member.canMove = true;
 
 		super.closeSubState();
 		#if FEATURE_TOUCH_CONTROLS
@@ -66,20 +66,11 @@ class BaseRoom extends StateBackend {
 		FlxG.cameras.setDefaultDrawTarget(camGame, true);
 
 		instance = this;
-		objectives = new ObjectiveManager();
 
-		room = new RoomManager(this);
-		room.loadRoom(roomName);
-
-		room.initPlayerState(camGame, isFromLoad);
+		room = new Room();
+		room.loadRoom(roomName, isFromLoad);
 
 		add(room);
-
-		#if FEATURE_HSCRIPT
-		room.scripts.setParent(this);
-		room.scripts.call("onRoomLoaded", [roomName]);
-		#end
-		Game.save.room = roomName;
 	}
 
 	public function followTheObject(obj:Dynamic, type:String = "NO_DEAD_ZONE", smoothness:Float = 1):Void {
@@ -136,13 +127,9 @@ class BaseRoom extends StateBackend {
 
 		Game.save.playtime += elapsed;
 
-		var currentTarget = camGame.target;
-		if (currentTarget != null && Std.isOfType(currentTarget, Character)) {
-			var charTarget:Character = cast currentTarget;
-			camGame.targetOffset.set(charTarget.cameraOffset.x, charTarget.cameraOffset.y);
-		} else if (room.player != null) {
-			camGame.targetOffset.set(room.player.cameraOffset.x, room.player.cameraOffset.y);
-		}
+		var targetCharacter:Character = cast camGame.target;
+		if (targetCharacter != null)
+			camGame.targetOffset.set(targetCharacter.cameraOffset.x, targetCharacter.cameraOffset.y);
 
 		var i = followers.length;
 		while (i > 0) {
@@ -223,6 +210,6 @@ class BaseRoom extends StateBackend {
 		}
 
 		if (Controls.MENU)
-			openSubState(new Pause());
+			openSubState(new PauseMenu());
 	}
 }

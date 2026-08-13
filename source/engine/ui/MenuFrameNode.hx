@@ -16,8 +16,8 @@ class MenuFrameNode extends FlxSpriteGroup {
         nodeFrame = new SpecialNinePatch();
 
         if (mode == 1 || mode == 2) {
-            nodeFrame.texture = "ui/frames/frame_menu_2";
-            nodeFrame.bgTexture = "ui/frames/frame_menu_bg";
+            nodeFrame.texture = '${Flags.imageFolder}ui/frames/frame_menu_2.png';
+            nodeFrame.bgTexture = '${Flags.imageFolder}ui/frames/frame_menu_bg.png';
             nodeFrame.bgMaskTexture = null;
             nodeFrame.patchMarginLeft = 50;
             nodeFrame.patchMarginTop = 50;
@@ -30,15 +30,15 @@ class MenuFrameNode extends FlxSpriteGroup {
                 titleText.alignment = CENTER;
 
                 divider = new FlxSprite(0, 90);
-                divider.loadGraphic(LilyAssets.image("ui/dividers/divider_md"));
+                divider.loadGraphic(Assets.getImage('ui/dividers/divider_md'));
                 divider.scale.set(0.75, 0.75);
                 divider.updateHitbox();
                 divider.x = (targetWidth - divider.width) / 2;
             }
         } else {
-            nodeFrame.texture = "ui/frames/frame_default";
-            nodeFrame.bgTexture = "ui/frames/frame_default_bg";
-            nodeFrame.bgMaskTexture = "ui/masks/frame_default_bg_mask";
+            nodeFrame.texture = '${Flags.imageFolder}ui/frames/frame_default.png';
+            nodeFrame.bgTexture = '${Flags.imageFolder}ui/frames/frame_default_bg.png';
+            nodeFrame.bgMaskTexture = '${Flags.imageFolder}ui/masks/frame_default_bg_mask.png';
             nodeFrame.patchMarginLeft = 123;
             nodeFrame.patchMarginTop = 142;
             nodeFrame.patchMarginRight = 123;

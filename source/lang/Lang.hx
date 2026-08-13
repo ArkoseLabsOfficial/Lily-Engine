@@ -10,7 +10,7 @@ class Lang {
 	private static var currentLanguage:String = "en";
 	private static var defaultLanguage:String = "en";
 	private static var translations:StringMap<Dynamic> = new StringMap<Dynamic>();
-	private static var languagePath:String = "assets/data/language/";
+	private static var languagePath:String = "data/language/";
 	private static var initialized:Bool = false;
 
 	/**
@@ -143,10 +143,12 @@ class Lang {
 	 */
 	public static function getAvailableLanguages():Array<String> {
 		var languages:Array<String> = [];
-		var langPath = LilyAssets.getPath(languagePath);
 
-		if (FileSystem.exists(langPath) && FileSystem.isDirectory(langPath)) {
-			for (file in FileSystem.readDirectory(langPath)) {
+		trace(languagePath);
+		if (Assets.exists(languagePath) && Assets.isDirectory(languagePath)) {
+			trace(languagePath);
+			for (file in Assets.readDirectory(languagePath)) {
+				trace(file);
 				if (file.endsWith(".json")) {
 					languages.push(file.substring(0, file.length - 5));
 				}
@@ -171,8 +173,8 @@ class Lang {
 		try {
 			var content:String = null;
 
-			if (LilyAssets.fileExists(filePath)) {
-				content = LilyAssets.getTextFromFile(filePath);
+			if (Assets.exists(filePath)) {
+				content = Assets.getText(filePath);
 			}
 
 			if (content != null) {

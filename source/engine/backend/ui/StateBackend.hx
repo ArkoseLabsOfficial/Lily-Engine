@@ -31,13 +31,17 @@ class StateBackend extends FlxState {
 		if (scriptsAllowed) {
 			if (stateScripts.scripts.length == 0) {
 				var scriptName = this.scriptName != null ? this.scriptName : className.substr(className.lastIndexOf(".") + 1);
-				var filePath:String = "states/" + scriptName;
+				var filePath:String = Flags.scriptFolder + "states/" + scriptName;
 				if (customPath != null)
 					filePath = customPath;
 
-				var scriptPath = 'data/$filePath';
+				var scriptPath = '$filePath.hx';
+				if (!Assets.exists(scriptPath)) {
+					return;
+				}
+
 				var script = Script.create(scriptPath);
-				if (script is DummyScript) {} else {
+				if (script != null && !(script is DummyScript)) {
 					script.remappedNames.set(script.fileName, '${script.fileName}');
 					stateScripts.add(script);
 					script.load();
@@ -78,6 +82,13 @@ class StateBackend extends FlxState {
 		#end
 	}
 
+	override function createPost() {
+		super.createPost();
+		#if FEATURE_HSCRIPT
+		call("createPost");
+		#end
+	}
+	
 	override public function update(elapsed:Float) {
 		#if FEATURE_HSCRIPT call("preUpdate", [elapsed]); #end
 		super.update(elapsed);

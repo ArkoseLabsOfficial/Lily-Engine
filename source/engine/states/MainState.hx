@@ -19,9 +19,6 @@ class MainState extends StateBackend {
 		#elseif ios
 		Sys.setCwd(lime.system.System.documentsDirectory);
 		#end
-		FlxAssets.FONT_DEFAULT = "assets/font/NotoSans-Regular.ttf";
-		FlxText.defaultTextAntialiasing = true;
-		FlxSprite.defaultAntialiasing = false;
 
 		@:privateAccess
 		Main.game = new Game(); // Stores `inventory, save, objectives, language, game pause`
@@ -31,6 +28,9 @@ class MainState extends StateBackend {
 		Lang.init('en', Flags.languageFolder);
 
 		GamePrefs.loadMod();
+		FlxAssets.FONT_DEFAULT = '${Flags.fontFolder}NotoSans-Regular.ttf';
+		FlxText.defaultTextAntialiasing = true;
+		FlxSprite.defaultAntialiasing = false;
 
 		#if GLOBAL_SCRIPT
 		HScript.GlobalScript.init();
@@ -44,7 +44,7 @@ class MainState extends StateBackend {
 		#end
 
 		#if linux
-		var iconImage = Image.fromFile("assets/images/icons/game_round.png");
+		var iconImage = Image.fromFile('assets/${Flags.imageFolder}icons/game_round.png');
 		Lib.current.stage.window.setIcon(iconImage);
 		#end
 

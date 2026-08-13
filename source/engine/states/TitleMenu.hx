@@ -19,12 +19,12 @@ class TitleMenu extends StateBackend {
 				hasSaveFile = true;
 		}
 
-		bg = new FlxSprite(0, 0).loadGraphic(LilyAssets.image("img/cg/ch1/paperlily_title"));
+		bg = new FlxSprite(0, 0).loadGraphic(Assets.getImage('ui/titleBG'));
 		bg.setGraphicSize(1920, 1080);
 		bg.updateHitbox();
 		add(bg);
 
-		titleLogo = new FlxSprite(1134, 282);
+		titleLogo = new FlxSprite(1134, 282, Assets.getImage('ui/titleLogo'));
 		add(titleLogo);
 
 		extraInfoText = new FlxText(0, FlxG.height - 65, FlxG.width - 15, "", 24);
@@ -39,14 +39,14 @@ class TitleMenu extends StateBackend {
 
 		if (hasSaveFile) {
 			simpleMenu.addEntry("system.menu.loadgame", function() {
-				openSubState(new SaveLoad(false, true));
+				openSubState(new SaveLoadMenu(false, true));
 			});
 		}
 		simpleMenu.addEntry("system.menu.newgame", function() {
-			startNewGame(new BaseRoom(LilyAssets.getTextFromFile('${Flags.roomFolder}start_room.txt').trim()));
+			startNewGame(new BaseRoom(Assets.getText('${Flags.roomFolder}start_room.txt').trim()));
 		});
 		simpleMenu.addEntry("system.menu.mods", function() {
-			openSubState(new ModSelector(function() {
+			openSubState(new ModSelectorMenu(function() {
 				StateBackend.switchState(new MainState());
 			}));
 		});
@@ -54,7 +54,7 @@ class TitleMenu extends StateBackend {
 			startNewGame(new BaseRoom("DebugRoom"));
 		});
 		simpleMenu.addEntry("system.menu.settings", function() {
-			openSubState(new Settings());
+			openSubState(new SettingsMenu());
 		});
 		simpleMenu.addEntry("system.menu.website.translator", function() {});
 		simpleMenu.addEntry("system.menu.quit", function() {

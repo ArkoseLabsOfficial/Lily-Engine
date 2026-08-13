@@ -12,3 +12,13 @@ final class DialogEntryEvent extends CancellableEvent {
 final class DialogSelectionEvent extends CancellableEvent {
     public var selections:Array<Dynamic>;
 }
+
+final class DialogCharTypedEvent extends CancellableEvent {
+    public var preTextCharNum:Int;
+    public var nextTextCharNum:Int;
+}
+
+final class DialogOptionSelectedEvent extends CancellableEvent {
+    public var index:Int;
+    public var optionId:String;
+}

@@ -1,0 +1,22 @@
+{
+  "full_test": [
+    {
+      "name": "System Test",
+      "text": "Hello, {player_name}! This confirms the basic text rendering and variable injection system."
+    },
+    {
+      "name": "Selection Test",
+      "text": "Now, let's verify if the selection menu handles multiple options correctly.",
+      "selections": [
+        { "id": "test_1", "text": "Select Option 1" },
+        { "id": "test_2", "text": "Select Option 2" },
+        { "id": "test_3", "text": "Select Option 3" }
+      ]
+    },
+    {
+      "name": "Exit Test",
+      "text": "If you are reading this, the dialog system successfully progressed after your selection.",
+      "close": true
+    }
+  ]
+}

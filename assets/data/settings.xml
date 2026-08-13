@@ -4,15 +4,6 @@
         <category label="system.settings.ui.language" target="language" />
         <category label="system.settings.ui.controls" target="controls" />
         <category label="system.settings.ui.graphics" target="graphics" />
-        <category label="system.settings.ui.graphics" target="graphics" />
-        <category label="system.settings.ui.graphics" target="graphics" />
-        <category label="system.settings.ui.graphics" target="graphics" />
-        <category label="system.settings.ui.graphics" target="graphics" />
-        <category label="system.settings.ui.graphics" target="graphics" />
-        <category label="system.settings.ui.graphics" target="graphics" />
-        <category label="system.settings.ui.graphics" target="graphics" />
-        <category label="system.settings.ui.graphics" target="graphics" />
-        <category label="system.settings.ui.graphics" target="graphics" />
     </menu>
 
     <menu id="graphics" width="800" height="900">

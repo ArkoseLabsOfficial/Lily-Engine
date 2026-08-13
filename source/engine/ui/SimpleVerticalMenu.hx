@@ -4,7 +4,6 @@ import flixel.group.FlxSpriteGroup;
 import flixel.FlxG;
 import flixel.util.FlxColor;
 import engine.backend.Game;
-import io.LilyAssets;
 
 class SimpleVerticalMenu extends FlxSpriteGroup {
 	public var selection:Int = 0;
@@ -64,10 +63,10 @@ class SimpleVerticalMenu extends FlxSpriteGroup {
 			return;
 
 		if (Controls.UP_P) {
-			LilyAssets.play(LilyAssets.NAVIGATE);
+			FlxG.sound.play(Flags.NAVIGATE);
 			changeSelection(-1);
 		} else if (Controls.DOWN_P) {
-			LilyAssets.play(LilyAssets.NAVIGATE);
+			FlxG.sound.play(Flags.NAVIGATE);
 			changeSelection(1);
 		} else if (Controls.ACCEPT) {
 			acceptSelection();
@@ -89,7 +88,8 @@ class SimpleVerticalMenu extends FlxSpriteGroup {
 
 	public function acceptSelection():Void {
 		if (entries[selection] != null && entries[selection].action != null) {
-			LilyAssets.play(LilyAssets.CONFIRM);
+
+			FlxG.sound.play(Flags.CONFIRM);
 			entries[selection].action();
 		}
 	}

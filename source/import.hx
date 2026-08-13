@@ -52,9 +52,9 @@ import engine.scripting.events.CancellableEvent;
 import haxe.io.Path;
 
 /* Assets */
+import openfl.utils.Assets;
 import io.File;
 import io.FileSystem;
-import io.LilyAssets;
 
 /* Flixel */
 import flixel.util.typeLimit.OneOfTwo;

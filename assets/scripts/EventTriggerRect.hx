@@ -1,47 +1,53 @@
 import flixel.math.FlxRect;
 import flixel.FlxG;
 import lime.math.Vector2;
-import engine.backend.game.RoomManager;
-import engine.substates.SaveLoad;
-import engine.states.BaseRoom;
-import engine.backend.Game;
 
 importScript("GDUtil");
 importScript("PlayerProps");
 using StringTools;
 
 class EventTriggerRect {
-	var player = Game.room.player;
+	var player = Game.party[0];
 
 	var triggerAnswers:Map<String, Array<String>->Void> = [
+		"Sit_Down" => function(args) {
+			Game.room.scene.changeLayer(player, "Main/Bench3");
+			PlayerProps.sit(obj, "sitDOWN", 0, -3);
+		},
+		"Sit_Down2" => function(args) {
+			Game.room.scene.changeLayer(player, "Main/Bench3");
+			PlayerProps.sit(obj, "sitDOWN", 0, -3);
+		},
 		"get_knife" => function(args) {
 			Game.items.addItem("ch1_knife");
 		},
 		"Sign1" => function(args) {
-			Game.playDialogue("signs", "Sign1");
+			FlxG.state.openSubState(new DialogBox("signs", "Sign1"));
 		},
 		"Sign2" => function(args) {
-			Game.playDialogue("signs", "Sign2");
+			FlxG.state.openSubState(new DialogBox("signs", "Sign2"));
 		},
 		"Sign3" => function(args) {
-			Game.playDialogue("signs", "Sign3");
+			FlxG.state.openSubState(new DialogBox("signs", "Sign3"));
 		},
 		"Sign4" => function(args) {
-			var path = room.currentScene.getNode("Paths/Hiro/PathFollow2D");
+			var path = Game.room.scene.getNode("Paths/Hiro/PathFollow2D");
 			path._offset = 0;
-			room.followPath2D("Paths/Hiro/PathFollow2D", player, 50, false, function() {
-				var hiroAnim = room.currentScene.getNode("Main/HiroAnim");
-				var hiroNpc = room.currentScene.getNode("Main/HiroNpc");
+			Game.room.followPath2D("Paths/Hiro/PathFollow2D", player, 50, false, function() {
+				var hiroAnim = Game.room.scene.getNode("Main/HiroAnim");
+				var hiroNpc = Game.room.scene.getNode("Main/HiroNpc");
 				path._target = null;
 				hiroAnim.visible = true;
 				hiroNpc.visible = false;
 				player.visible = false;
+				player.canMove = false	;
 				hiroAnim.visual.animation.add("karsilasma", [0, 1, 2, 3, 4, 5, 6], 6, false);
 				hiroAnim.visual.animation.finishCallback = function(name:String) {
 					if (name == "karsilasma") {
 						hiroAnim.visible = false;
 						hiroNpc.visible = true;
 						player.visible = true;
+						player.canMove = true;
 
 						hiroAnim.visual.animation.finishCallback = null;
 					}
@@ -50,13 +56,13 @@ class EventTriggerRect {
 			});
 		},
 		"Sign5" => function(args) {
-			Game.playDialogue("signs", "Sign5");
+			FlxG.state.openSubState(new DialogBox("signs", "Sign5"));
 		},
 		"Sign6" => function(args) {
-			Game.playDialogue("signs", "Sign6");
+			FlxG.state.openSubState(new DialogBox("signs", "Sign6"));
 		},
 		"Bench" => function(args) {
-			room.changeLayer(player, "Main/Bench");
+			Game.room.scene.changeLayer(player, "Main/Bench");
 			PlayerProps.sit(obj, "sitDOWN", 0, -3);
 		},
 		"DoubleChairTable_SitLeft" => function(args) {
@@ -66,7 +72,7 @@ class EventTriggerRect {
 			PlayerProps.sit(obj, "sitLEFT", -10, -6);
 		},
 		"openSave" => function(args) {
-			openSubState(new SaveLoad(true, true));
+			FlxG.state.openSubState(new SaveLoadMenu(true, true));
 		},
 		"Open_Door" => function(args) {
 			var closeValue:Int = Std.int(args[1]);
@@ -103,7 +109,7 @@ class EventTriggerRect {
 		_shapeNode = GDUtil.MakeCollisionRect(Area, Offset);
 		_shapeNode.nodeName = obj.nodeName + "_shape";
 
-		var scene:Dynamic = RoomManager.instance.currentScene;
+		var scene:Dynamic = Game.room.scene;
 		if (scene != null)
 			scene.add(_shapeNode);
 		PlayerProps.sitting = false;

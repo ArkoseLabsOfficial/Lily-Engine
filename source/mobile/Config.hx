@@ -3,14 +3,14 @@ package mobile;
 import mobile.ControlsData;
 
 class Config {
-	public static var DPAD_PATH:String = "assets/mobile/DPad/images/";
-	public static var BUTTON_PATH:String = "assets/mobile/Button/images/";
-	public static var JOYSTICK_PATH:String = "assets/mobile/JoyStick/images/";
+	public static var DPAD_PATH:String = 'assets/${Flags.mobileFolder}/DPad/images/';
+	public static var BUTTON_PATH:String = 'assets/${Flags.mobileFolder}/Button/images/';
+	public static var JOYSTICK_PATH:String = 'assets/${Flags.mobileFolder}/JoyStick/images/';
 
-	public static var DPAD_JSON:String = "assets/mobile/DPad/";
-	public static var BUTTON_JSON:String = "assets/mobile/Button/";
-	public static var JOYSTICK_JSON:String = "assets/mobile/JoyStick/";
-	public static var HITBOX_JSON:String = "assets/mobile/Hitbox/";
+	public static var DPAD_JSON:String = 'assets/${Flags.mobileFolder}/DPad/';
+	public static var BUTTON_JSON:String = 'assets/${Flags.mobileFolder}/Button/';
+	public static var JOYSTICK_JSON:String = 'assets/${Flags.mobileFolder}/JoyStick/';
+	public static var HITBOX_JSON:String = 'assets/${Flags.mobileFolder}/Hitbox/';
 
 	public static var MODDED_DPAD_PATH:String = "";
 	public static var MODDED_BUTTON_PATH:String = "";
