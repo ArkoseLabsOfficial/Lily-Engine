@@ -1,0 +1,139 @@
+{
+  "cafeSelector": [
+    {
+      "text": "The first item in a to-do list is always the hardest one to cross off."
+    },
+    {
+      "text": "If we could just get one item done, the rest would surely follow. We just need to start."
+    },
+    {
+      "text": "That's why some people find the easiest item first, and start from there."
+    },
+    {
+      "text": "It gives them a better chance at getting something done."
+    },
+    {
+      "text": "This is because setting things in motion is difficult."
+    },
+    {
+      "text": "Choosing to do homework is difficult. Choosing to clean your room is difficult. Choosing to get out of bed is difficult."
+    },
+    {
+      "text": "Change is uncomfortable. It's always easier to leave things the way they are. To let the flow carry you."
+    },
+    {
+      "text": "Until you reach a point where doing nothing does more damage than doing anything."
+    },
+    {
+      "text": "When this happens, change is no longer a choice. It's a consequence."
+    },
+    {
+      "text": "Is that also a choice? The choice to do nothing?"
+    },
+    {
+      "name": "Lacie",
+      "text": "...For now, I'll focus on getting the first item on the list done."
+    },
+    {
+      "name": null,
+      "text": "All I need to do is choose...",
+      "selections": [
+        {
+          "id": "ch1.cafe.drink",
+          "text": "Coffee"
+        },
+        {
+          "id": "ch1.cafe.drink",
+          "text": "Green Tea"
+        },
+        {
+          "id": "ch1.cafe.drink",
+          "text": "Strawberry Milkshake"
+        }
+      ]
+    },
+    {
+      "name": null,
+      "text": "...and also...",
+      "selections": [
+        {
+          "id": "ch1.cafe.food",
+          "text": "Flan"
+        },
+        {
+          "id": "ch1.cafe.food",
+          "text": "Macarons"
+        },
+        {
+          "id": "ch1.cafe.food",
+          "text": "Chocolate Eclair"
+        }
+      ]
+    }
+  ],
+  "cafe_selector_after": [
+    {
+        "name": "Lacie",
+        "translate": [
+            "A coffee and a flan", "A coffee and macarons", "A coffee and an eclair",
+            "A tea and a flan", "A tea and macarons", "A tea and an eclair",
+            "A milkshake and a flan", "A milkshake and macarons", "A milkshake and an eclair"
+        ],
+        "text": "${translate[0]}..."
+    },
+    {
+        "name": "Lacie",
+        "translate": [
+            "A coffee and a flan", "A coffee and macarons", "A coffee and an eclair",
+            "A tea and a flan", "A tea and macarons", "A tea and an eclair",
+            "A milkshake and a flan", "A milkshake and macarons", "A milkshake and an eclair"
+        ],
+        "text": "${translate[0]}..."
+    },
+    {
+        "name": "Lacie",
+        "translate": [
+            "A coffee and a flan", "A coffee and macarons", "A coffee and an eclair",
+            "A tea and a flan", "A tea and macarons", "A tea and an eclair",
+            "A milkshake and a flan", "A milkshake and macarons", "A milkshake and an eclair"
+        ],
+        "text": "${translate[0]}....."
+    },
+    {
+        "name": "Lacie",
+        "text": "Okay."
+    },
+    {
+        "name": "Lacie",
+        "text": "I got this."
+    },
+    {
+        "name": "Lacie",
+        "translate": [
+            "A coffee and a flan", "A coffee and macarons", "A coffee and an eclair",
+            "A tea and a flan", "A tea and macarons", "A tea and an eclair",
+            "A milkshake and a flan", "A milkshake and macarons", "A milkshake and an eclair"
+        ],
+        "text": "${translate[0]}."
+    }
+  ],
+  
+  "tryingTalk": [
+    {
+      "name": "Lacie",
+      "text": "Could I get-"
+    }
+  ],
+  "cashierHello": [
+    {
+      "name": "Cashier",
+      "text": "Oh, h-hello."
+    }
+  ],
+  "cantGet": [
+    {
+        "name": "Lacie",
+        "text": "(Ah... I couldn't even get what I paid for...)"
+    }
+  ]
+}

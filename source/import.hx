@@ -10,6 +10,11 @@ import engine.states.*;
 import engine.substates.*;
 import engine.ui.*;
 
+/* Fixed Flixel Objects (Flixel sucks) */
+import engine.ui.GameText;
+import engine.ui.GameCamera;
+import engine.ui.GameTypeText;
+import engine.backend.shaders.LacieShader;
 
 /* Scripting */
 import engine.scripting.HScript;
@@ -21,11 +26,12 @@ import engine.scripting.events.*;
 /* Language */
 import lang.Lang;
 import lang.LangText;
+import lang.LangSprite;
 
 /* Objective */
 import engine.backend.Objective.ObjectiveData;
 
-/* BACKEND */
+/* Backend */
 import engine.backend.game.*;
 import engine.backend.parser.*;
 import engine.backend.save.*;
@@ -34,10 +40,6 @@ import engine.backend.*;
 
 /* UI */
 import engine.ui.*;
-import engine.ui.MenuFrameNode;
-import engine.ui.MenuVisualEntry;
-import engine.ui.SimpleVerticalMenu;
-import engine.ui.SpecialNinePatch;
 
 #if FEATURE_HSCRIPT
 import engine.scripting.ScriptedSprite;
@@ -49,10 +51,9 @@ import engine.scripting.HScript.Script;
 import engine.scripting.HScript.ScriptPack;
 import engine.scripting.events.CancellableEvent;
 #end
-import haxe.io.Path;
 
 /* Assets */
-import openfl.utils.Assets;
+import openfl.utils.Assets; //Main class used in this engine.
 import io.File;
 import io.FileSystem;
 
@@ -90,6 +91,8 @@ import flixel.util.FlxTimer;
 import flixel.text.FlxText.FlxTextAlign;
 import flixel.system.FlxAssets;
 import flixel.util.FlxSave;
+import flixel.math.FlxMath;
+import flixel.sound.FlxSound;
 import flixel.graphics.frames.FlxImageFrame;
 
 #if GodotSceneLoader
@@ -100,6 +103,8 @@ import godot.nodes.*;
 /* Haxe */
 import haxe.DynamicAccess;
 import haxe.xml.Access;
+import haxe.io.Path;
+import haxe.Timer;
 import haxe.Json;
 
 /* Lime */
@@ -118,7 +123,12 @@ import openfl.geom.Matrix;
 import openfl.display.BitmapData;
 import openfl.display.BitmapDataChannel;
 import openfl.geom.Point;
+import openfl.display.Shader;
 
+/* Android */
+#if android
+import android.content.Context as AndroidContext;
+#end
 
 using StringTools;
 #end

@@ -1,4 +1,4 @@
-importScript("PlayerProps");
+importScript("GameProperties");
 var idleTimer:Float = 0;
 var idleDelay:Float = 5.0;
 var isPlayingSpecialIdle:Bool = false;
@@ -12,20 +12,17 @@ class lacie {
 	}
 
 	function update(elapsed:Float) {
-		if (PlayerProps.sitting)
+		if (GameProperties.sitting)
 			return;
 
 		if (isPlayingSpecialIdle && (Controls.UP_P || Controls.DOWN_P || Controls.LEFT_P || Controls.RIGHT_P)) {
 			isPlayingSpecialIdle = false;
 			idleTimer = 0;
-			char.state = 0;
+			char.state = 0; // Reverts to Standing
 		}
 
-		var vx = char.isFollowingPath ? char.pathVelocity.x : char.velocity.x;
-		var vy = char.isFollowingPath ? char.pathVelocity.y : char.velocity.y;
-		var speed = Math.sqrt((vx * vx) + (vy * vy));
-
-		if (speed > 5) {
+		// Use keys instead of shitty weird walk thing
+		if (Controls.UP || Controls.DOWN || Controls.LEFT || Controls.RIGHT || char.isFollowingPath) {
 			idleTimer = 0;
 			isPlayingSpecialIdle = false;
 			return;
@@ -35,7 +32,7 @@ class lacie {
 			idleTimer += elapsed;
 
 			if (idleTimer >= idleDelay) {
-				var specialAnim = "standing_" + char.direction;
+				var specialAnim = "standing_" + char.direction.toUpperCase();
 
 				if (char.animData.exists(specialAnim)) {
 					isPlayingSpecialIdle = true;
@@ -48,7 +45,7 @@ class lacie {
 			if (char.visual.animation.curAnim == null || char.visual.animation.finished) {
 				isPlayingSpecialIdle = false;
 				idleTimer = 0;
-				char.state = 0;
+				char.state = 0; // Reverts to Standing
 			}
 		}
 	}

@@ -1,89 +1,92 @@
 package engine.states;
 
 class TitleMenu extends StateBackend {
-	var bg:FlxSprite;
-	var titleLogo:FlxSprite;
-	var extraInfoText:FlxText;
-	var versionInfoText:FlxText;
-
-	var menuFrame:MenuFrameNode;
+	var bg:LangSprite;
 
 	var hasSaveFile:Bool = false;
 
-	override public function create():Void {
+	override public function create() {
 		super.create();
-
 		for (slotNum in 0...31) {
 			var info = Game.save.getSlotInfo(slotNum);
 			if (!hasSaveFile && !info.isEmpty)
 				hasSaveFile = true;
 		}
 
-		bg = new FlxSprite(0, 0).loadGraphic(Assets.getImage('ui/titleBG'));
-		bg.setGraphicSize(1920, 1080);
-		bg.updateHitbox();
+		bg = new LangSprite(320, 180, Assets.getImagePath('ui/titleBG'));
+		bg.antialiasing = true;
+		bg.scale.set(1.5, 1.5);
 		add(bg);
 
-		titleLogo = new FlxSprite(1134, 282, Assets.getImage('ui/titleLogo'));
-		add(titleLogo);
+		menu = new NineNode(1300, 550, {
+			texture: 'ui/new/border',
+			bgTexture: 'ui/frames/frame_default_bg',
+			scaleFactor: 2,
+			widthOffset: -50,
 
-		extraInfoText = new FlxText(0, FlxG.height - 65, FlxG.width - 15, "", 24);
-		extraInfoText.alignment = RIGHT;
-		add(extraInfoText);
+			margin: {
+				left: 10,
+				top: 10,
+				right: 10,
+				bottom: 10
+			},
 
-		versionInfoText = new FlxText(0, FlxG.height - 35, FlxG.width - 15, "v1.1.6 Debug © Leef 6010 2024", 24);
-		versionInfoText.alignment = RIGHT;
-		add(versionInfoText);
-
-		simpleMenu = new SimpleVerticalMenu();
+			itemWidth: 300,
+			itemHeight: 45,
+			itemFontSize: 28,
+			itemSeparation: 45,
+			itemFont: 'AlegreyaSC',
+			maxBeforeScroll: 0,
+		});
+		add(menu);
 
 		if (hasSaveFile) {
-			simpleMenu.addEntry("system.menu.loadgame", function() {
+			menu.addEntry("system.menu.loadgame", function() {
 				openSubState(new SaveLoadMenu(false, true));
 			});
 		}
-		simpleMenu.addEntry("system.menu.newgame", function() {
-			startNewGame(new BaseRoom(Assets.getText('${Flags.roomFolder}start_room.txt').trim()));
+		menu.addEntry("system.menu.newgame", function() {
+			startNewGame(new BaseRoom(Assets.getText('${Flags.roomFolder}/start_room.txt').trim()));
 		});
-		simpleMenu.addEntry("system.menu.mods", function() {
+		menu.addEntry("system.menu.mods", function() {
 			openSubState(new ModSelectorMenu(function() {
-				StateBackend.switchState(new MainState());
+				FlxG.switchState(new MainState());
 			}));
 		});
-		simpleMenu.addEntry("system.menu.debugroom", function() {
+		menu.addEntry("system.menu.debugroom", function() {
 			startNewGame(new BaseRoom("DebugRoom"));
 		});
-		simpleMenu.addEntry("system.menu.settings", function() {
+		menu.addEntry("system.menu.settings", function() {
 			openSubState(new SettingsMenu());
 		});
-		simpleMenu.addEntry("system.menu.website.translator", function() {});
-		simpleMenu.addEntry("system.menu.quit", function() {
+		menu.addEntry("system.menu.website.translator", function() {});
+		menu.addEntry("Title Menu", function() {
+			FlxG.switchState(new TitleMenu());
+		});
+		menu.addEntry("system.menu.quit", function() {
 			System.exit(0);
 		});
 
-		var frameX:Float = 1300;
-		var frameY:Float = 561;
-		var layoutSpacing:Float = 50;
-
-		menuFrame = new MenuFrameNode(frameX, frameY, 400, (simpleMenu.entries.length * layoutSpacing) + 60, 0);
-		add(menuFrame);
-
-		simpleMenu.x = frameX;
-		simpleMenu.y = frameY + 30;
-		simpleMenu.itemWidth = 400;
-		simpleMenu.itemFontSize = 25;
-		simpleMenu.buildVisualList(layoutSpacing);
-		add(simpleMenu);
+		menu.buildVisualList();
 
 		#if FEATURE_TOUCH_CONTROLS
 		Game.mobileC.addDPad("FULL");
 		Game.mobileC.addButton("MENU");
 		#end
+
+		Discord.updatePresence('In the title menu', 'Mod: ${GamePrefs.currentMod}');
+	}
+
+	public override function closeSubState() {
+		super.closeSubState();
+		Discord.updatePresence('In the title menu', 'Mod: ${GamePrefs.currentMod}');
 	}
 
 	public function startNewGame(state:Dynamic) {
 		Game.save.reset();
 		Game.items.reset();
-		StateBackend.switchState(new BaseRoom("DebugRoom"));
+		var event = event("onStartingNewGame", new CancellableEvent());
+		if (!event.cancelled)
+			FlxG.switchState(state);
 	}
 }

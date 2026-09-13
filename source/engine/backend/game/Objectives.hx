@@ -1,10 +1,5 @@
 package engine.backend.game;
 
-import io.FileSystem;
-import lang.Lang;
-
-using StringTools;
-
 class Objectives {
 	public var objectives:Map<String, Objective>;
 
@@ -35,15 +30,15 @@ class Objectives {
 
 		var files:Array<String> = [];
 
-		if (Assets.exists(Flags.objectiveFolder) && Assets.isDirectory(Flags.objectiveFolder)) {
-			files = Assets.readDirectory(Flags.objectiveFolder);
+		if (Assets.exists('${Flags.objectiveFolder}/') && Assets.isDirectory('${Flags.objectiveFolder}/')) {
+			files = Assets.readDirectory('${Flags.objectiveFolder}/');
 		}
 
 		for (file in files) {
 			if (!file.endsWith(".json"))
 				continue;
 
-			var rawJson = Assets.getText(Flags.objectiveFolder + file);
+			var rawJson = Assets.getText('${Flags.objectiveFolder}/$file');
 
 			if (rawJson == null)
 				continue;
@@ -74,7 +69,6 @@ class Objectives {
 		obj.group = group;
 		obj.order = currentOrder;
 
-		// Strictly use language system identifiers instead of parsing strings from JSON
 		obj.name = 'objectives.name.${obj.id}';
 		obj.description = 'objectives.desc.${obj.id}';
 

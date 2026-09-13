@@ -1,0 +1,386 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://assets/fonts/NotoSans-Regular.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://assets/images/ui/phone/WhatsApp_Group.png" type="Texture" id=2]
+[ext_resource path="res://assets/images/ui/phone/WhatsApp_Buttons.png" type="Texture" id=3]
+[ext_resource path="res://assets/images/ui/phone/WhatsApp_BG.png" type="Texture" id=4]
+[ext_resource path="res://assets/images/ui/phone/WhatsApp_Bar.png" type="Texture" id=5]
+[ext_resource path="res://assets/images/ui/phone/WhatsApp_MessageBox.png" type="Texture" id=6]
+[ext_resource path="res://assets/images/ui/phone/WhatsApp_Bottom_Bar.png" type="Texture" id=7]
+
+[sub_resource type="DynamicFont" id=7]
+size = 14
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=8]
+size = 12
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=4]
+size = 10
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=5]
+size = 12
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=6]
+size = 12
+font_data = ExtResource( 1 )
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 1, 0, 0, 0 )
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 30
+border_color = Color( 0.611765, 0.0823529, 0.0823529, 1 )
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -1.0
+margin_right = -1.0
+
+[node name="PhoneScreen" type="ColorRect" parent="."]
+margin_left = 759.0
+margin_top = 84.0
+margin_right = 1239.0
+margin_bottom = 937.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="WhatsApp" type="Control" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="WP_BG" type="TextureRect" parent="WhatsApp"]
+margin_left = 759.0
+margin_top = 84.0
+margin_right = 1238.0
+margin_bottom = 936.0
+texture = ExtResource( 4 )
+expand = true
+stretch_mode = 1
+
+[node name="WP_Panel" type="TextureRect" parent="WhatsApp"]
+margin_left = 769.0
+margin_top = 94.0
+margin_right = 1229.0
+margin_bottom = 156.0
+texture = ExtResource( 5 )
+expand = true
+
+[node name="WP_Buttons" type="TextureRect" parent="WhatsApp"]
+margin_left = 1107.0
+margin_top = 94.0
+margin_right = 1229.0
+margin_bottom = 156.0
+texture = ExtResource( 3 )
+
+[node name="WP_Group" type="TextureRect" parent="WhatsApp"]
+margin_left = 769.0
+margin_top = 94.0
+margin_right = 982.0
+margin_bottom = 156.0
+texture = ExtResource( 2 )
+
+[node name="Name" type="Label" parent="WhatsApp/WP_Group"]
+margin_left = 7.0
+margin_top = 14.0
+margin_right = 251.0
+margin_bottom = 59.0
+custom_fonts/font = SubResource( 7 )
+text = "Ön Sokaklar Grubu"
+align = 1
+
+[node name="WP_Bottom_Panel" type="TextureRect" parent="WhatsApp"]
+margin_left = 769.0
+margin_top = 880.0
+margin_right = 1229.0
+margin_bottom = 907.0
+texture = ExtResource( 7 )
+expand = true
+
+[node name="Label" type="Label" parent="WhatsApp/WP_Bottom_Panel"]
+margin_left = 118.0
+margin_top = 5.0
+margin_right = 328.0
+margin_bottom = 22.0
+custom_fonts/font = SubResource( 8 )
+text = "Only admins can send messages"
+align = 1
+
+[node name="Messages" type="Control" parent="WhatsApp"]
+margin_left = 769.0
+margin_top = 156.0
+margin_right = 1229.0
+margin_bottom = 907.0
+
+[node name="Message1" type="NinePatchRect" parent="WhatsApp/Messages"]
+margin_left = 9.0
+margin_top = 7.0
+margin_right = 249.0
+margin_bottom = 96.0
+texture = ExtResource( 6 )
+
+[node name="Time" type="Label" parent="WhatsApp/Messages/Message1"]
+margin_left = 193.0
+margin_top = 70.0
+margin_right = 255.0
+margin_bottom = 93.0
+custom_fonts/font = SubResource( 4 )
+text = "6:39 AM"
+
+[node name="Name" type="Label" parent="WhatsApp/Messages/Message1"]
+margin_left = 10.0
+margin_top = 3.0
+margin_right = 54.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 5 )
+text = "A.L"
+
+[node name="Text" type="Label" parent="WhatsApp/Messages/Message1"]
+margin_left = 9.0
+margin_top = 19.0
+margin_right = 207.0
+margin_bottom = 76.0
+custom_fonts/font = SubResource( 6 )
+text = "Beyler bizimkilerin işi varmış ve
+eve gelmiceklermiş, okuldan sonra
+8-9 gibi takılmak isteyen varmı?"
+
+[node name="Message2" type="NinePatchRect" parent="WhatsApp/Messages"]
+margin_left = 9.0
+margin_top = 103.0
+margin_right = 216.0
+margin_bottom = 147.0
+texture = ExtResource( 6 )
+
+[node name="Time" type="Label" parent="WhatsApp/Messages/Message2"]
+margin_left = 162.0
+margin_top = 30.0
+margin_right = 224.0
+margin_bottom = 53.0
+custom_fonts/font = SubResource( 4 )
+text = "6:39 AM"
+
+[node name="Name" type="Label" parent="WhatsApp/Messages/Message2"]
+margin_left = 10.0
+margin_top = 3.0
+margin_right = 54.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 5 )
+
+[node name="Text" type="Label" parent="WhatsApp/Messages/Message2"]
+margin_left = 9.0
+margin_top = 3.0
+margin_right = 205.0
+margin_bottom = 40.0
+custom_fonts/font = SubResource( 6 )
+text = "Gelen olursa yemek içmek
+tamamen benden."
+
+[node name="Message3" type="NinePatchRect" parent="WhatsApp/Messages"]
+margin_left = 9.0
+margin_top = 155.0
+margin_right = 230.0
+margin_bottom = 218.0
+texture = ExtResource( 6 )
+
+[node name="Time" type="Label" parent="WhatsApp/Messages/Message3"]
+margin_left = 177.0
+margin_top = 47.0
+margin_right = 239.0
+margin_bottom = 70.0
+custom_fonts/font = SubResource( 4 )
+text = "6:53 AM"
+
+[node name="Name" type="Label" parent="WhatsApp/Messages/Message3"]
+margin_left = 10.0
+margin_top = 3.0
+margin_right = 54.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 5 )
+text = "K.O"
+
+[node name="Text" type="Label" parent="WhatsApp/Messages/Message3"]
+margin_left = 9.0
+margin_top = 19.0
+margin_right = 77.0
+margin_bottom = 36.0
+custom_fonts/font = SubResource( 6 )
+text = "Beleş ha, keşke gelebilsem
+ama bizimkiler izin vermez :("
+
+[node name="Message4" type="NinePatchRect" parent="WhatsApp/Messages"]
+margin_left = 9.0
+margin_top = 227.0
+margin_right = 230.0
+margin_bottom = 290.0
+texture = ExtResource( 6 )
+
+[node name="Time" type="Label" parent="WhatsApp/Messages/Message4"]
+margin_left = 177.0
+margin_top = 47.0
+margin_right = 239.0
+margin_bottom = 70.0
+custom_fonts/font = SubResource( 4 )
+text = "7:17 AM"
+
+[node name="Name" type="Label" parent="WhatsApp/Messages/Message4"]
+margin_left = 10.0
+margin_top = 3.0
+margin_right = 54.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 5 )
+text = "ZackLabs"
+
+[node name="Text" type="Label" parent="WhatsApp/Messages/Message4"]
+margin_left = 9.0
+margin_top = 19.0
+margin_right = 77.0
+margin_bottom = 36.0
+custom_fonts/font = SubResource( 6 )
+text = "Bizimkilerde bir süreliğine evde yok,
+ben gelebilirim galiba"
+
+[node name="Message5" type="NinePatchRect" parent="WhatsApp/Messages"]
+margin_left = 9.0
+margin_top = 299.0
+margin_right = 286.0
+margin_bottom = 341.0
+texture = ExtResource( 6 )
+
+[node name="Time" type="Label" parent="WhatsApp/Messages/Message5"]
+margin_left = 234.0
+margin_top = 26.0
+margin_right = 296.0
+margin_bottom = 49.0
+custom_fonts/font = SubResource( 4 )
+text = "7:19 AM"
+
+[node name="Name" type="Label" parent="WhatsApp/Messages/Message5"]
+margin_left = 10.0
+margin_top = 3.0
+margin_right = 54.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 5 )
+text = "A.L"
+
+[node name="Text" type="Label" parent="WhatsApp/Messages/Message5"]
+margin_left = 9.0
+margin_top = 19.0
+margin_right = 77.0
+margin_bottom = 36.0
+custom_fonts/font = SubResource( 6 )
+text = "Anlaştık o zaman,  8:30 civarı [link]'de ol"
+
+[node name="Message6" type="NinePatchRect" parent="WhatsApp/Messages"]
+margin_left = 9.0
+margin_top = 347.0
+margin_right = 205.0
+margin_bottom = 388.0
+texture = ExtResource( 6 )
+patch_margin_left = 1
+patch_margin_top = 1
+patch_margin_right = 1
+patch_margin_bottom = 1
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="Time" type="Label" parent="WhatsApp/Messages/Message6"]
+margin_left = 152.0
+margin_top = 25.0
+margin_right = 214.0
+margin_bottom = 48.0
+custom_fonts/font = SubResource( 4 )
+text = "7:21 AM"
+
+[node name="Name" type="Label" parent="WhatsApp/Messages/Message6"]
+margin_left = 10.0
+margin_top = 3.0
+margin_right = 54.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 5 )
+text = "ZackLabs"
+
+[node name="Text" type="Label" parent="WhatsApp/Messages/Message6"]
+margin_left = 9.0
+margin_top = 19.0
+margin_right = 77.0
+margin_bottom = 36.0
+custom_fonts/font = SubResource( 6 )
+text = "Anlaştık orada olacağım"
+
+[node name="Message7" type="NinePatchRect" parent="WhatsApp/Messages"]
+margin_left = 9.0
+margin_top = 395.0
+margin_right = 311.0
+margin_bottom = 439.0
+texture = ExtResource( 6 )
+
+[node name="Time" type="Label" parent="WhatsApp/Messages/Message7"]
+margin_left = 257.0
+margin_top = 27.0
+margin_right = 319.0
+margin_bottom = 50.0
+custom_fonts/font = SubResource( 4 )
+text = "7:46 AM"
+
+[node name="Name" type="Label" parent="WhatsApp/Messages/Message7"]
+margin_left = 10.0
+margin_top = 3.0
+margin_right = 54.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 5 )
+text = "ZackLabs"
+
+[node name="Text" type="Label" parent="WhatsApp/Messages/Message7"]
+margin_left = 9.0
+margin_top = 19.0
+margin_right = 214.0
+margin_bottom = 56.0
+custom_fonts/font = SubResource( 6 )
+text = "Ayrıca yanımda birini getirmeşansım varmı?"
+
+[node name="Message8" type="NinePatchRect" parent="WhatsApp/Messages"]
+margin_left = 9.0
+margin_top = 448.0
+margin_right = 338.0
+margin_bottom = 511.0
+texture = ExtResource( 6 )
+
+[node name="Time" type="Label" parent="WhatsApp/Messages/Message8"]
+margin_left = 283.0
+margin_top = 44.0
+margin_right = 345.0
+margin_bottom = 67.0
+custom_fonts/font = SubResource( 4 )
+text = "7:52 AM"
+
+[node name="Name" type="Label" parent="WhatsApp/Messages/Message8"]
+margin_left = 10.0
+margin_top = 3.0
+margin_right = 54.0
+margin_bottom = 20.0
+custom_fonts/font = SubResource( 5 )
+text = "A.L"
+
+[node name="Text" type="Label" parent="WhatsApp/Messages/Message8"]
+margin_left = 9.0
+margin_top = 19.0
+margin_right = 77.0
+margin_bottom = 36.0
+custom_fonts/font = SubResource( 6 )
+text = "Sorun olmaz, ne kadar fazla kişi olursak o kadar iyi
+zaten [emote]"
+
+[node name="PhoneCase" type="Panel" parent="."]
+margin_left = 759.0
+margin_top = 84.0
+margin_right = 1239.0
+margin_bottom = 937.0
+custom_styles/panel = SubResource( 1 )
+
+[node name="Node2D" type="Node2D" parent="."]
+rotation = 0.349066

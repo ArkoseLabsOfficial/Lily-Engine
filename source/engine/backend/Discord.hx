@@ -10,7 +10,7 @@ class Discord {
 
 		DiscordRPC.Initialize(discordClientID, null, true, null);
 
-		updatePresence("RPC Test", "Lily Engine v0.1.0 Alpha");
+		updatePresence("Base Engine", "Loading");
 
 		sys.thread.Thread.create(() -> {
 			while (true) {
@@ -35,5 +35,11 @@ class Discord {
 	public static function shutdown():Void {
 		DiscordRPC.Shutdown();
 	}
+}
+#else
+class Discord {
+	public static function initialize():Void {}
+	public static function updatePresence(details:String, state:String):Void {}
+	public static function shutdown():Void {}
 }
 #end

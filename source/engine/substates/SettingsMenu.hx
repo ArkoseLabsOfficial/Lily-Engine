@@ -11,7 +11,10 @@ import flixel.text.FlxText;
 import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.util.FlxTimer;
+import flixel.group.FlxSpriteGroup;
+import flixel.FlxSubState;
 import haxe.xml.Access;
+import engine.ui.NineNode;
 
 typedef XmlOption = {
 	var label:String;
@@ -35,20 +38,12 @@ class SettingsMenu extends SubStateBackend {
 	public var optionGap:Float = 80;
 	public var fromPause:Bool = false;
 
-	public var menuFrame:MenuFrameNode;
-	public var settingsMenu:SimpleSettingsMenu;
-
+	public var menuNode:NineNode;
 	public var options:Array<XmlOption> = [];
-	public var currentMenuId:String;
-
-	public var xmlMenuWidth:Null<Float> = null;
-	public var xmlMenuHeight:Null<Float> = null;
-
 	public var canInput:Bool = false;
 
-	public function new(menuId:String = "main", fromPause:Bool = false) {
+	public function new(fromPause:Bool = false) {
 		super(0x99000000);
-		currentMenuId = menuId;
 		this.fromPause = fromPause;
 	}
 
@@ -58,80 +53,182 @@ class SettingsMenu extends SubStateBackend {
 		if (fromPause)
 			camMenu.scroll.set(-230, 40);
 
-		parseXML(currentMenuId);
+		parseXML();
 
 		var textScale = 1.0;
 		var frameScale = fromPause ? 1.3 : 1.0;
 
-		var useTitle = currentMenuId != "main";
-
 		optionGap *= textScale;
-		var numItems = options.length;
-		if (useTitle) {
-			numItems += 1;
-		}
+		var numItems = options.length + 1;
 
 		var contentHeight = numItems * optionGap;
-
-		var targetWidth = fromPause ? 1452.0 : (xmlMenuWidth != null ? xmlMenuWidth * frameScale : (600.0 * frameScale));
-		var targetHeight = fromPause ? 985.0 : (xmlMenuHeight != null ? xmlMenuHeight * frameScale : Math.min(contentHeight, 550.0 * frameScale)
-			+ ((useTitle ? 180.0 : 120.0) * frameScale));
-		var viewHeight = targetHeight - ((useTitle ? 180.0 : 120.0) * frameScale);
+		var targetWidth = fromPause ? 1452.0 : (600.0 * frameScale);
+		var targetHeight = fromPause ? 985.0 : (Math.min(contentHeight, 550.0 * frameScale) + (120.0 * frameScale));
 
 		var entryWidth = targetWidth * 0.85;
 
-		menuFrame = new MenuFrameNode(0, 0, targetWidth, targetHeight, useTitle ? 2 : 0);
+		var data:NineNodeMenuData = {
+			width: targetWidth,
+			height: targetHeight,
+			itemWidth: entryWidth,
+			itemHeight: optionGap - 10,
+			itemFontSize: Std.int(28 * textScale),
+			itemSeparation: optionGap,
+			itemAlignment: CENTER,
+			maxBeforeScroll: fromPause ? 11 : 9,
+			title: null,
+			titleTexture: "ui/dividers/divider_md",
+			listAlignment: "center",
+			texture: 'ui/frames/frame_default',
+			bgTexture: 'ui/frames/frame_default_bg',
+			bgMaskTexture: 'ui/masks/frame_default_bg_mask',
+			margin: {
+				left: 123,
+				top: 142,
+				right: 123,
+				bottom: 120
+			},
+			scaleFactor: 0.45
+		};
 
-		menuFrame.screenCenter();
-		menuFrame.x = Math.floor(menuFrame.x);
-		menuFrame.y = Math.floor(menuFrame.y);
+		menuNode = new NineNode(0, 0, data);
+
+		for (opt in options) {
+			menuNode.addEntry(opt.label, function() {
+				if (canInput) {
+					FlxG.sound.play(Flags.CONFIRM);
+					if (opt.target == "language") {
+						openSubState(new LanguageMenu());
+					} else {
+						openSubState(new OptionsMenu(opt.target, fromPause));
+					}
+				}
+			});
+		}
+
+		menuNode.buildVisualList();
+		menuNode.screenCenter();
+
+		add(menuNode);
+
+		new FlxTimer().start(0.1, function(_) {
+			canInput = true;
+		});
+
+		Discord.updatePresence("In the settings menu", 'Mod: ${GamePrefs.currentMod}');
+	}
+
+	override public function update(elapsed:Float):Void {
+		if (menuNode != null) {
+			menuNode.canInput = canInput;
+		}
+		super.update(elapsed);
+		if (canInput && Controls.BACK) {
+			FlxG.sound.play(Flags.CANCEL);
+			close();
+			GamePrefs.saveSettings();
+		}
+	}
+
+	function parseXML():Void {
+		var xmlString = Assets.getText(Flags.settingsFile);
+		var xml = new Access(Xml.parse(xmlString).firstElement());
+		for (menuNode in xml.nodes.menu) {
+			if (menuNode.att.id == "main") {
+				for (cat in menuNode.nodes.category) {
+					if (cat.att.label == "system.settings.ui.language" && fromPause)
+						continue;
+					options.push({label: cat.att.label, target: cat.att.target, type: "category"});
+				}
+				break;
+			}
+		}
+	}
+}
+
+class OptionsMenu extends SubStateBackend {
+	public var uiScale:Float = 1.0;
+	public var optionGap:Float = 80;
+	public var fromPause:Bool = false;
+
+	public var menuNode:OptionsNode;
+	public var options:Array<XmlOption> = [];
+	public var menuId:String;
+
+	public var xmlMenuWidth:Null<Float> = null;
+	public var xmlMenuHeight:Null<Float> = null;
+
+	public var canInput:Bool = false;
+
+	public function new(menuId:String, fromPause:Bool = false) {
+		super(0x99000000);
+		this.menuId = menuId;
+		this.fromPause = fromPause;
+	}
+
+	override public function create():Void {
+		super.create();
 
 		if (fromPause)
-			menuFrame.y += 2;
+			camMenu.scroll.set(-230, 40);
 
-		if (useTitle) {
-			menuFrame.setTitle(options[0] != null ? "system.settings.ui." + currentMenuId : "Settings");
-		}
+		parseXML();
 
-		add(menuFrame);
+		var textScale = 1.0;
+		var frameScale = fromPause ? 1.3 : 1.0;
 
-		settingsMenu = new SimpleSettingsMenu(this);
-		settingsMenu.buildOptions(options, entryWidth, textScale, optionGap, currentMenuId);
+		optionGap *= textScale;
+		var numItems = options.length + 1;
 
-		menuFrame.addMenu(settingsMenu);
+		var contentHeight = numItems * optionGap;
+		var targetWidth = fromPause ? 1452.0 : (xmlMenuWidth != null ? xmlMenuWidth * frameScale : (600.0 * frameScale));
+		var targetHeight = fromPause ? 985.0 : (xmlMenuHeight != null ? xmlMenuHeight * frameScale : Math.min(contentHeight, 550.0 * frameScale)
+			+ (180.0 * frameScale));
 
-		var menuBaseY = Math.floor(menuFrame.y + (targetHeight - viewHeight) / 2);
+		var entryWidth = targetWidth * 0.85;
 
-		if (useTitle) {
-			menuBaseY += Math.floor(35 * frameScale);
-		}
+		var data:NineNodeMenuData = {
+			width: targetWidth,
+			height: targetHeight,
+			itemWidth: entryWidth,
+			itemHeight: optionGap - 10,
+			itemFontSize: Std.int(28 * textScale),
+			itemSeparation: optionGap,
+			itemAlignment: GameTextAlign.CENTER,
+			maxBeforeScroll: fromPause ? 11 : 9,
+			title: options[0] != null ? "system.settings.ui." + menuId : "Settings",
+			titleTexture: "ui/dividers/divider_md",
+			listAlignment: "top",
+			texture: 'ui/frames/frame_menu_2',
+			bgTexture: 'ui/frames/frame_menu_bg',
+			margin: {
+				left: 50,
+				top: 50,
+				right: 50,
+				bottom: 50
+			},
+			scaleFactor: 0.75
+		};
 
-		settingsMenu.baseY = menuBaseY;
-		settingsMenu.viewHeight = viewHeight;
+		menuNode = new OptionsNode(0, 0, data, this);
+		menuNode.buildOptions(options, textScale);
 
-		settingsMenu.x = Math.floor(menuFrame.x + (targetWidth - entryWidth) / 2);
-		settingsMenu.y = menuBaseY;
+		menuNode.screenCenter();
+		menuNode.x = Math.floor(menuNode.x);
+		menuNode.y = Math.floor(menuNode.y);
+		if (fromPause)
+			menuNode.y += 2;
 
-		settingsMenu.clipMask = new ClipMask(menuFrame.x, menuBaseY, targetWidth, viewHeight);
+		add(menuNode);
 
 		new FlxTimer().start(0.1, function(_) {
 			canInput = true;
 		});
 	}
 
-	override public function openSubState(SubState:FlxSubState):Void {
-		canInput = false;
-		super.openSubState(SubState);
-	}
-
-	override public function closeSubState():Void {
-		canInput = true;
-		super.closeSubState();
-	}
-
 	override public function update(elapsed:Float):Void {
-		if (settingsMenu != null) {
-			settingsMenu.canInput = this.canInput;
+		if (menuNode != null) {
+			menuNode.canInput = canInput;
 		}
 		super.update(elapsed);
 	}
@@ -220,7 +317,7 @@ class SettingsMenu extends SubStateBackend {
 		}
 	}
 
-	function parseXML(menuId:String):Void {
+	function parseXML():Void {
 		var xmlString = Assets.getText(Flags.settingsFile);
 		var xml = new Access(Xml.parse(xmlString).firstElement());
 		for (menuNode in xml.nodes.menu) {
@@ -230,68 +327,60 @@ class SettingsMenu extends SubStateBackend {
 				if (menuNode.has.height)
 					xmlMenuHeight = Std.parseFloat(menuNode.att.height);
 
-				if (menuId == "main") {
-					for (cat in menuNode.nodes.category) {
-						if (cat.att.label == "system.settings.ui.language" && fromPause)
-							continue;
-						options.push({label: cat.att.label, target: cat.att.target, type: "category"});
+				for (opt in menuNode.nodes.option) {
+					var newOpt:XmlOption = {
+						label: opt.att.label,
+						type: opt.att.type,
+						variable: opt.has.variable ? opt.att.variable : ""
+					};
+
+					if (opt.has.resolve("default"))
+						newOpt.defaultValue = opt.att.resolve("default");
+					if (opt.has.values)
+						newOpt.values = opt.att.values.split(",");
+					if (opt.has.min)
+						newOpt.min = Std.parseFloat(opt.att.min);
+					if (opt.has.max)
+						newOpt.max = Std.parseFloat(opt.att.max);
+					if (opt.has.step)
+						newOpt.step = Std.parseFloat(opt.att.step);
+					if (opt.has.scrollSpeed)
+						newOpt.scrollSpeed = Std.parseFloat(opt.att.scrollSpeed);
+					if (newOpt.type == "keybind" && newOpt.variable != "") {
+						if (opt.has.keyPath)
+							newOpt.keyPath = opt.att.keyPath;
 					}
-				} else {
-					for (opt in menuNode.nodes.option) {
-						var newOpt:XmlOption = {
-							label: opt.att.label,
-							type: opt.att.type,
-							variable: opt.has.variable ? opt.att.variable : ""
+
+					var scriptCode = "";
+					for (node in opt.x.iterator()) {
+						if (node.nodeType == Xml.PCData || node.nodeType == Xml.CData) {
+							scriptCode += node.nodeValue;
+						}
+					}
+
+					scriptCode = StringTools.trim(scriptCode);
+
+					if (scriptCode != "") {
+						var runner = function(?val:Dynamic) {
+							#if FEATURE_HSCRIPT
+							var sName = (newOpt.variable != "" ? newOpt.variable : "option") + "_script.hx";
+							var script = new HScript(sName);
+							script.loadFromString(scriptCode);
+							script.set("value", val);
+							script.load();
+							#else
+							FlxG.log.warn("HScript is not enabled! Script for " + newOpt.label + " won't run.");
+							#end
 						};
 
-						if (opt.has.resolve("default"))
-							newOpt.defaultValue = opt.att.resolve("default");
-						if (opt.has.values)
-							newOpt.values = opt.att.values.split(",");
-						if (opt.has.min)
-							newOpt.min = Std.parseFloat(opt.att.min);
-						if (opt.has.max)
-							newOpt.max = Std.parseFloat(opt.att.max);
-						if (opt.has.step)
-							newOpt.step = Std.parseFloat(opt.att.step);
-						if (opt.has.scrollSpeed)
-							newOpt.scrollSpeed = Std.parseFloat(opt.att.scrollSpeed);
-						if (newOpt.type == "keybind" && newOpt.variable != "") {
-							if (opt.has.keyPath)
-								newOpt.keyPath = opt.att.keyPath;
+						if (newOpt.type == "button") {
+							newOpt.onClicked = function() runner();
+						} else {
+							newOpt.onChanged = function(v) runner(v);
 						}
-
-						var scriptCode = "";
-						for (node in opt.x.iterator()) {
-							if (node.nodeType == Xml.PCData || node.nodeType == Xml.CData) {
-								scriptCode += node.nodeValue;
-							}
-						}
-
-						scriptCode = StringTools.trim(scriptCode);
-
-						if (scriptCode != "") {
-							var runner = function(?val:Dynamic) {
-								#if FEATURE_HSCRIPT
-								var sName = (newOpt.variable != "" ? newOpt.variable : "option") + "_script.hx";
-								var script = new HScript(sName);
-								script.loadFromString(scriptCode);
-								script.set("value", val);
-								script.load();
-								#else
-								FlxG.log.warn("HScript is not enabled! Script for " + newOpt.label + " won't run.");
-								#end
-							};
-
-							if (newOpt.type == "button") {
-								newOpt.onClicked = function() runner();
-							} else {
-								newOpt.onChanged = function(v) runner(v);
-							}
-						}
-
-						options.push(newOpt);
 					}
+
+					options.push(newOpt);
 				}
 				break;
 			}
@@ -299,99 +388,54 @@ class SettingsMenu extends SubStateBackend {
 	}
 }
 
-class SimpleSettingsMenu extends SimpleVerticalMenu {
+class OptionsNode extends NineNode {
 	public var options:Array<XmlOption> = [];
 	public var uiScale:Float = 1.0;
-	public var optionGap:Float = 72;
-	public var currentMenuId:String = "main";
 	public var isListening:Bool = false;
-	public var parentState:SettingsMenu;
+	public var parentState:OptionsMenu;
 
 	public var typedVisualItems:Array<SettingsVisualEntry> = [];
-	public var clipMask:ClipMask;
-
-	public var baseY:Float = 0;
-	public var viewHeight:Float = 0;
-	public var scrollY:Float = 0;
-	public var scrollLerp:Float = 0;
 
 	private var holdTime:Float = 0;
 	private var holdDir:Int = 0;
 	private var currentScrollTimer:Float = 0;
 
-	public function new(parent:SettingsMenu) {
-		super();
+	public function new(x:Float, y:Float, data:NineNodeMenuData, parent:OptionsMenu) {
+		super(x, y, data);
 		this.parentState = parent;
 	}
 
-	public function buildOptions(opts:Array<XmlOption>, entryWidth:Float, scale:Float, gap:Float, menuId:String):Void {
+	public function buildOptions(opts:Array<XmlOption>, scale:Float):Void {
 		this.options = opts;
 		this.uiScale = scale;
-		this.optionGap = gap;
-		this.itemWidth = entryWidth;
-		this.currentMenuId = menuId;
 
-		clearItems();
+		for (opt in options)
+			addEntry(opt.label, null);
+
+		addEntry("system.settings.ui.back", null);
+
+		super.buildVisualList();
+
 		typedVisualItems = [];
+		var numOpts = options.length;
 
-		for (i in 0...options.length) {
-			var opt = options[i];
-			var entry = new SettingsVisualEntry(0, i * optionGap, opt, entryWidth, optionGap, uiScale);
+		for (i in 0...visualItems.length) {
+			var group = visualItems[i];
+			var isBackBtn = (i == numOpts);
+			var opt = isBackBtn ? {label: "system.settings.ui.back", type: "button", variable: ""} : options[i];
 
+			var oldTxt = group.members[1];
+			group.remove(oldTxt, true);
+			oldTxt.destroy();
+
+			var entry = new SettingsVisualEntry(0, 0, opt, itemWidth, itemHeight, uiScale);
+			group.add(entry);
 			typedVisualItems.push(entry);
-			visualItems.push(entry);
-			add(entry);
 
-			if (currentMenuId != "main" && opt.type != "category" && opt.type != "button") {
+			if (opt.type != "category" && opt.type != "button") {
 				parentState.ensureDefaultData(opt);
 			}
 		}
-
-		if (currentMenuId != "main") {
-			var backOpt:XmlOption = {label: "system.settings.ui.back", type: "button", variable: ""};
-			var backEntry = new SettingsVisualEntry(0, options.length * optionGap, backOpt, entryWidth, optionGap, uiScale);
-			typedVisualItems.push(backEntry);
-			visualItems.push(backEntry);
-			add(backEntry);
-		}
-
-		highlightSelection();
-	}
-
-	override public function highlightSelection():Void {
-		super.highlightSelection();
-
-		if (viewHeight > 0) {
-			var selectedY = selection * optionGap;
-			if (selectedY < scrollY) {
-				scrollY = selectedY;
-			} else if (selectedY + optionGap > scrollY + viewHeight) {
-				scrollY = selectedY + optionGap - viewHeight;
-			}
-
-			var maxScroll = Math.max(0, typedVisualItems.length * optionGap - viewHeight);
-			if (scrollY > maxScroll)
-				scrollY = maxScroll;
-			if (scrollY < 0)
-				scrollY = 0;
-		}
-	}
-
-	override public function update(elapsed:Float):Void {
-		super.update(elapsed);
-
-		if (viewHeight > 0 && baseY != 0) {
-			scrollLerp += (scrollY - scrollLerp) * (elapsed * 10);
-			this.y = baseY - scrollLerp;
-
-			if (clipMask != null) {
-				clipMask.apply(this);
-			}
-		}
-	}
-
-	override public function getListLength():Int {
-		return typedVisualItems.length;
 	}
 
 	override public function handleInput():Void {
@@ -402,14 +446,12 @@ class SimpleSettingsMenu extends SimpleVerticalMenu {
 
 		super.handleInput();
 
-		if (selection < options.length && currentMenuId != "main") {
+		if (selection < options.length) {
 			var opt = options[selection];
-
 			var leftP = Controls.LEFT_P;
 			var rightP = Controls.RIGHT_P;
 			var left = Controls.LEFT;
 			var right = Controls.RIGHT;
-
 			var speedScrollDelay = 0.4;
 
 			if (leftP || rightP) {
@@ -420,10 +462,10 @@ class SimpleSettingsMenu extends SimpleVerticalMenu {
 				FlxG.sound.play(Flags.NAVIGATE);
 			} else if ((left && holdDir == -1) || (right && holdDir == 1)) {
 				if (opt.type == "int" || opt.type == "float" || opt.type == "percent") {
-					holdTime += flixel.FlxG.elapsed;
+					holdTime += FlxG.elapsed;
 					if (holdTime > speedScrollDelay) {
 						var speed = opt.scrollSpeed != null ? opt.scrollSpeed : 0.05;
-						currentScrollTimer += flixel.FlxG.elapsed;
+						currentScrollTimer += FlxG.elapsed;
 						while (currentScrollTimer >= speed) {
 							currentScrollTimer -= speed;
 							parentState.adjustOption(opt, holdDir, typedVisualItems[selection]);
@@ -436,7 +478,7 @@ class SimpleSettingsMenu extends SimpleVerticalMenu {
 			}
 		}
 
-		if (Controls.CANCEL) {
+		if (Controls.BACK) {
 			FlxG.sound.play(Flags.CANCEL);
 			parentState.close();
 			GamePrefs.saveSettings();
@@ -454,22 +496,17 @@ class SimpleSettingsMenu extends SimpleVerticalMenu {
 		if (opt.onClicked != null)
 			opt.onClicked();
 
-		if (currentMenuId == "main") {
+		if (opt.type == "bool") {
 			FlxG.sound.play(Flags.CONFIRM);
-			if (opt.target == "language")
-				parentState.openSubState(new LanguageMenu());
-			else
-				parentState.openSubState(new SettingsMenu(opt.target, parentState.fromPause));
-		} else {
-			if (opt.type == "bool") {
-				FlxG.sound.play(Flags.CONFIRM);
-				parentState.adjustOption(opt, 1, typedVisualItems[selection]);
-			}
-			if (opt.type == "keybind") {
-				FlxG.sound.play(Flags.CONFIRM);
-				isListening = true;
-				typedVisualItems[selection].setListeningState();
-			}
+			parentState.adjustOption(opt, 1, typedVisualItems[selection]);
+		}
+		if (opt.type == "keybind") {
+			FlxG.sound.play(Flags.CONFIRM);
+			isListening = true;
+			typedVisualItems[selection].setListeningState();
+
+			var bgSprite:FlxSprite = cast visualItems[selection].members[0];
+			bgSprite.makeGraphic(Std.int(bgSprite.width), Std.int(bgSprite.height), 0x77FFD700);
 		}
 	}
 
@@ -512,7 +549,7 @@ class SimpleSettingsMenu extends SimpleVerticalMenu {
 	}
 }
 
-class SettingsVisualEntry extends MenuVisualEntry {
+class SettingsVisualEntry extends FlxSpriteGroup {
 	public var valueText:FlxText;
 	public var optionLabel:LangText;
 	public var optData:XmlOption;
@@ -524,7 +561,7 @@ class SettingsVisualEntry extends MenuVisualEntry {
 	public var entryHeight:Float;
 
 	public function new(X:Float, Y:Float, opt:XmlOption, width:Float, height:Float, scale:Float) {
-		super(Math.floor(X), Math.floor(Y), "", width, height);
+		super(Math.floor(X), Math.floor(Y));
 
 		this.optData = opt;
 		this.internalScale = scale;
@@ -534,10 +571,9 @@ class SettingsVisualEntry extends MenuVisualEntry {
 		var ts = Std.int(28 * scale);
 
 		optionLabel = new LangText(0, 0, 0, opt.label, null, ts);
-
 		add(optionLabel);
 
-		valueText = new FlxText(0, 0, 0, "needed for fixing text issue lol", ts); // text basically fixes the font issue idk why lmao.
+		valueText = new FlxText(0, 0, 0, "needed for fixing text issue lol", ts);
 		add(valueText);
 
 		if (opt.type == "keybind" && opt.keyPath != null) {
@@ -634,7 +670,6 @@ class SettingsVisualEntry extends MenuVisualEntry {
 	public function setListeningState():Void {
 		isListening = true;
 		valueText.text = Lang.get("system.settings.ui.waiting");
-		bg.makeGraphic(Std.int(bg.width), Std.int(bg.height), 0x77FFD700);
 		if (keySprites != null) {
 			keySprites[0].visible = false;
 			keySprites[1].visible = false;

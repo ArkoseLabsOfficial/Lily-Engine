@@ -1,0 +1,163 @@
+[gd_scene load_steps=29 format=2]
+
+[ext_resource path="res://script/Subgame/Chapter1/Ch1MinigameBattleMkPt1.cs" type="Script" id=1]
+[ext_resource path="res://assets/sprite/ch1/minigame/battle/mk_panel.png" type="Texture" id=2]
+[ext_resource path="res://assets/sprite/ch1/minigame/battle/default_panel_mask.png" type="Texture" id=3]
+[ext_resource path="res://assets/sprite/ch1/minigame/battle/panel_exclamation.png" type="Texture" id=4]
+[ext_resource path="res://resources/material/transition_saw.tres" type="Material" id=5]
+[ext_resource path="res://assets/sfx/battle_intro.ogg" type="AudioStream" id=6]
+[ext_resource path="res://assets/sfx/minigame_damage.ogg" type="AudioStream" id=7]
+[ext_resource path="res://assets/sfx/minigame_death.ogg" type="AudioStream" id=8]
+[ext_resource path="res://assets/sprite/common/minigame/battle/hud_lacie.png" type="Texture" id=9]
+[ext_resource path="res://assets/sprite/common/minigame/battle/hud_hp_full.png" type="Texture" id=10]
+[ext_resource path="res://assets/sprite/common/minigame/battle/hud_hp_empty.png" type="Texture" id=11]
+[ext_resource path="res://assets/sprite/ch1/minigame/battle/mk_atk_knife.png" type="Texture" id=12]
+[ext_resource path="res://assets/sprite/ch1/minigame/battle/mk_atk_knife_2.png" type="Texture" id=13]
+[ext_resource path="res://assets/sprite/ch1/minigame/battle/mk_atk_knife_3.png" type="Texture" id=14]
+[ext_resource path="res://assets/sfx/ch1_stab.ogg" type="AudioStream" id=15]
+[ext_resource path="res://assets/sfx/slice2.ogg" type="AudioStream" id=16]
+[ext_resource path="res://assets/sfx/fire2.ogg" type="AudioStream" id=17]
+[ext_resource path="res://assets/bgm/ch1_mk_boss_0.ogg" type="AudioStream" id=18]
+[ext_resource path="res://assets/bgm/ch1_mk_boss_a.ogg" type="AudioStream" id=19]
+[ext_resource path="res://assets/bgm/ch1_mk_boss_b.ogg" type="AudioStream" id=20]
+[ext_resource path="res://assets/bgm/ch1_mk_boss_c.ogg" type="AudioStream" id=21]
+[ext_resource path="res://assets/sprite/common/tiles_black.png" type="Texture" id=22]
+[ext_resource path="res://resources/material/sfx_squishscroll.tres" type="Material" id=23]
+[ext_resource path="res://assets/sprite/ch1/minigame/battle/mk_bg.png" type="Texture" id=24]
+[ext_resource path="res://assets/sprite/ch1/minigame/battle/mk_bg_frame.png" type="Texture" id=25]
+[ext_resource path="res://assets/sprite/ch1/minigame/battle/mk_char.png" type="Texture" id=26]
+[ext_resource path="res://assets/sprite/common/white.png" type="Texture" id=27]
+[ext_resource path="res://assets/sprite/ch1/minigame/battle/mk_chain_1.png" type="Texture" id=28]
+
+[node name="Battle_MissKnives" type="Control"]
+
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -186.0
+margin_bottom = -39.0
+rect_min_size = Vector2( 640, 360 )
+script = ExtResource( 1 )
+Width = 7
+Height = 4
+CellPadding = Vector2( 1, 1 )
+PlayArea = Rect2( 0, 158, 640, 184 )
+texPanel = ExtResource( 2 )
+texPanelMask = ExtResource( 3 )
+texPanelAlert = ExtResource( 4 )
+SuccessEvent = "ch1_event_mk_phase2"
+FailureEvent = "ch1_death_mk_pt1"
+TimeoutWin = true
+TimeoutTime = 68.0
+PlayerColor = Color( 1, 1, 1, 0.27451 )
+TelegraphColor = Color( 1, 0.501961, 0.501961, 1 )
+TelegraphColor2 = Color( 1, 1, 1, 1 )
+DamageColor = Color( 1, 0.788235, 0.419608, 0.392157 )
+matTransition = ExtResource( 5 )
+sfxTransition = ExtResource( 6 )
+sfxDamage = ExtResource( 7 )
+sfxDeath = ExtResource( 8 )
+texUi = ExtResource( 9 )
+texHpFull = ExtResource( 10 )
+texHpEmpty = ExtResource( 11 )
+texKnife = ExtResource( 12 )
+texKnifePanel = ExtResource( 13 )
+texKnifeSlash = ExtResource( 14 )
+sfxStab = ExtResource( 15 )
+sfxSlash = ExtResource( 16 )
+sfxFire = ExtResource( 17 )
+bgmPart0 = ExtResource( 18 )
+bgmPartA = ExtResource( 19 )
+bgmPartB = ExtResource( 20 )
+bgmPartC = ExtResource( 21 )
+
+[node name="TilesBlack" type="Sprite" parent="."]
+
+position = Vector2( 320, 180 )
+scale = Vector2( 20, 11.25 )
+texture = ExtResource( 22 )
+
+[node name="Bg" type="Node2D" parent="."]
+
+[node name="BgAnim" type="Sprite" parent="Bg"]
+
+material = ExtResource( 23 )
+position = Vector2( 319.679, 180 )
+scale = Vector2( 0.642, 0.514286 )
+texture = ExtResource( 24 )
+offset = Vector2( 0.5, 0 )
+
+[node name="MkBgFrame" type="Sprite" parent="Bg"]
+
+position = Vector2( 196, 65 )
+texture = ExtResource( 25 )
+
+[node name="MkBgFrame2" type="Sprite" parent="Bg"]
+
+position = Vector2( 238, 104 )
+texture = ExtResource( 25 )
+
+[node name="MkBgFrame3" type="Sprite" parent="Bg"]
+
+position = Vector2( 157, 123 )
+texture = ExtResource( 25 )
+
+[node name="MkBgFrame4" type="Sprite" parent="Bg"]
+
+position = Vector2( 402, 107 )
+texture = ExtResource( 25 )
+
+[node name="MkBgFrame5" type="Sprite" parent="Bg"]
+
+position = Vector2( 441, 57 )
+texture = ExtResource( 25 )
+
+[node name="MkBgFrame6" type="Sprite" parent="Bg"]
+
+position = Vector2( 483, 122 )
+texture = ExtResource( 25 )
+
+[node name="MkChar" type="Sprite" parent="Bg"]
+
+position = Vector2( 322, 77 )
+texture = ExtResource( 26 )
+
+[node name="Line" type="Sprite" parent="Bg"]
+
+modulate = Color( 0.231373, 0.176471, 0.321569, 1 )
+position = Vector2( 0, 157 )
+scale = Vector2( 640, 1 )
+texture = ExtResource( 27 )
+centered = false
+
+[node name="Line2" type="Sprite" parent="Bg"]
+
+modulate = Color( 0.231373, 0.176471, 0.321569, 1 )
+position = Vector2( 0, 342 )
+scale = Vector2( 640, 1 )
+texture = ExtResource( 27 )
+centered = false
+
+[node name="BlackBar" type="Sprite" parent="Bg"]
+
+position = Vector2( 320, 250 )
+scale = Vector2( 20, 5.75 )
+texture = ExtResource( 22 )
+
+[node name="PlayArea" type="Node2D" parent="."]
+
+position = Vector2( 0, 158 )
+
+[node name="Main" type="YSort" parent="."]
+
+[node name="Fg" type="Node2D" parent="."]
+
+[node name="MkChain1" type="Sprite" parent="Fg"]
+
+position = Vector2( 61, 200 )
+texture = ExtResource( 28 )
+
+[node name="MkChain2" type="Sprite" parent="Fg"]
+
+position = Vector2( 581, 200 )
+texture = ExtResource( 28 )
+flip_h = true

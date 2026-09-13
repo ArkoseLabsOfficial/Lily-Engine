@@ -4,6 +4,9 @@ package engine.backend;
 import mobile.openfl.controls.MobileControls;
 #end
 
+/**
+ * Simple helper class for accessing some main game elements with static and shorten call.
+**/
 class Game {
 	public static var instance:Game;
 	public static var paused(get, default):Bool = false;
@@ -17,6 +20,7 @@ class Game {
 	public static var language:Lang;
 	public static var save(get, never):SaveManager;
 	public static var room(get, never):Room;
+	public static var scene(get, never):Scene;
 	public static var baseRoom(get, never):BaseRoom;
 	public static var party(get, set):Array<Character>;
 
@@ -31,6 +35,9 @@ class Game {
 
 	static inline function get_room()
 		return Room.instance;
+
+	static inline function get_scene()
+		return Room.instance.scene;
 
 	static inline function get_baseRoom()
 		return BaseRoom.instance;

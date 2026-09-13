@@ -8,7 +8,7 @@ class Config {
         if (value.startsWith("assets/")) value = value.replace("assets/", "");
         if (value.startsWith("images/")) value = value.replace("images/", "");
         if (value.endsWith(".png")) {
-            return Assets.getBitmapData(Flags.imageFolder + value);
+            return Assets.getBitmapData('${Flags.imageFolder}/$value');
         }
         return Assets.getText(value);
     }
@@ -22,6 +22,6 @@ class Config {
     public static function getBitmapData(value:String) {
         if (value.startsWith("assets/")) value = value.replace("assets/", "");
         if (value.startsWith("images/")) value = value.replace("images/", "");
-        return Assets.getBitmapData(Flags.imageFolder + value);
+        return Assets.getBitmapData('${Flags.imageFolder}/$value');
     }
 }

@@ -1,4 +1,8 @@
 {
+  "fonts": {
+    "NotoSans": "NotoSans-Regular.ttf",
+    "AlegreyaSC": "AlegreyaSC-Regular.ttf"
+  },
   "name": "English By ArkoseLabs",
   "system.settings.language": {
     "select": "Select Language",
@@ -12,7 +16,7 @@
     "controls.move_left": "Move Left",
     "controls.move_right": "Move Right",
     "controls.accept": "Accept",
-    "controls.cancel": "Cancel",
+    "controls.back": "Back",
     "controls.run": "Run",
     "controls.menu": "Menu",
     "graphics.fpscap": "FPS Cap",
@@ -60,10 +64,22 @@
     "knife": "Very Sharp Knife."
   },
   "objectives.name": {
-    "test": "Test Objective"
+    "main_investigation": "Büyük Araştırma",
+    "main_investigation.explore_hall": "Giriş Salonunu İncele",
+    "main_investigation.explore_hall.check_painting": "Tabloya Bak",
+    "main_investigation.explore_hall.open_drawer": "Çekmeceyi Aç",
+    "main_investigation.find_key": "Anahtarı Bul",
+    "secret_room_unlocked": "Gizli Odaya Gir",
+    "optional_sidequest": "Kediye Mama Ver"
   },
   "objectives.desc": {
-    "test": "Learn the basic controls"
+    "main_investigation": "Gizemli malikaneyi araştır ve sırlar ortaya çıkar.",
+    "main_investigation.explore_hall": "Salondaki ipuçlarını topla.",
+    "main_investigation.explore_hall.check_painting": "Duvardaki tuhaf tablonun arkasını kontrol et.",
+    "main_investigation.explore_hall.open_drawer": "Kilitli antika çekmeceyi aç.",
+    "main_investigation.find_key": "Bodrum katının anahtarını ele geçir.",
+    "secret_room_unlocked": "Kilidini açtığın gizli odayı keşfet.",
+    "optional_sidequest": "Bahçedeki aç kediyi doyur."
   },
   "ch1.dialog.cafe.buy.whatshould": "(What should I buy...)",
   "ch1.dialog.cafe.buy.food1": "Pie",

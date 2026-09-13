@@ -4,7 +4,7 @@ class Config {
 	// Runs support for custom classes in these
 	public static final ALLOWED_CUSTOM_CLASSES = [
 		"flixel",
-        "engine",
+		"flixel.addons.display.shapes",
 		"engine.scripting.ScriptedSprite",
 		"engine.scripting.ScriptedSpriteGroup",
 		"engine.scripting.ScriptedState",
@@ -17,6 +17,7 @@ class Config {
 		"flixel.text",
 		"flixel.math",
 		"flixel.util",
+		"flixel.addons.display.shapes",
 		"openfl.display.BlendMode",
 		"haxe.xml",
 		"haxe.ds.Map",
@@ -24,13 +25,20 @@ class Config {
 		"engine"
 	];
 
+	// Runs support for typedef support in these
+	public static final ALLOWED_TYPEDEFS = [
+		"flixel",
+	];
+
 	// Incase any of your files fail
 	// These are the module names
 	public static final DISALLOW_CUSTOM_CLASSES = [
 	// Scripting side
 	"engine.scripting.HScript",
+	"engine",
 
 	// Flixel-UI core classes
+	"flixel.addons.effects.FlxSkewedSprite",
 	"flixel.addons.ui.FlxUI",
 	"flixel.addons.ui.FlxUIState",
 	"flixel.addons.ui.FlxUISubState",
@@ -60,5 +68,15 @@ class Config {
 
 	public static final DISALLOW_ABSTRACT_AND_ENUM = [
 		"engine.scripting.HScript",
+		"flixel.addons.effects.FlxSkewedSprite",
+	];
+
+	public static final DISALLOW_TYPEDEFS = [
+		"flixel.addons.effects.FlxSkewedSprite",
+	];
+
+	@:unreflective
+	public static final IMPORT_BLACKLIST:Array<String> = [
+		// "flixel.FlxG"
 	];
 }

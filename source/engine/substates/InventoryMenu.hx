@@ -1,19 +1,28 @@
 package engine.substates;
 
+import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.FlxSubState;
+import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
+import flixel.group.FlxSpriteGroup;
+import flixel.text.FlxText;
+import engine.ui.NineGrid;
+import engine.ui.NineNode;
+import lang.LangText;
+
 class InventoryMenu extends SubStateBackend {
 	static inline var MAIN_PANEL_W:Int = 900;
 	static inline var MAIN_PANEL_H:Int = 600;
 	static inline var DESC_PANEL_W:Int = 546;
 	static inline var DESC_PANEL_H:Int = 600;
 
-	var entries:Array<InventoryMenuEntry> = [];
-	var curSelected:Int = 0;
-	var maxCols:Int = 5;
-
 	public var canInput:Bool = false;
 
-	var descFrame:MenuFrameNode;
+	var invGrid:NineGrid;
+	var descFrame:NineNode;
 	var descText:LangText;
+	var gridEntries:Array<InventoryMenuEntry> = [];
 
 	override public function create() {
 		super.create();
@@ -24,23 +33,55 @@ class InventoryMenu extends SubStateBackend {
 		var startX = (FlxG.width - totalWidth) / 2;
 		var startY = (FlxG.height - MAIN_PANEL_H) / 2;
 
-		var invFrame = new MenuFrameNode(startX, startY, MAIN_PANEL_W, MAIN_PANEL_H, 2);
-		invFrame.setTitle("system.menu.items");
-		invFrame.divider.loadGraphic(Assets.getImage("ui/dividers/divider_md"));
-		add(invFrame);
+		var gridData:NineGridData = {
+			width: MAIN_PANEL_W,
+			height: MAIN_PANEL_H,
+			texture: 'ui/frames/frame_menu_2',
+			bgTexture: 'ui/frames/frame_menu_bg',
+			margin: {
+				left: 50,
+				top: 50,
+				right: 50,
+				bottom: 50
+			},
+			scaleFactor: 0.75,
+			title: "system.menu.items",
+			titleTexture: "ui/dividers/divider_md",
+			columns: 5,
+			maxVisibleRows: 3,
+			itemWidth: 120,
+			itemHeight: 120,
+			gapX: 30,
+			gapY: 30,
+			paddingX: 75,
+			paddingY: 120
+		};
+
+		invGrid = new NineGrid(startX, startY, gridData);
+		add(invGrid);
 
 		var descX = startX + MAIN_PANEL_W + separation;
-		descFrame = new MenuFrameNode(descX, startY, DESC_PANEL_W, DESC_PANEL_H, 2);
-		descFrame.nodeFrame.decorBgTexture = "ui/decors/menu_bg_decor";
-		descFrame.divider.loadGraphic(Assets.getImage("ui/dividers/divider_sm"));
-		descFrame.divider.updateHitbox();
-		descFrame.divider.x = descX + (DESC_PANEL_W - descFrame.divider.width) / 2;
+		var descData:NineNodeMenuData = {
+			width: DESC_PANEL_W,
+			height: DESC_PANEL_H,
+			texture: 'ui/frames/frame_menu_2',
+			bgTexture: 'ui/frames/frame_menu_bg',
+			margin: {
+				left: 50,
+				top: 50,
+				right: 50,
+				bottom: 50
+			},
+			scaleFactor: 0.75,
+			titleTexture: "ui/dividers/divider_sm"
+		};
+		descFrame = new NineNode(descX, startY, descData);
+		descFrame.setTitle("");
+		descFrame.divider.x += 65;
 		add(descFrame);
 
 		descText = new LangText(descX + 45, startY + 130, DESC_PANEL_W - 90, "", null, 24);
 		descText.alignment = LEFT;
-
-		descText.autoSize = false;
 		descText.height = DESC_PANEL_H - 150;
 		add(descText);
 
@@ -51,33 +92,55 @@ class InventoryMenu extends SubStateBackend {
 		var rawCount = ownedItemIDs.length;
 		var totalSlots = Std.int(Math.max(15, 5 * Math.ceil(rawCount / 5.0)));
 
-		var gridStartX = startX + 75;
-		var gridStartY = startY + 120;
-		var iconSize = 120;
-		var gap = 30;
-		var stride = iconSize + gap;
-
 		for (i in 0...totalSlots) {
-			var cx = gridStartX + (i % maxCols) * stride;
-			var cy = gridStartY + Math.floor(i / maxCols) * stride;
+			var id = (i < rawCount) ? ownedItemIDs[i] : "";
+			var amt = (i < rawCount) ? Game.items.getOwnedAmount(id) : 0;
 
-			var entry:InventoryMenuEntry;
-			if (i < rawCount) {
-				var id = ownedItemIDs[i];
-				entry = new InventoryMenuEntry(cx, cy, id, Game.items.getOwnedAmount(id));
-			} else {
-				entry = new InventoryMenuEntry(cx, cy, "", 0);
+			var entry = new InventoryMenuEntry(0, 0, id, amt);
+			gridEntries.push(entry);
+
+			var action = null;
+			if (!entry.isEmpty) {
+				action = function() {
+					FlxG.sound.play(Flags.CONFIRM);
+					var itemData = Game.items.items.get(entry.itemId);
+					if (itemData != null && itemData.scriptPath != "") {
+						Game.items.runItemScript(itemData.scriptPath);
+						Game.items.removeItem(entry.itemId, 1);
+					}
+					close();
+				};
 			}
-
-			entries.push(entry);
-			add(entry);
+			invGrid.addItem(entry, action);
 		}
 
-		highlightSelection();
+		invGrid.buildGrid();
+
+		invGrid.onSelectionChanged = function(index:Int) {
+			for (e in gridEntries)
+				e.deselect();
+			descFrame.setTitle("");
+			descText.text = "";
+
+			if (index > -1 && index < gridEntries.length) {
+				var activeEntry = gridEntries[index];
+				activeEntry.select();
+
+				if (!activeEntry.isEmpty) {
+					var itemData = Game.items.items.get(activeEntry.itemId);
+					descFrame.setTitle(itemData.name);
+					descText.setTranslation(itemData.desc);
+				}
+			}
+		};
+
+		invGrid.resetSelection();
 
 		new FlxTimer().start(0.1, function(_) {
 			canInput = true;
 		});
+
+		Discord.updatePresence('In the inventory menu', 'Mod: ${GamePrefs.currentMod}');
 	}
 
 	override public function openSubState(SubState:FlxSubState):Void {
@@ -91,78 +154,18 @@ class InventoryMenu extends SubStateBackend {
 	}
 
 	override public function update(elapsed:Float) {
+		if (invGrid != null) {
+			invGrid.canInput = canInput;
+		}
+
 		super.update(elapsed);
 
 		if (!canInput)
 			return;
 
-		if (Controls.UP_P)
-			moveSelection(-maxCols, false);
-		if (Controls.DOWN_P)
-			moveSelection(maxCols, false);
-		if (Controls.LEFT_P)
-			moveSelection(-1, true);
-		if (Controls.RIGHT_P)
-			moveSelection(1, true);
-
-		if (Controls.CANCEL) {
+		if (Controls.BACK) {
 			FlxG.sound.play(Flags.CANCEL);
 			close();
-		}
-
-		if (Controls.ACCEPT) {
-			var activeEntry = entries[curSelected];
-			if (!activeEntry.isEmpty) {
-				FlxG.sound.play(Flags.CONFIRM);
-				var itemData = Game.items.items.get(activeEntry.itemId);
-
-				if (itemData != null && itemData.scriptPath != "") {
-					Game.items.runItemScript(itemData.scriptPath);
-					Game.items.removeItem(activeEntry.itemId, 1);
-				}
-				close();
-			} else {
-				FlxG.sound.play(Flags.ERROR);
-			}
-		}
-	}
-
-	function moveSelection(change:Int, isHorizontal:Bool) {
-		FlxG.sound.play(Flags.NAVIGATE);
-		if (isHorizontal) {
-			var oldCol = curSelected % maxCols;
-			curSelected += change;
-			if (change == -1 && oldCol == 0)
-				curSelected += maxCols;
-			else if (change == 1 && oldCol == maxCols - 1)
-				curSelected -= maxCols;
-		} else {
-			curSelected += change;
-			if (curSelected < 0)
-				curSelected += entries.length;
-			if (curSelected >= entries.length)
-				curSelected %= maxCols;
-		}
-		highlightSelection();
-	}
-
-	function highlightSelection() {
-		for (entry in entries)
-			entry.deselect();
-		descFrame.setTitle("");
-		descText.text = "";
-		descFrame.divider.visible = false;
-
-		if (curSelected > -1 && curSelected < entries.length) {
-			var activeEntry = entries[curSelected];
-			activeEntry.select();
-
-			if (!activeEntry.isEmpty) {
-				var itemData = Game.items.items.get(activeEntry.itemId);
-				descFrame.setTitle(itemData.name);
-				descText.setTranslation(itemData.desc);
-				descFrame.divider.visible = true;
-			}
 		}
 	}
 }
@@ -192,7 +195,7 @@ class InventoryMenuEntry extends FlxSpriteGroup {
 			itemIcon = new FlxSprite(0, 0);
 			var iconPath = (itemData != null ? itemData.iconPath : id);
 
-			if (Assets.imageExists(iconPath))
+			if (Assets.exists(Assets.getImagePath(iconPath)))
 				itemIcon.loadGraphic(Assets.getImage(iconPath));
 			else
 				itemIcon.makeGraphic(ICON_SIZE, ICON_SIZE, FlxColor.TRANSPARENT);
@@ -208,7 +211,6 @@ class InventoryMenuEntry extends FlxSpriteGroup {
 				nQtyLabel.borderColor = 0xFFBD274D;
 				nQtyLabel.borderStyle = OUTLINE;
 				nQtyLabel.borderSize = 3;
-
 				nQtyLabel.wordWrap = false;
 				nQtyLabel.autoSize = false;
 				nQtyLabel.height += 20;

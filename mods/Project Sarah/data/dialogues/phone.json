@@ -1,0 +1,48 @@
+{
+  "full_test": [
+    {
+      "name": "Member 1",
+      "text": "Beyler bizimkilerin işi varmış ve eve gelmiceklermiş, okuldan sonra 8-9 gibi takılmak isteyen varmı?",
+      "time": "6:39 AM"
+    },
+    {
+      "name": "Member 1",
+      "text": "Gelen olura yemek içmek tamamen benden.",
+      "time": "6:39 AM"
+    },
+    {
+      "name": "Member 5/ArkoseLabs",
+      "text": "Beleş ha, keşke gelebilsem ama bizimkiler izin vermez :(",
+      "time": "6:53 AM"
+    },
+    {
+      "name": "Zack",
+      "text": "Bizimkilerde bir süreliğine evde yok, ben gelebilirim galiba",
+      "time": "7:17 AM"
+    },
+    {
+      "name": "Zack",
+      "text": "Ayrıca yanımda birini getirme şansım varmı?",
+      "time": "7:17 AM"
+    },
+    {
+      "name": "Member 1",
+      "text": "Tabi Efenim (gif)",
+      "time": "7:17 AM"
+    },
+    {
+      "name": "Selection Test",
+      "text": "Now, let's verify if the selection menu handles multiple options correctly.",
+      "selections": [
+        { "id": "test_1", "text": "Select Option 1" },
+        { "id": "test_2", "text": "Select Option 2" },
+        { "id": "test_3", "text": "Select Option 3" }
+      ]
+    },
+    {
+      "name": "Exit Test",
+      "text": "If you are reading this, the dialog system successfully progressed after your selection.",
+      "close": true
+    }
+  ]
+}

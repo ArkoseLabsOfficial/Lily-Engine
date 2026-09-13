@@ -1,0 +1,6 @@
+1- ev (2 katlı ön bahçeli ev)
+2- okul ()
+3- cafe (geçici)
+4- sokak ve park
+5- pc arayüzü
+6- telefon arayüzü

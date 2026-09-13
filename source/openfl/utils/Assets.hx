@@ -18,6 +18,7 @@ import sys.io.FileOutput;
 #end
 
 #if lime
+import lime.text.Font as LimeFont;
 import lime.app.Promise;
 import lime.app.Future;
 import lime.utils.AssetLibrary as LimeAssetLibrary;
@@ -204,6 +205,13 @@ class Assets
 
     public static function readDirectory(path:String):Array<String>
     {
+        var results:Array<String> = [];
+        var addUnique = function(filename:String) {
+            if (!results.contains(filename)) {
+                results.push(filename);
+            }
+        };
+    
         path = getGameFilePath(path);
         #if sys
         var actualPath:String = path;
@@ -213,11 +221,11 @@ class Assets
         #end
         
         if (FileSystem.exists(actualPath) && FileSystem.isDirectory(actualPath))
-            return FileSystem.readDirectory(actualPath);
+            for (file in FileSystem.readDirectory(actualPath))
+                addUnique(file);
         #end
 
         var filteredList:Array<String> = list().filter(f -> f.startsWith(path));
-        var results:Array<String> = [];
         for (i in filteredList.copy())
         {
             var slashsCount:Int = path.split('/').length;
@@ -234,17 +242,17 @@ class Assets
             for (library in LimeAssets.libraries.keys())
             {
                 var libPath:String = '$library:$item';
-                if (library != 'default' && exists(libPath) && !results.contains(libPath))
-                    results.push(libPath);
-                else if (exists(item) && !results.contains(item))
-                    results.push(item);
+                if (library != 'default' && exists(libPath))
+                    addUnique(libPath.substr(libPath.lastIndexOf("/") + 1));
+                else if (exists(item))
+                    addUnique(item.substr(item.lastIndexOf("/") + 1));
             }
             #else
-            if (exists(item) && !results.contains(item))
-                results.push(item);
+            if (exists(item))
+                addUnique(item.substr(item.lastIndexOf("/") + 1));
             #end
         }
-        return results.map(f -> f.substr(f.lastIndexOf("/") + 1));
+        return results;
     }
 
     // End
@@ -252,20 +260,23 @@ class Assets
 
     // Helper Functions
 
+    public static function getImagePath(id:String):String
+        return '${Flags.imageFolder}/$id.png';
+
     public static function getImage(id:String, useCache:Bool = true):BitmapData
-        return getBitmapData('${Flags.imageFolder}$id.png', useCache);
+        return getBitmapData('${Flags.imageFolder}/$id.png', useCache);
 
     public static function imageExists(id:String):Bool
         return exists('${Flags.imageFolder}$id.png');
 
     public static function getSparrowAtlas(key:String):FlxAtlasFrames
-		return FlxAtlasFrames.fromSparrow(Assets.getImage(key), Assets.getText('${Flags.imageFolder}$key.xml'));
+		return FlxAtlasFrames.fromSparrow(Assets.getImage(key), Assets.getText('${Flags.imageFolder}/$key.xml'));
 
 	public static function getPackerAtlas(key:String):FlxAtlasFrames
-		return FlxAtlasFrames.fromSpriteSheetPacker(Assets.getImage(key), Assets.getText('${Flags.imageFolder}$key.txt'));
+		return FlxAtlasFrames.fromSpriteSheetPacker(Assets.getImage(key), Assets.getText('${Flags.imageFolder}/$key.txt'));
 
 	public static function getAsepriteAtlas(key:String):FlxAtlasFrames
-		return FlxAtlasFrames.fromTexturePackerJson(Assets.getImage(key), Assets.getText('${Flags.imageFolder}$key.json'));
+		return FlxAtlasFrames.fromTexturePackerJson(Assets.getImage(key), Assets.getText('${Flags.imageFolder}/$key.json'));
 
     // End
 
@@ -304,7 +315,7 @@ class Assets
         #if sys
         if (FileSystem.exists(path))
         {
-            var bitmapData = BitmapData.fromFile(path);
+            var bitmapData = BitmapData.fromFile(Sys.getCwd() + path); // Sys.getCwd() used for Angle supported library versions needs it
             if (bitmapData != null)
             {
                 if (useCache && cache.enabled) cache.setBitmapData(id, bitmapData);
@@ -357,6 +368,9 @@ class Assets
 
     public static function getFont(id:String, useCache:Bool = true):Font
     {
+        if (id == "")
+            id = Flags.fonts.get("NotoSans");
+
         #if (lime && tools && !display && !macro)
         if (useCache && cache.enabled && cache.hasFont(id))
         {
@@ -371,6 +385,11 @@ class Assets
             var font = Font.fromFile(path);
             if (font != null)
             {
+                if (font.fontName != null)
+                {
+                    Font.registerFont(font);
+                }
+
                 if (useCache && cache.enabled) cache.setFont(id, font);
                 return font;
             }

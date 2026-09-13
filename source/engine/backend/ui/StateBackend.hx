@@ -1,7 +1,14 @@
 package engine.backend.ui;
 
+import flixel.addons.transition.FlxTransitionableState;
+
 class StateBackend extends FlxState {
-	var simpleMenu:SimpleVerticalMenu;
+	var menu:NineNode; // use this for custom menus.
+
+	public static var instance:StateBackend;
+
+	public static var skipNextTransIn:Bool = false;
+	public static var skipNextTransOut:Bool = false;
 
 	/**
 	 * SCRIPTING STUFF
@@ -17,6 +24,7 @@ class StateBackend extends FlxState {
 
 	public function new(scriptsAllowed:Bool = true, ?scriptName:String) {
 		super();
+		instance = this;
 		if (lastStateName != (lastStateName = Type.getClassName(Type.getClass(this)))) {
 			lastScriptName = null;
 		}
@@ -31,7 +39,7 @@ class StateBackend extends FlxState {
 		if (scriptsAllowed) {
 			if (stateScripts.scripts.length == 0) {
 				var scriptName = this.scriptName != null ? this.scriptName : className.substr(className.lastIndexOf(".") + 1);
-				var filePath:String = Flags.scriptFolder + "states/" + scriptName;
+				var filePath:String = '${Flags.scriptFolder}/states/' + scriptName;
 				if (customPath != null)
 					filePath = customPath;
 
@@ -53,6 +61,7 @@ class StateBackend extends FlxState {
 	#else
 	public function new() {
 		super();
+		instance = this;
 	}
 	#end
 
@@ -77,6 +86,12 @@ class StateBackend extends FlxState {
 		loadScript();
 		#end
 		super.create();
+
+		if (!skipNextTransOut) {
+			openSubState(new CustomFadeTransition(0.7, true));
+		}
+		skipNextTransOut = false;
+
 		#if FEATURE_HSCRIPT
 		call("create");
 		#end
@@ -88,7 +103,7 @@ class StateBackend extends FlxState {
 		call("createPost");
 		#end
 	}
-	
+
 	override public function update(elapsed:Float) {
 		#if FEATURE_HSCRIPT call("preUpdate", [elapsed]); #end
 		super.update(elapsed);
@@ -104,9 +119,22 @@ class StateBackend extends FlxState {
 		super.destroy();
 	}
 
+	override function startOutro(onOutroComplete:() -> Void):Void {
+		if (!FlxTransitionableState.skipNextTransIn) {
+			var targetContainer = (subState != null) ? subState : this;
+
+			targetContainer.openSubState(new CustomFadeTransition(0.6, false));
+			CustomFadeTransition.finishCallback = onOutroComplete;
+			return;
+		}
+
+		FlxTransitionableState.skipNextTransIn = false;
+		onOutroComplete();
+	}
+
 	override public function closeSubState() {
-		if (simpleMenu != null)
-			simpleMenu.canInput = true;
+		if (menu != null)
+			menu.canInput = true;
 		super.closeSubState();
 		#if FEATURE_HSCRIPT
 		call('onCloseSubState');
@@ -122,18 +150,9 @@ class StateBackend extends FlxState {
 		#end
 	}
 
-	/**
-	 * Call this instead of FlxG.switchState()
-	 */
-	public static function switchState(nextState:FlxState, duration:Float = 0.2):Void {
-		FlxG.camera.fade(FlxColor.BLACK, duration, false, function() {
-			FlxG.switchState(nextState);
-		});
-	}
-
 	override public function openSubState(SubState:FlxSubState):Void {
-		if (simpleMenu != null)
-			simpleMenu.canInput = false;
+		if (menu != null)
+			menu.canInput = false;
 		super.openSubState(SubState);
 	}
 

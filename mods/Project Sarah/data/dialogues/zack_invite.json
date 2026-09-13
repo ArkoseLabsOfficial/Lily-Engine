@@ -1,0 +1,150 @@
+{
+    "zack_intro0": [
+        {
+            "name": "Zack",
+            "text": "Sarahhh, uyudunmu?"
+        },
+        {
+            "name": "Zack",
+            "text": "Sarahh..."
+        }
+    ],
+    "zack_intro1": [
+        {
+            "name": "Sarah",
+            "text": "Ne var ya..., gece gece ne oldu?"
+        },
+        {
+            "name": "Zack",
+            "text": "Birşey soracaktımda."
+        },
+        {
+            "name": "Sarah",
+            "text": "Sor."
+        },
+        {
+            "name": "Zack",
+            "text": "Kapıyı açarsan sorcam."
+        },
+        {
+            "name": "Sarah",
+            "text": "Neden? direkt sor işte."
+        },
+        {
+            "name": "Zack",
+            "text": "."
+        },
+        {
+            "name": "Zack",
+            "text": ".."
+        },
+        {
+            "name": "Zack",
+            "text": "..."
+        },
+        {
+            "name": "Zack",
+            "text": "Pekalaaa-, Bunu bir red olarak kabul ediyoooorrruuu-"
+        },
+        {
+            "name": "Sarah",
+            "text": "Bekle Bekle, tamam açıyorum."
+        }
+    ],
+    "zack_intro2": [
+        {
+            "name": "Sarah",
+            "text": "Peki ne söyleyeceksin?"
+        },
+        {
+            "name": "Zack",
+            "text": "Biz arkaşla bir plan yaptık"
+        },
+        {
+            "name": "Sarah",
+            "text": "Eeee-"
+        },
+        {
+            "name": "Zack",
+            "text": "ve yemekleri o karşılayacakmış tama-"
+        },
+        {
+            "name": "Sarah",
+            "text": "iyi napim :|"
+        },
+        {
+            "name": "Zack",
+            "text": "az bi dinle dinlesen mi acaba?"
+        },
+        {
+            "name": "Zack",
+            "text": "Sende benle gelsende iki kat hesabı kitlesek nasıl olur?"
+        },
+        {
+            "name": "Sarah",
+            "text": "Belli bir sınır varmı?"
+        },
+        {
+            "name": "Zack",
+            "text": "Galiba belli bir sınırı yok, ama kabul edersen sorabilirim."
+        },
+        {
+            "name": "Sarah",
+            "text": "Hmm."
+        },
+        {
+            "name": "Sarah",
+            "text": "Hmm.."
+        },
+        {
+            "name": "Sarah",
+            "text": "Hmm...",
+            "selections": [
+                {
+                    "id": "sarahAcceptedZacksOffer",
+                    "text": "Kabul Et"
+                },
+                {
+                    "id": "sarahRefusesZacksOffer",
+                    "text": "Reddet"
+                }
+            ]
+        }
+    ],
+    "zack_intro_accept": [
+        {
+            "name": "Sarah",
+            "text": "Olur."
+        },
+        {
+            "name": "Zack",
+            "text": "Süper o zaman byeeeee."
+        },
+        {
+            "name": "Sarah",
+            "text": "Görüşürüz."
+        },
+        {
+            "name": "Sarah",
+            "text": "(Beleş yemek her zaman güzeldir.)"
+        }
+    ],
+    "zack_intro_refuse_1": [
+        {
+            "name": "Sarah",
+            "text": "Yok kalsın."
+        },
+        {
+            "name": "Sarah",
+            "text": "Yorgunum ve yarın için arkadaşlarla erkenden bir planımız var."
+        },
+        {
+            "name": "Sarah",
+            "text": "belki bir dahaki sefere."
+        },
+        {
+            "name": "Zack",
+            "text": "Peki :("
+        }
+    ]
+}

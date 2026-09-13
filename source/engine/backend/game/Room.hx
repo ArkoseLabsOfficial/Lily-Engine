@@ -2,6 +2,7 @@ package engine.backend.game;
 
 class Room extends FlxGroup {
 	public static var instance:Room;
+
 	public var scene:Scene;
 
 	#if FEATURE_HSCRIPT
@@ -14,7 +15,7 @@ class Room extends FlxGroup {
 	}
 
 	public function loadRoom(roomName:String, isFromLoad:Bool = false):Void {
-		var tscnPath = '${Flags.roomFolder}$roomName.tscn';
+		var tscnPath = '${Flags.roomFolder}/$roomName.tscn';
 
 		if (!Assets.exists(tscnPath)) {
 			trace("Failed to load room. TSCN does not exist for: " + roomName);
@@ -36,6 +37,7 @@ class Room extends FlxGroup {
 
 		scene = new Scene();
 		scene.applyScript.add(onNodeScriptApply);
+		scene.applyAnimationPlayerScript.add(onAnimationMethod);
 
 		scene.load(Assets.getPath(tscnPath));
 		add(scene);
@@ -44,29 +46,36 @@ class Room extends FlxGroup {
 
 		Game.save.room = roomName;
 		#if FEATURE_HSCRIPT
-		scripts.setParent(this);
-		scripts.load();
 		scripts.call("onRoomLoaded", [roomName]);
 		#end
+	}
+
+	private function onAnimationMethod(targetNode:Node, methodName:String, args:Array<Dynamic>):Void {
+		if (targetNode.script != null)
+			targetNode.script.call(methodName, args);
 	}
 
 	private function onNodeScriptApply(node:Node, hxScriptPath:String):Void {
 		#if FEATURE_HSCRIPT
 		if (hxScriptPath.startsWith("script/")) {
-			hxScriptPath = hxScriptPath.replace("script/", Flags.scriptFolder);
+			hxScriptPath = hxScriptPath.replace("script/", '${Flags.scriptFolder}/');
 		}
 		if (hxScriptPath.startsWith("assets/")) {
 			hxScriptPath = hxScriptPath.replace("assets/", "");
 		}
 		if (Assets.exists(hxScriptPath)) {
 			var script = Script.create(hxScriptPath);
+			script.setParent(this);
+			script.set("parent", this);
 			script.set("obj", node);
+			script.load();
 			if (TscnParser.scriptPropertiesMap.exists(node)) {
 				var props:Map<String, Dynamic> = TscnParser.scriptPropertiesMap.get(node);
 				for (key in props.keys()) {
 					script.set(key, props.get(key));
 				}
 			}
+			node.script = script;
 			scripts.add(script);
 		}
 		#end
@@ -82,15 +91,15 @@ class Room extends FlxGroup {
 			f.destroy();
 		}
 		Game.party = [];
-		Game.baseRoom.clearFollowers();
 
 		var targetNode:Dynamic = scene.getNode("Main");
-		if (targetNode == null)
+		if (targetNode == null) {
+			trace("null");
 			targetNode = scene.root;
+		}
 
 		if (Std.isOfType(targetNode, Node2D)) {
 			var n2d:Node2D = cast targetNode;
-			n2d.ySort = true;
 		}
 
 		var prev:Character = null;
@@ -107,7 +116,7 @@ class Room extends FlxGroup {
 			Game.party.push(member);
 
 			if (prev != null)
-				Game.baseRoom.addFollower(member, prev, 12, true);
+				member.follow(prev, 12, true);
 
 			prev = member;
 		}
@@ -123,8 +132,8 @@ class Room extends FlxGroup {
 		}
 
 		Game.baseRoom.camGame.zoom = 3;
-		Game.baseRoom.camGame.follow(Game.party[0], NO_DEAD_ZONE, 1);
-		Game.baseRoom.camGame.focusOn(Game.party[0].getPosition());
+		Game.baseRoom.camGame.follow(Game.party[0].visual, FlxCameraFollowStyle.LOCKON, 999);
+		Game.baseRoom.camGame.focusOn(Game.party[0].visual.getPosition());
 	}
 
 	public function followPath2D(path2dnodepath:String, objnode:Dynamic, speed:Float = 150, loop:Bool = false, ?onFinish:Dynamic):Void {

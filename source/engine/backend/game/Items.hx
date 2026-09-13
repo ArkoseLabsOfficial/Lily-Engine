@@ -75,7 +75,7 @@ class Items {
 		var fullPath = scriptPath + ".hx";
 
 		#if FEATURE_HSCRIPT
-		var itemScript = Script.create(Flags.scriptFolder + fullPath);
+		var itemScript = Script.create('${Flags.scriptFolder}/' + fullPath);
 
 		itemScript.load();
 		itemScript.call("onUse");

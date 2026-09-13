@@ -25,7 +25,7 @@ class GamePrefs {
 			}
 		}
 
-		var actions = ["UP", "DOWN", "LEFT", "RIGHT", "ACCEPT", "CANCEL", "RUN", "MENU"];
+		var actions = ["UP", "DOWN", "LEFT", "RIGHT", "ACCEPT", "BACK", "RUN", "MENU"];
 		var savedBinds:Dynamic = FlxG.save.data.keybinds;
 
 		for (action in actions) {
@@ -76,7 +76,7 @@ class GamePrefs {
 			case "LEFT": ["LEFT", "DPAD_LEFT"];
 			case "RIGHT": ["RIGHT", "DPAD_RIGHT"];
 			case "ACCEPT": ["Z", "A"];
-			case "CANCEL": ["X", "B"];
+			case "BACK": ["X", "B"];
 			case "RUN": ["SHIFT", "X"];
 			case "MENU": ["C", "Y"];
 			default: ["NONE", "NONE"];

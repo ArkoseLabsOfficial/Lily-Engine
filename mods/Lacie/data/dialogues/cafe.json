@@ -1,0 +1,418 @@
+{
+    "tryingTalk": [
+        {
+            "name": "Lacie",
+            "text": "Could I get-"
+        }
+    ],
+    "cashierHello": [
+        {
+            "name": "Cashier",
+            "text": "Oh, h-hello."
+        }
+    ],
+    "talkingWithCashier": [
+        {
+            "name": "Cashier",
+            "text": "(What the... this girl startled the soul out of me...)"
+        },
+        {
+            "name": "Cashier",
+            "text": "(Her whole vibe is... really unsettling.)"
+        },
+        {
+            "name": "Cashier",
+            "text": "(Let's get this over with quickly.)"
+        },
+        {
+            "name": "Lacie",
+            "text": "Um... hello?"
+        },
+        {
+            "name": "Lacie",
+            "text": "Could I-"
+        },
+        {
+            "name": "Cashier",
+            "text": "What can I get you?"
+        },
+        {
+            "name": "Lacie",
+            "translate": [
+                "A coffee and a flan", "A coffee and macarons", "A coffee and an eclair",
+                "A tea and a flan", "A tea and macarons", "A tea and an eclair",
+                "A milkshake and a flan", "A milkshake and macarons", "A milkshake and an eclair"
+            ],
+            "text": "${translate[0]}?"
+        }
+    ],
+    "talkingWithCashier_Post": [
+        {
+            "name": "Lacie",
+            "text": "...Um... Actually, just a bottle of water... please."
+        },
+        {
+            "name": "Cashier",
+            "translate": [
+                "...A bottle of water and a flan...?"
+            ],
+            "text": "${translate[0]}"
+        },
+        {
+            "name": "Lacie",
+            "text": "Yes."
+        },
+        {
+            "name": "Cashier",
+            "text": "Alright."
+        },
+        {
+            "name": "Cashier",
+            "text": "Have a seat, I'll bring it for you."
+        }
+    ],
+    "talkingWithCashier_(Coffee)": [
+        {
+            "name": "Lacie",
+            "text": "...And a coffee."
+        },
+        {
+            "name": "Cashier",
+            "text": "What kind of coffee?"
+        },
+        {
+            "name": "Lacie",
+            "text": "Just coffee?"
+        },
+        {
+            "name": "Cashier",
+            "text": "Black, latte, with milk...?"
+        },
+        {
+            "name": "Cashier",
+            "text": "With whipped cream?"
+        },
+        {
+            "name": "Cashier",
+            "text": "Also what size?"
+        }
+    ],
+    "talkingWithCashier_(Green Tea)": [
+        {
+            "name": "Lacie",
+            "text": "...And a tea, please."
+        },
+        {
+            "name": "Cashier",
+            "text": "Tea, or bubble tea?"
+        },
+        {
+            "name": "Lacie",
+            "text": "(What's bubble tea...?)"
+        },
+        {
+            "name": "Lacie",
+            "text": "Tea, I think."
+        },
+        {
+            "name": "Cashier",
+            "text": "What kind? Black, purple, oolong...?"
+        },
+        {
+            "name": "Lacie",
+            "text": "..."
+        },
+        {
+            "name": "Lacie",
+            "text": "(Which was it...? It was none of those...!)"
+        },
+        {
+            "name": "Lacie",
+            "text": "...Maybe bubble tea then?"
+        },
+        {
+            "name": "Cashier",
+            "text": "You still need to choose a flavor."
+        },
+        {
+            "name": "Cashier",
+            "text": "...Have you even looked at the menu?"
+        }
+    ],
+    "talkingWithCashier_(Strawberry Milkshake)": [
+        {
+            "name": "Lacie",
+            "text": "...And the milkshake."
+        },
+        {
+            "name": "Cashier",
+            "text": "What flavor?"
+        },
+        {
+            "name": "Lacie",
+            "text": "Um... strawberry please."
+        },
+        {
+            "name": "Cashier",
+            "text": "We're out of strawberries. We'll go with concentrate, okay?"
+        },
+        {
+            "name": "Lacie",
+            "text": "...W-wait... concentrate?"
+        },
+        {
+            "name": "Cashier",
+            "text": "Unless you wanna choose something else."
+        },
+        {
+            "name": "Lacie",
+            "text": "Another fruit...?"
+        },
+        {
+            "name": "Lacie",
+            "text": "(What fruits are there...? I should have thought of this in advance...!)"
+        },
+        {
+            "name": "Cashier",
+            "text": "I don't have all day, you know."
+        }
+    ],
+    "talkingWithCashier_(Flan)": [
+        {
+            "name": "Cashier",
+            "text": "A flan, with anything on top?"
+        },
+        {
+            "name": "Lacie",
+            "text": "Um... just one of those on display."
+        },
+        {
+            "name": "Cashier",
+            "text": "Those are just for display. Not for sale."
+        },
+        {
+            "name": "Lacie",
+            "text": "Then... just a flan."
+        },
+        {
+            "name": "Cashier",
+            "text": "You need to tell me if you want it with anything..."
+        },
+        {
+            "name": "Lacie",
+            "text": "Just the flan. Regular."
+        },
+        {
+            "name": "Cashier",
+            "text": "...One \"regular\" flan then..."
+        },
+        {
+            "name": "Lacie",
+            "text": "...Yes, regular."
+        }
+    ],
+    "talkingWithCashier_(Macarons)": [
+        {
+            "name": "Cashier",
+            "text": "Macarons? What kind? How many?"
+        },
+        {
+            "name": "Lacie",
+            "text": "Uh... the pink ones?"
+        },
+        {
+            "name": "Cashier",
+            "text": "That can be strawberry, or raspberry, or cotton candy."
+        },
+        {
+            "name": "Lacie",
+            "text": "...Maybe one of each?"
+        },
+        {
+            "name": "Cashier",
+            "text": "The minimum is 6."
+        },
+        {
+            "name": "Lacie",
+            "text": "...Okay."
+        },
+        {
+            "name": "Cashier",
+            "text": "So two of each."
+        },
+        {
+            "name": "Lacie",
+            "text": "...Two of each, yes."
+        }
+    ],
+    "talkingWithCashier_(Chocolate Eclair)": [
+        {
+            "name": "Cashier",
+            "text": "An eclair? What kind?"
+        },
+        {
+            "name": "Lacie",
+            "text": "Chocolate, please."
+        },
+        {
+            "name": "Cashier",
+            "text": "There are no chocolate eclairs left."
+        },
+        {
+            "name": "Lacie",
+            "text": "..."
+        },
+        {
+            "name": "Cashier",
+            "text": "Hazelnut is pretty much the same thing."
+        },
+        {
+            "name": "Lacie",
+            "text": "...That one, then."
+        },
+        {
+            "name": "Cashier",
+            "text": "Just one?"
+        },
+        {
+            "name": "Lacie",
+            "text": "...Yeah. One hazelnut eclair."
+        },
+        {
+            "name": "Cashier",
+            "text": "Alright. "
+        }
+    ],
+    "lacieToughts": [
+        {
+            "name": "Lacie",
+            "text": "(...that was embarrassing.)"
+        },
+        {
+            "name": "Lacie",
+            "text": "(I scared the cashier and couldn't even get what I wanted...)"
+        },
+        {
+            "name": "Lacie",
+            "text": "(I can't even do this much?)"
+        }
+    ],
+    "girlAB": [
+        {
+            "name": "Girl A",
+            "text": "What is it? Did you notice that girl too?"
+        },
+        {
+            "name": "Girl B",
+            "text": "Is it just me or does she seem strange to you?"
+        },
+        {
+            "name": "Girl A",
+            "text": "I was just about to say the same thing."
+        },
+        {
+            "name": "Girl A",
+            "text": "She gives off creepy vibes..."
+        },
+        {
+            "name": "Lacie",
+            "text": "(This again...? Just ignore them...)"
+        },
+        {
+            "name": "Girl A",
+            "text": "Do you wanna move?"
+        },
+        {
+            "name": "Girl B",
+            "text": "I'd feel impolite switching tables now, but..."
+        },
+        {
+            "name": "Girl B",
+            "text": "Yeah, let's go."
+        },
+        {
+            "name": "Girl A",
+            "text": "Go go, before she curses us or something!"
+        },
+        {
+            "name": "Lacie",
+            "text": "..."
+        },
+        {
+            "name": "Lacie",
+            "text": "(Lacie... relax.)"
+        },
+        {
+            "name": "Lacie",
+            "text": "(It's just two girls. You can put up with it.)"
+        }
+    ],
+    "LadyMan": [
+        {
+            "name": "Man",
+            "text": "That girl.. isn't she the daughter of the family who lives on the next block?"
+        },
+        {
+            "name": "Lady",
+            "text": "Oh my goodness. You're right."
+        },
+        {
+            "name": "Man",
+            "text": "Man... Just being around her gives me the chills."
+        },
+        {
+            "name": "Lady",
+            "text": "What is it about her, I wonder?"
+        },
+        {
+            "name": "Man",
+            "text": "Whatever! She's a freak."
+        }
+    ],
+    "ChildTalk": [
+        {
+            "name": "Child",
+            "text": "Mommy can we leave? That lady..."
+        },
+        {
+            "name": "Mother",
+            "text": "Shh! Don't look in her direction. Finish your food and we'll go."
+        },
+        {
+            "name": "Child",
+            "text": "I don't want it anymore, I wanna go..."
+        },
+        {
+            "name": "Lady",
+            "text": "I've met her brother though, he was in one of my classes."
+        },
+        {
+            "name": "Lady",
+            "text": "She's nothing like him."
+        },
+        {
+            "name": "Child",
+            "text": "Mommy she's scary..."
+        },
+        {
+            "name": "Man",
+            "text": "I pity the poor people who have to share a classroom with her."
+        },
+        {
+            "name": "Lady",
+            "text": "Imagine what her family must feel having a daughter with such a reputation."
+        },
+        {
+            "name": "Man",
+            "text": "Oh man... and after what happened..."
+        },
+        {
+            "name": "Lady",
+            "text": "Sucks to have a broken family. They don't deserve that."
+        },
+        {
+            "name": "Man",
+            "text": "It's probably her fault, don't you think?"
+        }
+    ]
+}

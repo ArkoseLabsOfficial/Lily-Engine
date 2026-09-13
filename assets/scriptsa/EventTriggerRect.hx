@@ -1,0 +1,199 @@
+import flixel.math.FlxRect;
+import flixel.FlxG;
+import lime.math.Vector2;
+
+importScript("GDUtil");
+importScript("PlayerProps");
+using StringTools;
+
+class EventTriggerRect {
+	var player = Game.party[0];
+
+	var triggerAnswers:Map<String, Array<String>->Void> = [
+		"Sit_Down" => function(args) {
+			Game.room.scene.changeLayer(player, "Main/Bench3");
+			PlayerProps.sit(obj, "sitDOWN", 0, -3);
+		},
+		"Sit_Down2" => function(args) {
+			Game.room.scene.changeLayer(player, "Main/Bench3");
+			PlayerProps.sit(obj, "sitDOWN", 0, -3);
+		},
+		"get_knife" => function(args) {
+			Game.items.addItem("ch1_knife");
+		},
+		"Use" => function(args) {
+			switch (args[0]) {
+				case "ch1_knife":
+					Game.objectives.addObjective("main_investigation");
+					Game.objectives.failObjective("main_investigation.explore_hall");
+			}
+		},
+		"Sign1" => function(args) {
+			FlxG.state.openSubState(new DialogBox("signs", "Sign1"));
+		},
+		"Sign2" => function(args) {
+			FlxG.state.openSubState(new DialogBox("signs", "Sign2"));
+		},
+		"Sign3" => function(args) {
+			FlxG.state.openSubState(new DialogBox("signs", "Sign3"));
+		},
+		"Sign4" => function(args) {
+			var path = Game.room.scene.getNode("Paths/Hiro/PathFollow2D");
+			path._offset = 0;
+			Game.room.followPath2D("Paths/Hiro/PathFollow2D", player, 50, false, function() {
+				var hiroAnim = Game.room.scene.getNode("Main/HiroAnim");
+				var hiroNpc = Game.room.scene.getNode("Main/HiroNpc");
+				path._target = null;
+				hiroAnim.visible = true;
+				hiroNpc.visible = false;
+				player.visible = false;
+				player.canMove = false;
+				hiroAnim.visual.animation.add("karsilasma", [0, 1, 2, 3, 4, 5, 6], 6, false);
+				hiroAnim.visual.animation.finishCallback = function(name:String) {
+					if (name == "karsilasma") {
+						hiroAnim.visible = false;
+						hiroNpc.visible = true;
+						player.visible = true;
+						player.canMove = true;
+
+						hiroAnim.visual.animation.finishCallback = null;
+					}
+				};
+				hiroAnim.visual.animation.play("karsilasma");
+			});
+		},
+		"Sign5" => function(args) {
+			FlxG.state.openSubState(new DialogBox("signs", "Sign5"));
+		},
+		"Sign6" => function(args) {
+			FlxG.state.openSubState(new DialogBox("signs", "Sign6"));
+		},
+		"Bench" => function(args) {
+			Game.room.scene.changeLayer(player, "Main/Bench");
+			PlayerProps.sit(obj, "sitDOWN", 0, -3);
+		},
+		"DoubleChairTable_SitLeft" => function(args) {
+			PlayerProps.sit(obj, "sitRIGHT", 10, -6);
+		},
+		"DoubleChairTable_SitRight" => function(args) {
+			PlayerProps.sit(obj, "sitLEFT", -10, -6);
+		},
+		"save_game" => function(args) {
+			FlxG.state.openSubState(new SaveLoadMenu(true, true));
+		},
+		"Open_Door" => function(args) {
+			var closeValue:Int = Std.int(args[1]);
+			var openValue:Int = Std.int(args[2]);
+			var door = obj.parentNode;
+			if (door.Frame == closeValue) {
+				door.Frame = openValue;
+				Solid = false;
+			} else if (door.Frame == openValue) {
+				door.Frame = closeValue;
+				Solid = true;
+			}
+		},
+		"Exit" => function(args) {
+			if (args.length >= 2)
+				teleportPlayerToRoom(args[0], args[1]);
+			else
+				trace("Exit event requires 2 args: Exit(room, spawn)");
+		},
+	];
+
+	public var Event:String = "";
+	public var Enabled:Bool = true;
+	public var Solid:Bool = false;
+	public var Trigger:Int = 0; // 0 = confirm press, 1 = touch
+	public var Directions:Int = 0;
+	public var Area:Vector2 = new Vector2(32, 32);
+	public var Offset:Vector2 = new Vector2(0, 0);
+
+	var hasTriggeredTouch:Bool = false;
+	var _shapeNode:Dynamic = null;
+
+	function onRoomLoaded() {
+		_shapeNode = GDUtil.MakeCollisionRect(Area, Offset);
+		_shapeNode.nodeName = obj.nodeName + "_shape";
+
+		var scene:Dynamic = Game.room.scene;
+		if (scene != null)
+			scene.add(_shapeNode);
+		PlayerProps.sitting = false;
+	}
+
+	function update(elapsed:Float) {
+		if (_shapeNode != null) {
+			if (Solid && Enabled) {
+				_shapeNode.x = obj.x - (Area.x / 2.0) + Offset.x;
+				_shapeNode.y = obj.y - (Area.y / 2.0) + Offset.y;
+				_shapeNode.width = Area.x;
+				_shapeNode.height = Area.y;
+				_shapeNode.offset.set(0, 0);
+			} else {
+				_shapeNode.width = 0;
+				_shapeNode.height = 0;
+			}
+		}
+
+		if (!Enabled)
+			return;
+
+		if (Game.party != null && Game.party.length > 0) {
+			var player = Game.party[0];
+
+			var iBox = player.getInteractionBox();
+			var px:Float = obj.x;
+			var py:Float = obj.y;
+			var rectX:Float = px - (Area.x / 2.0) + Offset.x;
+			var rectY:Float = py - (Area.y / 2.0) + Offset.y;
+			var rect:FlxRect = FlxRect.get(rectX, rectY, Area.x, Area.y);
+			if (iBox.overlaps(rect)) {
+				if (Trigger == 1 && !hasTriggeredTouch) {
+					hasTriggeredTouch = true;
+					fireEvent();
+				} else if (Trigger == 0 && Controls.ACCEPT) {
+					fireEvent();
+				}
+			} else {
+				if (Trigger == 1) {
+					hasTriggeredTouch = false;
+				}
+			}
+		}
+
+		PlayerProps.update();
+	}
+
+	function fireEvent() {
+		var rawEvent:String = (Event != null && Event != "") ? Event : obj.nodeName;
+
+		var cmdName:String = rawEvent;
+		var args:Array<String> = [];
+
+		var openIndex:Int = rawEvent.indexOf("(");
+		var closeIndex:Int = rawEvent.indexOf(")");
+
+		if (openIndex != -1 && closeIndex != -1 && closeIndex > openIndex) {
+			cmdName = rawEvent.substring(0, openIndex).trim();
+			var argsContent:String = rawEvent.substring(openIndex + 1, closeIndex);
+			var rawArgs:Array<String> = argsContent.split(",");
+			for (arg in rawArgs)
+				args.push(arg.trim());
+		}
+
+		if (triggerAnswers.exists(cmdName)) {
+			var action = triggerAnswers[cmdName];
+			action(args);
+			return;
+		} else {
+			trace('Warning: Command "$cmdName" not found in triggerAnswers!');
+		}
+	}
+
+	function teleportPlayerToRoom(roomPath:String, targetSpawnPointName:String) {
+		trace("Teleporting to room: " + roomPath + " spawn: " + targetSpawnPointName);
+		targetSpawn = targetSpawnPointName;
+		FlxG.switchState(new BaseRoom(roomPath));
+	}
+}

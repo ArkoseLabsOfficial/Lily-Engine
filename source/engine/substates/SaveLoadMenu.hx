@@ -1,6 +1,17 @@
 package engine.substates;
 
+import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.FlxSubState;
+import flixel.group.FlxSpriteGroup;
+import flixel.text.FlxText;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
+import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
+import engine.ui.ImprovedNinePatch;
 import lang.Lang;
+import lang.LangText;
 
 class SaveLoadMenu extends SubStateBackend {
 	public var isSavingMode:Bool;
@@ -39,10 +50,29 @@ class SaveLoadMenu extends SubStateBackend {
 		var startY = (FlxG.height - MAIN_PANEL_H) / 2;
 
 		var titleTxt = isSavingMode ? "system.menu.savegame" : "system.menu.loadgame";
-		var frame = new MenuFrameNode(startX, startY, MAIN_PANEL_W, MAIN_PANEL_H, 2);
-		frame.setTitle(titleTxt);
-		frame.divider = new FlxSprite(0, 0, Assets.getImage("ui/dividers/divider_lg"));
+
+		var frame = new ImprovedNinePatch(startX, startY);
+		frame.texture = 'ui/frames/frame_menu_2';
+		frame.bgTexture = 'ui/frames/frame_menu_bg';
+		frame.margin = {
+			left: 50,
+			top: 50,
+			right: 50,
+			bottom: 50
+		};
+		frame.scaleFactor = 0.75;
+		frame.resize(MAIN_PANEL_W, MAIN_PANEL_H);
 		add(frame);
+
+		var titleText = new LangText(startX, startY + 30, MAIN_PANEL_W, titleTxt, null, 48);
+		titleText.alignment = CENTER;
+		add(titleText);
+
+		var divider = new FlxSprite(0, startY + 90);
+		divider.loadGraphic(Assets.getImage("ui/dividers/divider_lg"));
+		divider.updateHitbox();
+		divider.x = startX + ((MAIN_PANEL_W - divider.width) / 2);
+		add(divider);
 
 		slotGroup = new FlxSpriteGroup(startX + 178, startY + 120);
 		add(slotGroup);
@@ -57,6 +87,8 @@ class SaveLoadMenu extends SubStateBackend {
 		new FlxTimer().start(0.1, function(_) {
 			canInput = true;
 		});
+
+		Discord.updatePresence('In the ${isSavingMode ? "save" : "load"} menu', 'Mod: ${GamePrefs.currentMod}');
 	}
 
 	override public function openSubState(SubState:FlxSubState):Void {
@@ -103,7 +135,7 @@ class SaveLoadMenu extends SubStateBackend {
 		if (Controls.RIGHT_P)
 			paginate(1);
 
-		if (Controls.CANCEL) {
+		if (Controls.BACK) {
 			FlxG.sound.play(Flags.CANCEL);
 			close();
 		}
@@ -119,7 +151,7 @@ class SaveLoadMenu extends SubStateBackend {
 				if (!selectedInfo.isEmpty) {
 					FlxG.sound.play(Flags.CONFIRM);
 					if (Game.save.loadGame(selectedInfo.slotNum)) {
-						StateBackend.switchState(new BaseRoom(Game.save.room, true));
+						FlxG.switchState(new BaseRoom(Game.save.room, true));
 					}
 				} else {
 					FlxG.sound.play(Flags.ERROR);
@@ -198,7 +230,7 @@ class SaveLoadSlotEntry extends FlxSpriteGroup {
 		if (info.isEmpty) {
 			bg.loadGraphic(Assets.getImage("ui/saves/save_slot_empty"));
 
-			var lbl = new FlxText(0, 40, SLOT_W, Lang.get("system.menu.file") + " " + info.slotNum, 36);
+			var lbl = new FlxText(0, 25, SLOT_W, Lang.get("system.menu.file") + " " + info.slotNum, 36);
 			lbl.alignment = CENTER;
 			add(lbl);
 		} else {
@@ -220,7 +252,7 @@ class SaveLoadSlotEntry extends FlxSpriteGroup {
 
 			var locImg = new FlxSprite(870, 6);
 			var expectedPath = "saves/" + info.room;
-			if (Assets.exists(Flags.imageFolder + expectedPath + ".png"))
+			if (Assets.exists('${Flags.imageFolder}/$expectedPath.png'))
 				locImg.loadGraphic(Assets.getImage(expectedPath));
 			else
 				locImg.loadGraphic(Assets.getImage("saves/unknown"));

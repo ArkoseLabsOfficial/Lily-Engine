@@ -53,8 +53,9 @@
 	<!-- Comment this out to disable abstract support in hscript. !-->
 	<haxedef name="HSCRIPT_ABSTRACT_SUPPORT" unless="STRIPPED_COMPILE" />
 	<define name="FEATURE_HSCRIPT" />
-	<define name="FEATURE_TOUCH_CONTROLS" unless="html5 || desktop"/>
-	<define name="FEATURE_DISCORD_RPC" if="desktop" />
+	<!-- <define name="FEATURE_HXSCRIPT" /> --> <!-- Better Scripting Library For Engine but Not Implemented Fully Yet -->
+	<define name="ANGLE_RENDERER" unless="desktop || mobile"/> <!-- No one cares but can be good to have for PCs --> 
+	<define name="FEATURE_TOUCH_CONTROLS" unless="html5"/>
 
 	<haxedef name="lime_disable_assets_version" if="html5"/> <!-- I dont wanna deal wth these -->
 
@@ -65,9 +66,12 @@
 	<haxelib name="flixel" />
 	<haxelib name="flixel-addons" />
     <haxelib name="flixel-ui" />
+	<haxelib name="hxscript" if="FEATURE_HXSCRIPT" />
+	<define name="hxscript_host" value="engine.backend.ui" />
 	<haxelib name="LilyScript" if="FEATURE_HSCRIPT"/>
 	<haxelib name="mobile-controls" if="FEATURE_TOUCH_CONTROLS"/>
-	<haxelib name="GodotSceneLoader" />
+	<haxelib name="GodotSceneLoader" /> <!-- DO NOT REMOVE THIS IS A CORE OF THE GAME -->
+	<haxelib name="hxFileManager" /> <!-- Added because it's cool bruh -->
 	<haxedef name="openflPos" />
 	<haxedef name="hscriptPos" />
 	<haxelib name="hxdiscord_rpc" if="FEATURE_DISCORD_RPC"/>
@@ -75,6 +79,15 @@
 	<!-- Comment this out to prevent extending classes in hscript.
 		 Reduces compilation time at the cost of limited HScript flexibility. !-->
 	<define name="CUSTOM_CLASSES" />
+
+	<!-- Comment this out to prevent unused classes from being compiled.
+		 Reduces compilation time at the cost of limited HScript flexibility. !-->
+	<define name="COMPILE_ALL_CLASSES" />
+
+	<section if="COMPILE_ALL_CLASSES">
+		<haxeflag name="-dce" value="no" />
+		<haxeflag name="--macro" value="macros.Macros.addAdditionalClasses()" />
+	</section>
 
 	<define name="GLOBAL_SCRIPT" />
 

@@ -6,151 +6,187 @@ import godot.nodes.CollisionPolygon2D;
 import flixel.math.FlxRect;
 import flixel.math.FlxPoint;
 import flixel.FlxG;
-import engine.backend.game.Room;
 
 class Player extends Character {
-	var walkSpeed:Float = 160;
-	var runSpeed:Float = 280;
+	public var disableRunning:Bool = false;
 
-	override public function loadEntity(spriteName:String) {
-		super.loadEntity(spriteName);
-		solid = false;
-	}
-
-	override public function getCollisionBox():FlxRect {
-		return FlxRect.get(x - 12, y - 6, 24, 6);
-	}
-
-	public function getCollisionBoxAt(targetX:Float, targetY:Float):FlxRect {
-		var box = getCollisionBox();
-
-		box.x += targetX - x;
-		box.y += targetY - y;
-
-		return box;
+	public function new(x:Float, y:Float, zIndex:Int, name:String) {
+		super(x, y, zIndex, name);
+		baseSpeed = 160;
+		runMultiplier = 1.75;
+		runningThreshold = 200;
 	}
 
 	override public function update(elapsed:Float):Void {
-		if (canMove && !isFollowingPath) {
-			velocity.set(0, 0);
-			handleMovement(elapsed);
+		var up = Controls.UP_P;
+		var down = Controls.DOWN_P;
+		var left = Controls.LEFT_P;
+		var right = Controls.RIGHT_P;
+		if (movementEnabled && !isFollowingPath) {
+			var move = getMovementDelta(elapsed);
 
-			if (velocity.x != 0 || velocity.y != 0) {
-				if (Math.abs(velocity.x) > Math.abs(velocity.y))
-					direction = velocity.x > 0 ? RIGHT : LEFT;
-				else
-					direction = velocity.y > 0 ? DOWN : UP;
+			if (left)
+				direction = LEFT;
+			else if (right)
+				direction = RIGHT;
+			else if (up)
+				direction = UP;
+			else if (down)
+				direction = DOWN;
+
+			if (move.x != 0 || move.y != 0) {
+				var stepX = move.x;
+				var stepY = move.y;
+
+				if (stepX != 0 && !isCollidingAt(x + stepX, y))
+					x += Math.round(stepX);
+
+				if (stepY != 0 && !isCollidingAt(x, y + stepY))
+					y += Math.round(stepY);
 			}
-		} else if (isFollowingPath) {
-			velocity.set(0, 0);
-		}
 
-		if (!isFollowingPath && (velocity.x != 0 || velocity.y != 0)) {
-			var stepX = velocity.x * elapsed;
-			var stepY = velocity.y * elapsed;
-
-			var simulatedX = x;
-
-			if (velocity.x != 0) {
-				if (checkCollision(x + stepX, y)) {
-					velocity.x = 0;
-				} else {
-					simulatedX += stepX;
-				}
-			}
-
-			if (velocity.y != 0) {
-				if (checkCollision(simulatedX, y + stepY)) {
-					velocity.y = 0;
-				}
-			}
+			move.put();
 		}
 
 		super.update(elapsed);
 	}
 
-	public function checkCollisionObject(obj:Dynamic):Bool {
-		if (obj == null)
+	override function updatePathMovement(elapsed:Float):Void {
+		if (pathTarget == null)
+			return;
+
+		var dx = pathTarget.x - x;
+		var dy = pathTarget.y - y;
+		var distSq = dx * dx + dy * dy;
+		var step = baseSpeed * elapsed;
+
+		if (distSq <= step * step) {
+			x = Math.round(pathTarget.x);
+			y = Math.round(pathTarget.y);
+			isFollowingPath = false;
+			pathTarget.put();
+			pathTarget = null;
+
+			if (onPathComplete != null) {
+				var cb = onPathComplete;
+				onPathComplete = null;
+				cb();
+			}
+		} else {
+			var dist = Math.sqrt(distSq);
+			x += Math.round((dx / dist) * step);
+			y += Math.round((dy / dist) * step);
+		}
+	}
+
+	public function checkCollisionObject(other:Dynamic):Bool {
+		if (other == null)
 			return false;
 
-		var ox:Float = (obj.x != null) ? obj.x : 0;
-		var oy:Float = (obj.y != null) ? obj.y : 0;
-		var ow:Float = (obj.width != null) ? obj.width : 0;
-		var oh:Float = (obj.height != null) ? obj.height : 0;
+		var ox:Float = (other.x != null) ? other.x : 0;
+		var oy:Float = (other.y != null) ? other.y : 0;
+		var ow:Float = (other.width != null) ? other.width : 0;
+		var oh:Float = (other.height != null) ? other.height : 0;
 
 		if (ow <= 0 || oh <= 0)
 			return false;
 
-		var objRect:FlxRect = FlxRect.get(ox, oy, ow, oh);
+		var objRect = FlxRect.get(ox, oy, ow, oh);
+		var pBoxes = getCollisionBoxes();
+		var overlapping = false;
 
-		var pBox:FlxRect = getCollisionBox();
-		pBox.x -= 5;
-		pBox.y -= 5;
-		pBox.width += 10;
-		pBox.height += 10;
+		for (pBox in pBoxes) {
+			pBox.x -= 5;
+			pBox.y -= 5;
+			pBox.width += 10;
+			pBox.height += 10;
 
-		var overlapping:Bool = pBox.overlaps(objRect);
+			if (pBox.overlaps(objRect)) {
+				overlapping = true;
+				break;
+			}
+		}
 
-		pBox.put();
+		for (pBox in pBoxes)
+			pBox.put();
 		objRect.put();
 
 		return overlapping;
 	}
 
-	function checkCollision(targetX:Float, targetY:Float):Bool {
-		var pBox = getCollisionBoxAt(targetX, targetY);
+	function isCollidingAt(targetX:Float, targetY:Float):Bool {
 		var hit = false;
+		var pBoxes = getCollisionBoxes();
+
+		for (pBox in pBoxes) {
+			pBox.x += targetX - x;
+			pBox.y += targetY - y;
+		}
 
 		if (Game.room != null) {
-			var shapes = Game.room.scene.getNodesOfType(CollisionShape2D);
-			for (cShape in shapes) {
-				var sx = cShape.scale.x;
-				var sy = cShape.scale.y;
-				var sBox = FlxRect.get(cShape.x - (cShape.offset.x * sx), cShape.y - (cShape.offset.y * sy), cShape.width * sx, cShape.height * sy);
+			for (shape in Game.room.scene.getNodesOfType(CollisionShape2D)) {
+				var sx = shape.scale.x;
+				var sy = shape.scale.y;
+				var sBox = FlxRect.get(shape.x - (shape.offset.x * sx), shape.y - (shape.offset.y * sy), shape.width * sx, shape.height * sy);
 
-				if (pBox.overlaps(sBox)) {
-					hit = true;
-					sBox.put();
-					break;
+				for (pBox in pBoxes) {
+					if (pBox.overlaps(sBox)) {
+						hit = true;
+						break;
+					}
 				}
 				sBox.put();
+				if (hit)
+					break;
 			}
 
 			if (!hit) {
-				var polys = Game.room.scene.getNodesOfType(CollisionPolygon2D);
-				for (cPoly in polys) {
-					if (checkPolygonCollision(pBox, cPoly)) {
-						hit = true;
-						break;
+				for (poly in Game.room.scene.getNodesOfType(CollisionPolygon2D)) {
+					for (pBox in pBoxes) {
+						if (isPolygonOverlapping(pBox, poly)) {
+							hit = true;
+							break;
+						}
 					}
+					if (hit)
+						break;
 				}
 			}
 
 			if (!hit) {
-				var entities = Game.room.scene.getNodesOfType(Character);
-				for (entity in entities) {
-					if (entity == null || entity == this || !entity.solidCollision)
+				for (entity in Game.room.scene.getNodesOfType(Character)) {
+					if (entity == null || entity == this || !entity.isSolid)
 						continue;
 
-					var eBox = entity.getCollisionBox();
-					if (pBox.overlaps(eBox)) {
-						hit = true;
-						eBox.put();
-						break;
+					var eBoxes = entity.getCollisionBoxes();
+
+					for (pBox in pBoxes) {
+						for (eBox in eBoxes) {
+							if (pBox.overlaps(eBox)) {
+								hit = true;
+								break;
+							}
+						}
+						if (hit)
+							break;
 					}
-					eBox.put();
+					for (eBox in eBoxes)
+						eBox.put();
+					if (hit)
+						break;
 				}
 			}
 		}
 
-		pBox.put();
+		for (pBox in pBoxes)
+			pBox.put();
 		return hit;
 	}
 
-	function checkPolygonCollision(pBox:FlxRect, cPoly:CollisionPolygon2D):Bool {
-		var px = cPoly.x;
-		var py = cPoly.y;
-		var poly = cPoly.polygon;
+	function isPolygonOverlapping(rect:FlxRect, polyNode:CollisionPolygon2D):Bool {
+		var px = polyNode.x;
+		var py = polyNode.y;
+		var poly = polyNode.polygon;
 		if (poly.length < 3)
 			return false;
 
@@ -159,28 +195,29 @@ class Player extends Character {
 		var minY = poly[0].y;
 		var maxY = poly[0].y;
 		for (i in 1...poly.length) {
-			if (poly[i].x < minX)
-				minX = poly[i].x;
-			if (poly[i].x > maxX)
-				maxX = poly[i].x;
-			if (poly[i].y < minY)
-				minY = poly[i].y;
-			if (poly[i].y > maxY)
-				maxY = poly[i].y;
+			var pt = poly[i];
+			if (pt.x < minX)
+				minX = pt.x;
+			if (pt.x > maxX)
+				maxX = pt.x;
+			if (pt.y < minY)
+				minY = pt.y;
+			if (pt.y > maxY)
+				maxY = pt.y;
 		}
 
 		var polyBounds = FlxRect.get(px + minX, py + minY, maxX - minX, maxY - minY);
-		if (!pBox.overlaps(polyBounds)) {
+		if (!rect.overlaps(polyBounds)) {
 			polyBounds.put();
 			return false;
 		}
 		polyBounds.put();
 
 		var corners = [
-			FlxPoint.weak(pBox.x, pBox.y),
-			FlxPoint.weak(pBox.x + pBox.width, pBox.y),
-			FlxPoint.weak(pBox.x + pBox.width, pBox.y + pBox.height),
-			FlxPoint.weak(pBox.x, pBox.y + pBox.height)
+			FlxPoint.weak(rect.x, rect.y),
+			FlxPoint.weak(rect.x + rect.width, rect.y),
+			FlxPoint.weak(rect.x + rect.width, rect.y + rect.height),
+			FlxPoint.weak(rect.x, rect.y + rect.height)
 		];
 
 		for (c in corners) {
@@ -193,7 +230,7 @@ class Player extends Character {
 
 		for (pt in poly) {
 			var testPt = FlxPoint.weak(px + pt.x, py + pt.y);
-			if (pBox.containsPoint(testPt)) {
+			if (rect.containsPoint(testPt)) {
 				testPt.put();
 				return true;
 			}
@@ -203,24 +240,24 @@ class Player extends Character {
 		return false;
 	}
 
-	function pointInPoly(testx:Float, testy:Float, poly:Array<Vector2>, px:Float, py:Float):Bool {
-		var c = false;
+	function pointInPoly(testX:Float, testY:Float, poly:Array<Vector2>, offsetX:Float, offsetY:Float):Bool {
+		var inside = false;
 		var j = poly.length - 1;
 		for (i in 0...poly.length) {
-			var vix = poly[i].x + px;
-			var viy = poly[i].y + py;
-			var vjx = poly[j].x + px;
-			var vjy = poly[j].y + py;
+			var ix = poly[i].x + offsetX;
+			var iy = poly[i].y + offsetY;
+			var jx = poly[j].x + offsetX;
+			var jy = poly[j].y + offsetY;
 
-			if (((viy > testy) != (vjy > testy)) && (testx < (vjx - vix) * (testy - viy) / (vjy - viy) + vix)) {
-				c = !c;
-			}
+			if (((iy > testY) != (jy > testY)) && (testX < (jx - ix) * (testY - iy) / (jy - iy) + ix))
+				inside = !inside;
+
 			j = i;
 		}
-		return c;
+		return inside;
 	}
 
-	function handleMovement(elapsed:Float):Void {
+	function getMovementDelta(elapsed:Float):FlxPoint {
 		var up = Controls.UP || FlxG.keys.anyPressed([W, UP]);
 		var down = Controls.DOWN || FlxG.keys.anyPressed([S, DOWN]);
 		var left = Controls.LEFT || FlxG.keys.anyPressed([A, LEFT]);
@@ -231,20 +268,25 @@ class Player extends Character {
 		if (left && right)
 			left = right = false;
 
-		var speed = Controls.RUN ? runSpeed : walkSpeed;
+		var speed = (!disableRunning && Controls.RUN) ? (baseSpeed * runMultiplier) : baseSpeed;
+		var dx:Float = 0;
+		var dy:Float = 0;
 
 		if (up)
-			velocity.y -= speed;
+			dy -= speed;
 		else if (down)
-			velocity.y += speed;
+			dy += speed;
 		if (left)
-			velocity.x -= speed;
+			dx -= speed;
 		else if (right)
-			velocity.x += speed;
+			dx += speed;
 
-		if (velocity.x != 0 && velocity.y != 0) {
-			velocity.normalize();
-			velocity.scale(speed);
+		if (dx != 0 && dy != 0) {
+			var norm = 1 / Math.sqrt(2);
+			dx *= norm;
+			dy *= norm;
 		}
+
+		return FlxPoint.get(dx * elapsed, dy * elapsed);
 	}
 }

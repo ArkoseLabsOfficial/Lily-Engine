@@ -58,16 +58,32 @@ class Lang {
 	 * @return Translated string or key if not found
 	 */
 	public static function get(key:String, ?vars:Array<Dynamic>):String {
+		return getSpecific(key, currentLanguage, vars);
+	}
+
+	/**
+	 * Get a translated string from a SPECIFIC language (useful for language menu options)
+	 * @param key Translation key
+	 * @param targetLang Specific language code to query (e.g., "jp", "th", "tr")
+	 * @param vars Optional variables for interpolation
+	 * @return Translated string or key if not found
+	 */
+	public static function getSpecific(key:String, targetLang:String, ?vars:Array<Dynamic>):String {
 		if (!initialized) {
 			trace("Lang system not initialized! Call Lang.init() first.");
 			return key;
 		}
 
-		var result:String = getFromPath(key);
+		// Ensure the target language file is loaded into memory if possible
+		if (!translations.exists(targetLang)) {
+			loadLanguage(targetLang);
+		}
+
+		var result:String = getFromPathForLang(key, targetLang);
 
 		if (vars != null && vars.length > 0) {
 			for (i in 0...vars.length) {
-				result = StringTools.replace(result, '{$i}', Std.string(vars[i]));
+				result = result.replace('{$i}', Std.string(vars[i]));
 			}
 		}
 
@@ -144,11 +160,8 @@ class Lang {
 	public static function getAvailableLanguages():Array<String> {
 		var languages:Array<String> = [];
 
-		trace(languagePath);
 		if (Assets.exists(languagePath) && Assets.isDirectory(languagePath)) {
-			trace(languagePath);
 			for (file in Assets.readDirectory(languagePath)) {
-				trace(file);
 				if (file.endsWith(".json")) {
 					languages.push(file.substring(0, file.length - 5));
 				}
@@ -190,7 +203,16 @@ class Lang {
 	}
 
 	private static function getFromPath(key:String):String {
-		for (lang in [currentLanguage, defaultLanguage]) {
+		return getFromPathForLang(key, currentLanguage);
+	}
+
+	private static function getFromPathForLang(key:String, langCode:String):String {
+		var searchLangs = [langCode];
+		if (langCode != defaultLanguage) {
+			searchLangs.push(defaultLanguage);
+		}
+
+		for (lang in searchLangs) {
 			var current:Dynamic = translations.get(lang);
 			if (current == null)
 				continue;
@@ -237,7 +259,6 @@ class Lang {
 			}
 		}
 
-		trace('Translation not found: $key');
 		return key;
 	}
 }

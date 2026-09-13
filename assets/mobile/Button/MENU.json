@@ -12,8 +12,8 @@
       }
     },
     {
-      "name": "CANCEL",
-      "id": "CANCEL",
+      "name": "BACK",
+      "id": "BACK",
       "texture": "button_circle",
       "position": [1550, 890],
       "scale": 1.5,

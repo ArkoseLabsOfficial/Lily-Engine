@@ -5,6 +5,8 @@ import flixel.FlxSprite;
 import flixel.math.FlxRect;
 import flixel.math.FlxPoint;
 import flixel.graphics.frames.FlxAtlasFrames;
+import flixel.FlxG;
+import flixel.group.FlxSpriteGroup;
 import haxe.xml.Access;
 import engine.backend.Game;
 
@@ -20,44 +22,73 @@ typedef CharAnimData = {
 	var spritePath:String;
 }
 
-enum FacingDirection {
-	UP;
-	DOWN;
-	LEFT;
-	RIGHT;
+enum abstract FacingDirection(String) from String to String {
+	var UP = "up";
+	var DOWN = "down";
+	var LEFT = "left";
+	var RIGHT = "right";
 }
 
 enum CharacterState {
-	Standing;
+	Idle;
 	Walking;
 	Running;
 	Custom;
 }
 
+typedef RelativeBox = {
+	var name:String;
+	var x:Float;
+	var y:Float;
+	var width:Float;
+	var height:Float;
+	var visible:Bool;
+	var enabled:Bool;
+}
+
 class Character extends Sprite {
-	public var solidCollision:Bool = true;
-	public var canMove:Bool = true;
+	public var isSolid:Bool = true;
+	public var movementEnabled:Bool = true;
 	public var direction:FacingDirection = DOWN;
-	public var state:CharacterState = Standing;
+	public var state:CharacterState = Idle;
 
 	public var isFollowingPath:Bool = false;
-	public var pathVelocity:FlxPoint = FlxPoint.get();
+	public var pathTarget:FlxPoint = null;
+	public var baseSpeed:Float = 160;
+	public var runMultiplier:Float = 1.75;
+	public var runningThreshold:Float = 200;
+	public var onPathComplete:Void->Void = null;
 
-	private var _lastFrameX:Float = 0;
-	private var _lastFrameY:Float = 0;
-
-	public var idlePrefix:String = "idle";
-	public var walkPrefix:String = "walk";
-	public var runPrefix:String = "run";
+	public var followTarget:Character = null;
+	public var followDistance:Int = 12;
+	public var syncAnimations:Bool = false;
 
 	public var positionHistory:Array<FlxPoint> = [];
 	public var maxHistory:Int = 40;
 	public var historySpacing:Float = 2.0;
 
+	public var idlePrefix:String = "idle";
+	public var walkPrefix:String = "walk";
+	public var runPrefix:String = "run";
+
 	public var animData:Map<String, CharAnimData> = new Map();
 	public var loadedFrames:Map<String, FlxAtlasFrames> = new Map();
 	public var currentSpritePath:String = "";
 	public var cameraOffset:FlxPoint = FlxPoint.get();
+
+	public var hitboxes:Array<RelativeBox> = [];
+	public var interactions:Array<RelativeBox> = [];
+	public var drawDebugBoxes:Bool = false;
+
+	public var defaultHitbox:RelativeBox;
+
+	public var debugBoxesGroup:FlxSpriteGroup;
+
+	private var hitboxSprites:Map<String, FlxSprite> = new Map();
+	private var interactionSprites:Map<String, FlxSprite> = new Map();
+
+	private var lastX:Float = 0;
+	private var lastY:Float = 0;
 
 	#if FEATURE_HSCRIPT
 	public var __script:Script;
@@ -67,19 +98,163 @@ class Character extends Sprite {
 		super();
 		this.x = x;
 		this.y = y;
-		this.zIndex = zIndex;
-		this.nodeName = name;
-		this.ySort = true;
+		this.zindex = zIndex;
+		this.name = name;
 		this.centered = false;
 		visual.antialiasing = false;
 
-		_lastFrameX = x;
-		_lastFrameY = y;
+		lastX = x;
+		lastY = y;
+
+		initBoxes();
+
+		debugBoxesGroup = new FlxSpriteGroup();
+		add(debugBoxesGroup);
+	}
+
+	function initBoxes():Void {
+		defaultHitbox = addHitbox("body", -16, -12, 32, 12, false, true);
+
+		addInteraction("interact_down", -6, 0, 12, 12, false, true);
+		addInteraction("interact_up", -6, -26, 12, 12, false, true);
+		addInteraction("interact_left", -24, -14, 12, 12, false, true);
+		addInteraction("interact_right", 12, -14, 12, 12, false, true);
+	}
+
+	public function addHitbox(name:String, x:Float, y:Float, width:Float, height:Float, visible:Bool = false, enabled:Bool = true):RelativeBox {
+		var box:RelativeBox = {
+			name: name,
+			x: x,
+			y: y,
+			width: width,
+			height: height,
+			visible: visible,
+			enabled: enabled
+		};
+		hitboxes.push(box);
+		return box;
+	}
+
+	public function addInteraction(name:String, x:Float, y:Float, width:Float, height:Float, visible:Bool = false, enabled:Bool = true):RelativeBox {
+		var box:RelativeBox = {
+			name: name,
+			x: x,
+			y: y,
+			width: width,
+			height: height,
+			visible: visible,
+			enabled: enabled
+		};
+		interactions.push(box);
+		return box;
+	}
+
+	public function getHitboxRect(?box:RelativeBox):FlxRect {
+		if (box == null)
+			box = defaultHitbox;
+		return FlxRect.get(this.x + box.x, this.y + box.y, box.width, box.height);
+	}
+
+	public function getHitboxRects():Array<FlxRect> {
+		var rects = [];
+		for (box in hitboxes) {
+			if (box.enabled) {
+				rects.push(FlxRect.get(this.x + box.x, this.y + box.y, box.width, box.height));
+			}
+		}
+		return rects;
+	}
+
+	public function getInteractionRect(?targetName:String):FlxRect {
+		if (targetName == null)
+			targetName = "interact_" + direction;
+
+		for (box in interactions) {
+			if (box.name == targetName && box.enabled) {
+				return FlxRect.get(this.x + box.x, this.y + box.y, box.width, box.height);
+			}
+		}
+		return FlxRect.get(this.x, this.y, 0, 0);
+	}
+
+	public function getCollisionBox():FlxRect {
+		return getHitboxRect(defaultHitbox);
+	}
+
+	public function getCollisionBoxes():Array<FlxRect> {
+		return getHitboxRects();
+	}
+
+	public function getGraphicBox():FlxRect {
+		return FlxRect.get(x + visual.x - visual.offset.x, y + visual.y - visual.offset.y, visual.frameWidth, visual.frameHeight);
+	}
+
+	public function getInteractionBox():FlxRect {
+		return getInteractionRect("interact_" + direction);
+	}
+
+	public function updateDebugBoxes():Void {
+		if (debugBoxesGroup == null)
+			return;
+
+		if (!drawDebugBoxes) {
+			debugBoxesGroup.visible = false;
+			return;
+		}
+
+		debugBoxesGroup.visible = true;
+
+		for (box in hitboxes) {
+			var spr:FlxSprite;
+			if (!hitboxSprites.exists(box.name)) {
+				spr = new FlxSprite().makeGraphic(1, 1, 0xFFFFFFFF);
+				hitboxSprites.set(box.name, spr);
+				debugBoxesGroup.add(spr);
+			} else {
+				spr = hitboxSprites.get(box.name);
+			}
+
+			if (box.enabled) {
+				spr.visible = true;
+				spr.color = 0xFF0000;
+				spr.alpha = 0.5;
+				spr.scale.set(box.width, box.height);
+				spr.updateHitbox();
+				spr.x = this.x + box.x;
+				spr.y = this.y + box.y;
+			} else {
+				spr.visible = false;
+			}
+		}
+
+		var activeName = "interact_" + direction;
+		for (box in interactions) {
+			var spr:FlxSprite;
+			if (!interactionSprites.exists(box.name)) {
+				spr = new FlxSprite().makeGraphic(1, 1, 0xFFFFFFFF);
+				interactionSprites.set(box.name, spr);
+				debugBoxesGroup.add(spr);
+			} else {
+				spr = interactionSprites.get(box.name);
+			}
+
+			if (box.enabled) {
+				spr.visible = true;
+				spr.color = (box.name == activeName) ? 0x00FF00 : 0x004400;
+				spr.alpha = 0.5;
+				spr.scale.set(box.width, box.height);
+				spr.updateHitbox();
+				spr.x = this.x + box.x;
+				spr.y = this.y + box.y;
+			} else {
+				spr.visible = false;
+			}
+		}
 	}
 
 	public function loadEntity(spriteName:String) {
-		if (!spriteName.startsWith(Flags.characterFolder))
-			spriteName = Flags.characterFolder + spriteName;
+		if (!spriteName.startsWith('${Flags.characterFolder}/'))
+			spriteName = '${Flags.characterFolder}/$spriteName';
 
 		var fullPath = spriteName;
 		var xmlPath = fullPath + ".xml";
@@ -132,7 +307,7 @@ class Character extends Sprite {
 				}
 			}
 		} else {
-			var baseXmlPath = '${Flags.imageFolder}$spriteName.xml';
+			var baseXmlPath = '${Flags.imageFolder}/$spriteName.xml';
 
 			if (Assets.exists(baseXmlPath))
 				visual.frames = Assets.getSparrowAtlas(spriteName);
@@ -144,8 +319,6 @@ class Character extends Sprite {
 			var boxHeight = visual.height * 0.9;
 			visual.setSize(boxWidth, boxHeight);
 			visual.offset.set((visual.width - boxWidth) / 2, visual.height - boxHeight);
-
-			setupDefaultAnimations();
 		}
 
 		#if FEATURE_HSCRIPT
@@ -165,17 +338,10 @@ class Character extends Sprite {
 		#end
 	}
 
-	function setupDefaultAnimations() {
-		visual.animation.addByPrefix("idle_down", "idle_down", 1, false);
-		visual.animation.addByPrefix("walk_down", "walk_down", 6, true);
-		visual.animation.addByPrefix("run_down", "run_down", 10, true);
-		visual.animation.play("idle_down");
-	}
-
 	public function playAnim(animName:String, force:Bool = false, reversed:Bool = false) {
 		if (animName == "" && force) {
 			if (state == Custom)
-				state = Standing;
+				state = Idle;
 			return;
 		}
 
@@ -207,127 +373,235 @@ class Character extends Sprite {
 		}
 	}
 
+	public function turn(facing:FacingDirection) {
+		this.direction = facing;
+	}
+
+	public function moveTo(tx:Float, ty:Float, ?onFinish:Void->Void):Void {
+		if (pathTarget == null)
+			pathTarget = FlxPoint.get();
+		pathTarget.set(tx, ty);
+		onPathComplete = onFinish;
+		isFollowingPath = true;
+	}
+
+	public function teleport(?tx:Float, ?ty:Float):Void {
+		isFollowingPath = false;
+
+		if (tx != null && ty != null) {
+			x = tx;
+			y = ty;
+		} else if (pathTarget != null) {
+			x = pathTarget.x;
+			y = pathTarget.y;
+		}
+
+		if (pathTarget != null) {
+			pathTarget.put();
+			pathTarget = null;
+		}
+
+		if (onPathComplete != null) {
+			var cb = onPathComplete;
+			onPathComplete = null;
+			cb();
+		}
+	}
+
+	function updatePathMovement(elapsed:Float):Void {
+		if (pathTarget == null)
+			return;
+
+		var dx = pathTarget.x - x;
+		var dy = pathTarget.y - y;
+		var distSq = dx * dx + dy * dy;
+		var step = baseSpeed * elapsed;
+
+		if (distSq <= step * step) {
+			x = pathTarget.x;
+			y = pathTarget.y;
+			isFollowingPath = false;
+			pathTarget.put();
+			pathTarget = null;
+
+			if (onPathComplete != null) {
+				var cb = onPathComplete;
+				onPathComplete = null;
+				cb();
+			}
+		} else {
+			var dist = Math.sqrt(distSq);
+			x += (dx / dist) * step;
+			y += (dy / dist) * step;
+		}
+	}
+
+	public function follow(target:Character, distance:Int = 12, copyAnims:Bool = false):Void {
+		followTarget = target;
+		followDistance = distance;
+		syncAnimations = copyAnims;
+		isSolid = false;
+	}
+
+	public function stopFollowing():Void {
+		followTarget = null;
+		isSolid = true;
+	}
+
+	function updateFollower(elapsed:Float):Void {
+		if (followTarget == null || !followTarget.exists) {
+			stopFollowing();
+			return;
+		}
+
+		var dx = followTarget.x - x;
+		var dy = followTarget.y - y;
+		var distSq = dx * dx + dy * dy;
+
+		var targetDist:Float = 24.0;
+		var targetDistSq = targetDist * targetDist;
+
+		if (distSq > targetDistSq) {
+			var dist = Math.sqrt(distSq);
+			var followSpeed = followTarget.baseSpeed * (followTarget.state == Running ? followTarget.runMultiplier : 1.0);
+
+			var step = followSpeed * elapsed;
+			var moveDist = dist - targetDist;
+			if (step > moveDist)
+				step = moveDist;
+
+			x += (dx / dist) * step;
+			y += (dy / dist) * step;
+		}
+
+		if (syncAnimations) {
+			direction = followTarget.direction;
+			state = followTarget.state;
+		}
+	}
+
 	override public function update(elapsed:Float) {
 		#if FEATURE_HSCRIPT
 		if (__script != null)
 			__script.call("update", [elapsed]);
 		#end
 
-		if (elapsed > 0) {
-			var calcVx = (x - _lastFrameX) / elapsed;
-			var calcVy = (y - _lastFrameY) / elapsed;
-
-			if (Math.abs(calcVx) > 1500 || Math.abs(calcVy) > 1500) {
-				calcVx = 0;
-				calcVy = 0;
-			}
-			pathVelocity.set(calcVx, calcVy);
-		}
+		if (followTarget != null)
+			updateFollower(elapsed);
+		else if (isFollowingPath)
+			updatePathMovement(elapsed);
 
 		super.update(elapsed);
-		recordHistory();
-		updateAnimations();
 
-		_lastFrameX = x;
-		_lastFrameY = y;
+		var dx = x - lastX;
+		var dy = y - lastY;
+		var speed = computeSpeed(dx, dy, elapsed);
+
+		if (followTarget == null || !syncAnimations)
+			updateStateFromMovement(dx, dy, speed);
+
+		if (state != Custom)
+			refreshAnimation();
+
+		updateHistory();
+		updateDebugBoxes();
+
+		lastX = x;
+		lastY = y;
 	}
 
-	public function recordHistory() {
+	public function updateHistory():Void {
 		if (positionHistory.length > 0) {
-			var dist = Math.sqrt(Math.pow(x - positionHistory[0].x, 2) + Math.pow(y - positionHistory[0].y, 2));
-			if (dist > 150) {
+			var head = positionHistory[0];
+			var dx = x - head.x;
+			var dy = y - head.y;
+			if (dx * dx + dy * dy > 150 * 150) {
 				for (p in positionHistory)
 					p.put();
 				positionHistory = [];
 			}
 		}
 
-		if (positionHistory.length == 0
-			|| Math.sqrt(Math.pow(x - positionHistory[0].x, 2) + Math.pow(y - positionHistory[0].y, 2)) >= historySpacing) {
+		if (positionHistory.length == 0) {
 			positionHistory.unshift(FlxPoint.get(x, y));
-			while (positionHistory.length > maxHistory)
-				positionHistory.pop().put();
+		} else {
+			var head = positionHistory[0];
+			var dx = x - head.x;
+			var dy = y - head.y;
+			if (dx * dx + dy * dy >= historySpacing * historySpacing)
+				positionHistory.unshift(FlxPoint.get(x, y));
 		}
+
+		while (positionHistory.length > maxHistory)
+			positionHistory.pop().put();
 	}
 
-	public function updateAnimations():Void {
-		if (state == Custom)
-			return;
+	public function refreshAnimation():Void {
+		var hasData = animData.keys().hasNext();
+		var animName:String;
 
-		var vx = isFollowingPath ? pathVelocity.x : velocity.x;
-		var vy = isFollowingPath ? pathVelocity.y : velocity.y;
+		if (hasData) {
+			var suffix = switch (direction) {
+				case UP: "UP";
+				case LEFT: "LEFT";
+				case RIGHT: "RIGHT";
+				default: "DOWN";
+			};
+			var prefix = switch (state) {
+				case Walking: walkPrefix;
+				case Running: runPrefix;
+				default: idlePrefix;
+			};
+			animName = prefix + suffix;
 
-		var speed = Math.sqrt((vx * vx) + (vy * vy));
-
-		if (speed > 5) {
-			state = speed > 200 ? Running : Walking;
-			if (Math.abs(vx) > Math.abs(vy))
-				direction = vx > 0 ? RIGHT : LEFT;
-			else
-				direction = vy > 0 ? DOWN : UP;
-		} else {
-			state = Standing;
-		}
-
-		var currentPrefix = switch (state) {
-			case Walking: walkPrefix;
-			case Running: runPrefix;
-			case Custom: "";
-			default: idlePrefix;
-		};
-
-		var faceStr = switch (direction) {
-			case UP: "UP";
-			case LEFT: "LEFT";
-			case RIGHT: "RIGHT";
-			default: "DOWN";
-		};
-
-		var animName = currentPrefix + faceStr;
-
-		if (animData.keys().hasNext()) {
-			if (!animData.exists(animName) && state == Standing)
+			if (!animData.exists(animName) && state == Idle)
 				animName = animData.exists(idlePrefix) ? idlePrefix : idlePrefix + "DOWN";
-
-			playAnim(animName);
 		} else {
-			var lFace = switch (direction) {
+			var face = switch (direction) {
 				case UP: "_up";
 				case LEFT: "_left";
 				case RIGHT: "_right";
 				default: "_down";
 			};
-			playAnim(currentPrefix + lFace);
+			var prefix = switch (state) {
+				case Walking: walkPrefix;
+				case Running: runPrefix;
+				default: idlePrefix;
+			};
+			animName = prefix + face;
 		}
+
+		playAnim(animName);
 	}
 
-	public function getCollisionBox():FlxRect {
-		return FlxRect.get(x - 12, y - 12, 24, 12);
+	inline function computeSpeed(dx:Float, dy:Float, elapsed:Float):Float {
+		if (elapsed <= 0)
+			return 0;
+		var vx = dx / elapsed;
+		var vy = dy / elapsed;
+		if (Math.abs(vx) > 1500)
+			vx = 0;
+		if (Math.abs(vy) > 1500)
+			vy = 0;
+		return Math.sqrt(vx * vx + vy * vy);
 	}
 
-	public function getGraphicBox():FlxRect {
-		return FlxRect.get(x + visual.x - visual.offset.x, y + visual.y - visual.offset.y, visual.frameWidth, visual.frameHeight);
-	}
+	inline function updateStateFromMovement(dx:Float, dy:Float, speed:Float):Void {
+		if (speed > 5) {
+			state = (speed > runningThreshold) ? Running : Walking;
+			var threshold:Float = 0;
+			var absDx = Math.abs(dx);
+			var absDy = Math.abs(dy);
 
-	public function getInteractionBox():FlxRect {
-		var box = getCollisionBox();
-		box.setSize(12, 12);
-
-		switch (direction) {
-			case UP:
-				box.y -= 12;
-				box.x += 6;
-			case DOWN:
-				box.y += 14;
-				box.x += 6;
-			case LEFT:
-				box.x -= 12;
-				box.y += 3;
-			case RIGHT:
-				box.x += 24;
-				box.y += 3;
+			if (absDy > absDx + threshold) {
+				direction = (dy > 0) ? DOWN : UP;
+			} else if (absDx > absDy + threshold) {
+				direction = (dx > 0) ? RIGHT : LEFT;
+			}
+		} else {
+			if (state != Custom)
+				state = Idle;
 		}
-		return box;
 	}
 
 	override public function destroy() {
@@ -335,6 +609,23 @@ class Character extends Sprite {
 		if (__script != null)
 			__script.destroy();
 		#end
+
+		if (pathTarget != null) {
+			pathTarget.put();
+			pathTarget = null;
+		}
+
+		for (p in positionHistory)
+			p.put();
+		positionHistory = null;
+
+		if (debugBoxesGroup != null) {
+			debugBoxesGroup.destroy();
+			debugBoxesGroup = null;
+		}
+		hitboxSprites = null;
+		interactionSprites = null;
+
 		super.destroy();
 	}
 }

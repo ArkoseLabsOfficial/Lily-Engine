@@ -1,7 +1,9 @@
 package engine.backend.ui;
 
 class SubStateBackend extends FlxSubState {
-	var simpleMenu:SimpleVerticalMenu; // Used for many menus.
+	var menu:NineNode; // use this for custom menus.
+
+	public static var instance:SubStateBackend;
 
 	/**
 	 * SCRIPTING STUFF
@@ -13,6 +15,7 @@ class SubStateBackend extends FlxSubState {
 
 	public function new(scriptsAllowed:Bool = true, ?scriptName:String, bgColor:FlxColor = FlxColor.TRANSPARENT) {
 		super(bgColor);
+		instance = this;
 		this.scriptsAllowed = scriptsAllowed;
 		this.scriptName = scriptName;
 		#if FEATURE_TOUCH_CONTROLS
@@ -27,7 +30,7 @@ class SubStateBackend extends FlxSubState {
 		if (scriptsAllowed) {
 			if (stateScripts.scripts.length == 0) {
 				var scriptName = this.scriptName != null ? this.scriptName : className.substr(className.lastIndexOf(".") + 1);
-				var filePath:String = Flags.scriptFolder + "substates/" + scriptName;
+				var filePath:String = '${Flags.scriptFolder}/substates/' + scriptName;
 				if (customPath != null)
 					filePath = customPath;
 
@@ -48,6 +51,7 @@ class SubStateBackend extends FlxSubState {
 	#else
 	public function new(bgColor:FlxColor = FlxColor.TRANSPARENT) {
 		super(bgColor);
+		instance = this;
 		#if FEATURE_TOUCH_CONTROLS
 		Main.mobileControls.resetAllInputs();
 		#end
@@ -93,6 +97,7 @@ class SubStateBackend extends FlxSubState {
 		stateScripts = FlxDestroyUtil.destroy(stateScripts);
 		#end
 		super.destroy();
+		instance = null;
 	}
 
 	override function close() {
@@ -108,14 +113,14 @@ class SubStateBackend extends FlxSubState {
 	}
 
 	override public function openSubState(SubState:FlxSubState):Void {
-		if (simpleMenu != null)
-			simpleMenu.canInput = false;
+		if (menu != null)
+			menu.canInput = false;
 		super.openSubState(SubState);
 	}
 
 	override public function closeSubState():Void {
-		if (simpleMenu != null)
-			simpleMenu.canInput = true;
+		if (menu != null)
+			menu.canInput = true;
 		super.closeSubState();
 	}
 

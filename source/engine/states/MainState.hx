@@ -24,11 +24,10 @@ class MainState extends StateBackend {
 		Main.game = new Game(); // Stores `inventory, save, objectives, language, game pause`
 
 		// Inits
+		GamePrefs.loadMod();
 		Game.instance.init();
 		Lang.init('en', Flags.languageFolder);
 
-		GamePrefs.loadMod();
-		FlxAssets.FONT_DEFAULT = '${Flags.fontFolder}NotoSans-Regular.ttf';
 		FlxText.defaultTextAntialiasing = true;
 		FlxSprite.defaultAntialiasing = false;
 
@@ -39,12 +38,17 @@ class MainState extends StateBackend {
 		// Settings
 		GamePrefs.loadSettings();
 
+		// font map
+		Flags.fonts.set("NotoSans", '${Flags.fontFolder}/${Lang.get('fonts.NotoSans')}');
+		Flags.fonts.set("AlegreyaSC", '${Flags.fontFolder}/${Lang.get('fonts.AlegreyaSC')}');
+		FlxAssets.FONT_DEFAULT = Flags.fonts.get("NotoSans");
+
 		#if FEATURE_TOUCH_CONTROLS
 		mobile.Config.init();
 		#end
 
 		#if linux
-		var iconImage = Image.fromFile('assets/${Flags.imageFolder}icons/game_round.png');
+		var iconImage = Image.fromFile('assets/${Flags.imageFolder}/icons/game_round.png');
 		Lib.current.stage.window.setIcon(iconImage);
 		#end
 
@@ -57,6 +61,6 @@ class MainState extends StateBackend {
 			SysFileSystem.createDirectory('mods/');
 		#end
 
-		StateBackend.switchState(new TitleMenu());
+		FlxG.switchState(new TitleMenu());
 	}
 }

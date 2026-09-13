@@ -1,5 +1,11 @@
 package engine.substates;
 
+import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.FlxSubState;
+import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
+import engine.ui.NineNode;
 import lang.Lang;
 import lang.LangText;
 
@@ -16,15 +22,15 @@ class ObjectivesMenu extends SubStateBackend {
 	static inline var DESC_PANEL_W:Int = 546;
 	static inline var DESC_PANEL_H:Int = 600;
 
-	var curSelected:Int = 0;
 	var displayItems:Array<DisplayItem> = [];
-	var objectiveTexts:Array<FlxText> = [];
+
+	var mainNode:NineNode;
+	var descNode:NineNode;
+	var descText:LangText;
 
 	public var canInput:Bool = false;
 
-	var descFrame:MenuFrameNode;
-	var descText:LangText;
-	var highlightBox:FlxSprite;
+	var lastSelected:Int = -1;
 
 	override public function create() {
 		super.create();
@@ -36,24 +42,53 @@ class ObjectivesMenu extends SubStateBackend {
 		var startX = (FlxG.width - totalWidth) / 2 + 10;
 		var startY = (FlxG.height - MAIN_PANEL_H) / 2;
 
-		var mainFrame = new MenuFrameNode(startX, startY, MAIN_PANEL_W, MAIN_PANEL_H, 2);
-		mainFrame.setTitle("system.menu.objectives");
-		mainFrame.divider = new FlxSprite(0, 0, Assets.getImage('ui/dividers/divider_md'));
-		add(mainFrame);
+		var mainData:NineNodeMenuData = {
+			width: MAIN_PANEL_W,
+			height: MAIN_PANEL_H,
+			texture: 'ui/frames/frame_menu_2',
+			bgTexture: 'ui/frames/frame_menu_bg',
+			margin: {
+				left: 50,
+				top: 50,
+				right: 50,
+				bottom: 50
+			},
+			scaleFactor: 0.75,
+			title: "system.menu.objectives",
+			titleTexture: "ui/dividers/divider_md",
+			itemWidth: MAIN_PANEL_W - 300,
+			itemHeight: 46,
+			itemFontSize: 36,
+			itemSeparation: 60,
+			itemAlignment: LEFT,
+			maxBeforeScroll: 7
+		};
+
+		mainNode = new NineNode(startX, startY, mainData);
+		add(mainNode);
 
 		var descX = startX + MAIN_PANEL_W + separationRight;
-		descFrame = new MenuFrameNode(descX, startY, DESC_PANEL_W, DESC_PANEL_H, 1);
-		descFrame.divider = new FlxSprite(0, 0, Assets.getImage('ui/dividers/divider_sm'));
-		descFrame.nodeFrame.decorBgTexture = '${Flags.imageFolder}ui/decors/menu_bg_decor.png';
-		add(descFrame);
+		var descData:NineNodeMenuData = {
+			width: DESC_PANEL_W,
+			height: DESC_PANEL_H,
+			texture: 'ui/frames/frame_menu_2',
+			bgTexture: 'ui/frames/frame_menu_bg',
+			titleTexture: "ui/dividers/divider_sm",
+			margin: {
+				left: 50,
+				top: 50,
+				right: 50,
+				bottom: 50
+			},
+			scaleFactor: 0.75
+		};
 
-		descText = new LangText(descX + 30, startY + 40, DESC_PANEL_W - 60, "", null, 28);
+		descNode = new NineNode(descX, startY, descData);
+		add(descNode);
+
+		descText = new LangText(descX + 40, startY + 140, DESC_PANEL_W - 80, "", null, 28);
 		descText.alignment = LEFT;
 		add(descText);
-
-		highlightBox = new FlxSprite(startX + 150, 0).makeGraphic(MAIN_PANEL_W - 300, 46, 0xFF4A4A4A);
-		highlightBox.alpha = 0.6;
-		add(highlightBox);
 
 		var activeParents = Game.objectives.getCurrentObjectives();
 		for (parent in activeParents) {
@@ -66,51 +101,47 @@ class ObjectivesMenu extends SubStateBackend {
 			buildDisplayList(parent, 1);
 		}
 
-		var listStartY = startY + 140;
-
 		if (displayItems.length == 0) {
-			var emptyText = new LangText(startX, listStartY + 100, MAIN_PANEL_W, "system.menu.objectives.empty", null, 36);
+			var emptyText = new LangText(startX, startY + 240, MAIN_PANEL_W, "system.menu.objectives.empty", null, 36);
 			emptyText.alignment = CENTER;
 			emptyText.color = FlxColor.GRAY;
 			add(emptyText);
-			highlightBox.visible = false;
 		} else {
+			for (item in displayItems) {
+				var prefix = "• ";
+				var localizedObjName = Lang.get(item.obj.name);
+				mainNode.addEntry(prefix + localizedObjName, null);
+			}
+
+			mainNode.buildVisualList();
+
 			for (i in 0...displayItems.length) {
 				var item = displayItems[i];
-				var prefix = "• ";
-				var itemX = startX + 155;
-				var fontSize = 36;
+				var group = mainNode.visualItems[i];
+				var txt:LangText = cast group.members[1];
 
 				if (item.isChild) {
-					itemX = startX + 155 + (item.depth * 25);
-					fontSize = Std.int(Math.max(22, 36 - (item.depth * 5)));
+					var indent = item.depth * 25;
+					txt.x += indent;
+					txt.size = Std.int(Math.max(22, 36 - (item.depth * 5)));
 				}
-
-				var localizedObjName = Lang.get(item.obj.name);
-				var itemTxt = new FlxText(itemX, listStartY + (i * 60), MAIN_PANEL_W - (itemX - startX) - 35, prefix + localizedObjName, fontSize);
-				itemTxt.alignment = LEFT;
 
 				if (item.status == "failed") {
-					itemTxt.color = FlxColor.GRAY;
-
-					var tw = itemTxt.textField.textWidth;
-					if (tw == 0)
-						tw = itemTxt.text.length * (fontSize * 0.55);
-
-					var strikeY = itemTxt.y + (itemTxt.height / 2) + 2;
-					var strikeLine = new FlxSprite(itemX, strikeY).makeGraphic(Std.int(tw + 12), Math.floor(fontSize / 10) + 1, FlxColor.GRAY);
-					add(strikeLine);
+					txt.color = FlxColor.GRAY;
+					txt.text = txt.text;
+					txt.strikethrough = true;
+					descText.color = FlxColor.GRAY;
+					descText.text = descText.text;
+					descText.strikethrough = true;
 				}
-
-				objectiveTexts.push(itemTxt);
-				add(itemTxt);
 			}
-			highlightSelection();
 		}
 
 		new FlxTimer().start(0.1, function(_) {
 			canInput = true;
 		});
+
+		Discord.updatePresence('In the objective menu', 'Mod: ${GamePrefs.currentMod}');
 	}
 
 	private function buildDisplayList(parent:Objective, depth:Int):Void {
@@ -151,45 +182,50 @@ class ObjectivesMenu extends SubStateBackend {
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
 
+		if (mainNode != null) {
+			mainNode.canInput = canInput;
+		}
+
 		if (!canInput)
 			return;
 
-		if (displayItems.length > 0) {
-			if (Controls.UP_P)
-				moveSelection(-1);
-			if (Controls.DOWN_P)
-				moveSelection(1);
+		if (displayItems.length > 0 && mainNode != null) {
+			if (mainNode.selection != lastSelected) {
+				lastSelected = mainNode.selection;
+				highlightSelection();
+			}
 		}
 
-		if (Controls.CANCEL) {
+		if (Controls.BACK) {
 			FlxG.sound.play(Flags.CANCEL);
 			close();
 		}
 	}
 
-	function moveSelection(change:Int) {
-		FlxG.sound.play(Flags.NAVIGATE);
-		curSelected += change;
-		if (curSelected < 0)
-			curSelected = displayItems.length - 1;
-		if (curSelected >= displayItems.length)
-			curSelected = 0;
-		highlightSelection();
-	}
-
 	function highlightSelection() {
-		if (displayItems.length == 0)
+		if (displayItems.length == 0 || mainNode == null)
 			return;
 
-		var activeText = objectiveTexts[curSelected];
-		highlightBox.y = activeText.y + (activeText.height / 2) - (highlightBox.height / 2);
+		var item = displayItems[mainNode.selection];
 
-		var item = displayItems[curSelected];
-
-		if (descFrame.titleText != null) {
-			descFrame.setTitle(item.obj.name);
+		if (descNode != null) {
+			descNode.setTitle(item.obj.name);
+			descNode.titleText.color = FlxColor.WHITE;
+			if (item.status == "failed") {
+				descNode.titleText.color = FlxColor.GRAY;
+				descNode.titleText.text = descNode.titleText.text;
+				descNode.titleText.strikethrough = true;
+			}
 		}
 
-		descText.setTranslation(item.obj.description);
+		if (descText != null) {
+			descText.setTranslation(item.obj.description);
+			descText.color = FlxColor.WHITE;
+			if (item.status == "failed") {
+				descText.color = FlxColor.GRAY;
+				descText.text = descText.text;
+				descText.strikethrough = true;
+			}
+		}
 	}
 }

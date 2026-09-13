@@ -1,12 +1,5 @@
 package engine.backend.save;
 
-import flixel.util.FlxSave;
-import flixel.FlxG;
-import haxe.Timer;
-import engine.backend.Game;
-import engine.backend.save.GamePrefs;
-import engine.backend.game.Room;
-
 typedef SavedItem = {id:String, amount:Int}
 typedef Position = {x:Float, y:Float}
 

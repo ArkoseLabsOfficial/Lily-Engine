@@ -13,6 +13,8 @@
             
             var newFPS:Int = GamePrefs.options.get("framerate");
             FlxG.drawFramerate = newFPS;
+			FlxG.updateFramerate = newFPS >= 60 ? newFPS : 60;
+            trace(FlxG.updateFramerate);
         </option>
     </menu>
 
@@ -22,7 +24,7 @@
         <option type="keybind" label="system.settings.game.controls.move_left" variable="LEFT" />
         <option type="keybind" label="system.settings.game.controls.move_right" variable="RIGHT" />
         <option type="keybind" label="system.settings.game.controls.accept" variable="ACCEPT" />
-        <option type="keybind" label="system.settings.game.controls.cancel" variable="CANCEL" />
+        <option type="keybind" label="system.settings.game.controls.back" variable="BACK" />
         <option type="keybind" label="system.settings.game.controls.run" variable="RUN" />
         <option type="keybind" label="system.settings.game.controls.menu" variable="MENU" />
     </menu>

@@ -468,7 +468,7 @@ class FlxGame extends Sprite
 		var width:Int = FlxG.stage.stageWidth;
 		var height:Int = FlxG.stage.stageHeight;
 
-		#if !flash
+		#if (!flash && !ANGLE_RENDERER)
 		if (FlxG.renderTile)
 			FlxG.bitmap.onContext();
 		#end
@@ -909,7 +909,7 @@ class FlxGame extends Sprite
 	dynamic function getTimer():Int
 	{
 		// expensive, only call if necessary
-		return Lib.getTimer();
+		return #if ANGLE_RENDERER Std.int(Lib.getTimer()) #else Lib.getTimer() #end;
 	}
 }
 

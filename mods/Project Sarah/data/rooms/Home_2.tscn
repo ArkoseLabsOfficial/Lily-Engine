@@ -1,0 +1,244 @@
+[gd_scene load_steps=33 format=2]
+
+[ext_resource path="res://assets/tileset/Home.tres" type="TileSet" id=1]
+[ext_resource path="res://assets/images/rooms/home/kitchen/furniture_shelf5.png" type="Texture" id=2]
+[ext_resource path="res://assets/images/rooms/home/kitchen/misc_fridge.png" type="Texture" id=3]
+[ext_resource path="res://assets/images/rooms/home/kitchen/furniture_counter3.png" type="Texture" id=4]
+[ext_resource path="res://assets/images/rooms/home/kitchen/misc_sink.png" type="Texture" id=5]
+[ext_resource path="res://assets/images/rooms/home/kitchen/misc_ricecooker.png" type="Texture" id=6]
+[ext_resource path="res://assets/images/rooms/home/kitchen/furniture_counter2.png" type="Texture" id=7]
+[ext_resource path="res://assets/images/rooms/home/kitchen/misc_note.png" type="Texture" id=8]
+[ext_resource path="res://assets/images/rooms/home/kitchen/wall_kitchenacc.png" type="Texture" id=9]
+[ext_resource path="res://assets/images/rooms/home/kitchen/misc_cuttingboard.png" type="Texture" id=10]
+[ext_resource path="res://assets/images/rooms/home/kitchen/furniture_table3.png" type="Texture" id=11]
+[ext_resource path="res://assets/images/rooms/home/kitchen/misc_microwave.png" type="Texture" id=12]
+[ext_resource path="res://assets/images/rooms/home/kitchen/misc_mugs.png" type="Texture" id=13]
+[ext_resource path="res://assets/images/rooms/home/kitchen/misc_fruits.png" type="Texture" id=14]
+[ext_resource path="res://assets/images/rooms/home/kitchen/wall_kitchenacc2.png" type="Texture" id=15]
+[ext_resource path="res://assets/images/rooms/home/livingroom/furniture_shelf4.png" type="Texture" id=16]
+[ext_resource path="res://assets/images/rooms/home/livingroom/misc_tv.png" type="Texture" id=17]
+[ext_resource path="res://assets/images/rooms/home/livingroom/furniture_couch.png" type="Texture" id=18]
+[ext_resource path="res://assets/images/rooms/home/livingroom/furniture_couch2.png" type="Texture" id=19]
+[ext_resource path="res://assets/images/rooms/home/livingroom/furniture_table2.png" type="Texture" id=20]
+[ext_resource path="res://assets/images/rooms/home/livingroom/furniture_shelf.png" type="Texture" id=21]
+[ext_resource path="res://assets/images/rooms/home/livingroom/wall_clock.png" type="Texture" id=22]
+[ext_resource path="res://assets/images/rooms/home/livingroom/wall_frames2.png" type="Texture" id=23]
+[ext_resource path="res://assets/images/rooms/home/livingroom/wall_frames.png" type="Texture" id=24]
+[ext_resource path="res://assets/images/rooms/home/livingroom/wall_frames3.png" type="Texture" id=25]
+[ext_resource path="res://assets/scripts/EventTriggerRect.cs" type="Script" id=26]
+[ext_resource path="res://assets/images/rooms/common/light_fadeout_2.png" type="Texture" id=27]
+[ext_resource path="res://assets/scripts/SpawnPoint.cs" type="Script" id=28]
+[ext_resource path="res://assets/scripts/GameRoom.cs" type="Script" id=29]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 128, 25.5 )
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 16, 47.75 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 32, 40 )
+
+[node name="Home_2" type="Node2D"]
+script = ExtResource( 29 )
+
+[node name="TileMap" type="TileMap" parent="."]
+tile_set = ExtResource( 1 )
+cell_size = Vector2( 32, 32 )
+format = 1
+tile_data = PoolIntArray( 131063, 0, 65539, 131064, 0, 262146, 131065, 0, 262146, 131066, 0, 262146, 131067, 0, 262146, 131068, 0, 262146, 131069, 0, 262146, 131070, 0, 262146, 131071, 0, 262146, 65536, 0, 262146, 65537, 0, 262146, 65538, 0, 65538, 196599, 0, 196611, 196600, 1, 1, 196601, 1, 1, 196602, 1, 1, 196603, 1, 1, 196604, 1, 1, 196605, 1, 1, 196606, 1, 1, 196607, 1, 1, 131072, 1, 1, 131073, 1, 1, 131074, 0, 196609, 262135, 0, 196611, 262136, 1, 65537, 262137, 1, 65537, 262138, 1, 65537, 262139, 1, 65537, 262140, 1, 65537, 262141, 1, 65537, 262142, 1, 65537, 262143, 1, 65537, 196608, 1, 65537, 196609, 1, 65537, 196610, 0, 196609, 327671, 0, 196611, 327672, 1, 131073, 327673, 1, 131073, 327674, 1, 131073, 327675, 1, 131073, 327676, 1, 131073, 327677, 1, 131073, 327678, 1, 131073, 327679, 1, 131073, 262144, 1, 131073, 262145, 1, 131073, 262146, 0, 196609, 393207, 0, 196611, 393208, 2, 0, 393209, 2, 0, 393210, 2, 0, 393211, 2, 0, 393212, 2, 0, 393213, 2, 0, 393214, 2, 0, 393215, 2, 0, 327680, 2, 0, 327681, 2, 0, 327682, 0, 196609, 458743, 0, 196611, 458744, 2, 0, 458745, 2, 0, 458746, 2, 0, 458747, 2, 0, 458748, 2, 0, 458749, 2, 0, 458750, 2, 0, 458751, 2, 0, 393216, 2, 0, 393217, 2, 0, 393218, 0, 196609, 524279, 0, 196611, 524280, 2, 0, 524281, 2, 0, 524282, 2, 0, 524283, 2, 0, 524284, 2, 0, 524285, 2, 0, 524286, 2, 0, 524287, 2, 0, 458752, 2, 0, 458753, 2, 0, 458754, 0, 196609, 589815, 0, 196611, 589816, 2, 0, 589817, 2, 0, 589818, 2, 0, 589819, 2, 0, 589820, 2, 0, 589821, 2, 0, 589822, 2, 0, 589823, 2, 0, 524288, 2, 0, 524289, 2, 0, 524290, 0, 196609, 655351, 0, 3, 655352, 0, 131074, 655353, 0, 131074, 655354, 0, 131074, 655355, 0, 131075, 655356, 2, 0, 655357, 2, 0, 655358, 0, 131073, 655359, 0, 131074, 589824, 0, 131074, 589825, 0, 131074, 589826, 0, 2, 720887, 0, 65539, 720888, 0, 262146, 720889, 0, 262146, 720890, 0, 262146, 720891, 0, 262147, 720892, 2, 0, 720893, 2, 0, 720894, 0, 262145, 720895, 0, 262146, 655360, 0, 262146, 655361, 0, 262146, 655362, 0, 262146, 655363, 0, 262146, 655364, 0, 262147, 786423, 0, 196611, 786424, 1, 0, 786425, 1, 1, 786426, 1, 1, 786427, 1, 2, 786428, 2, 0, 786429, 2, 0, 786430, 1, 0, 786431, 1, 1, 720896, 1, 1, 720897, 1, 1, 720898, 1, 1, 720899, 1, 1, 720900, 1, 2, 851959, 0, 196611, 851960, 1, 65536, 851961, 1, 65537, 851962, 1, 65537, 851963, 1, 65538, 851964, 2, 0, 851965, 2, 0, 851966, 1, 65536, 851967, 1, 65537, 786432, 1, 65537, 786433, 1, 65537, 786434, 1, 65537, 786435, 1, 65537, 786436, 1, 65538, 917495, 0, 196611, 917496, 1, 131072, 917497, 1, 131073, 917498, 1, 131073, 917499, 1, 131074, 917500, 2, 0, 917501, 2, 0, 917502, 1, 131072, 917503, 1, 131073, 851968, 1, 131073, 851969, 1, 131073, 851970, 1, 131073, 851971, 1, 131073, 851972, 1, 131074, 983031, 0, 196611, 983032, 2, 0, 983033, 2, 0, 983034, 2, 0, 983035, 2, 0, 983036, 2, 0, 983037, 2, 0, 983038, 2, 0, 983039, 2, 0, 917504, 2, 0, 917505, 2, 0, 917506, 2, 0, 917507, 2, 0, 917508, 2, 0, 1048567, 0, 196611, 1048568, 2, 0, 1048569, 2, 0, 1048570, 2, 0, 1048571, 2, 0, 1048572, 2, 0, 1048573, 2, 0, 1048574, 2, 0, 1048575, 2, 0, 983040, 2, 0, 983041, 2, 0, 983042, 2, 0, 983043, 2, 0, 983044, 2, 0, 1114103, 0, 196611, 1114104, 2, 0, 1114105, 2, 0, 1114106, 2, 0, 1114107, 2, 0, 1114108, 2, 0, 1114109, 2, 0, 1114110, 2, 0, 1114111, 2, 0, 1048576, 2, 0, 1048577, 2, 0, 1048578, 0, 131073, 1048579, 0, 131074, 1048580, 0, 131075, 1179639, 0, 196611, 1179640, 2, 0, 1179641, 2, 0, 1179642, 2, 0, 1179643, 2, 0, 1179644, 2, 0, 1179645, 2, 0, 1179646, 2, 0, 1179647, 2, 0, 1114112, 2, 0, 1114113, 2, 0, 1114114, 0, 196609, 1245175, 0, 196611, 1245176, 2, 0, 1245177, 2, 0, 1245178, 2, 0, 1245179, 2, 0, 1245180, 2, 0, 1245181, 2, 0, 1245182, 2, 0, 1245183, 2, 0, 1179648, 2, 0, 1179649, 2, 0, 1179650, 0, 196609, 1310711, 0, 196611, 1310712, 2, 0, 1310713, 2, 0, 1310714, 2, 0, 1310715, 2, 0, 1310716, 2, 0, 1310717, 2, 0, 1310718, 2, 0, 1310719, 2, 0, 1245184, 2, 0, 1245185, 2, 0, 1245186, 0, 196609, 1376247, 0, 196611, 1376248, 2, 0, 1376249, 2, 0, 1376250, 2, 0, 1376251, 2, 0, 1376252, 2, 0, 1376253, 2, 0, 1376254, 2, 0, 1376255, 2, 0, 1310720, 2, 0, 1310721, 2, 0, 1310722, 0, 196609, 1441783, 0, 3, 1441784, 0, 131074, 1441785, 0, 131074, 1441786, 0, 131074, 1441787, 0, 131074, 1441788, 0, 131074, 1441789, 0, 131074, 1441790, 0, 131074, 1441791, 0, 131074, 1376256, 0, 131074, 1376257, 0, 131074, 1376258, 0, 2 )
+
+[node name="Kitchen" type="Node2D" parent="."]
+position = Vector2( 0, 16 )
+
+[node name="furniture_counter2" type="Sprite" parent="Kitchen"]
+position = Vector2( -47, 150 )
+texture = ExtResource( 7 )
+
+[node name="misc_fridge" type="Sprite" parent="Kitchen"]
+position = Vector2( -169, 137.5 )
+texture = ExtResource( 3 )
+hframes = 2
+
+[node name="furniture_counter3" type="Sprite" parent="Kitchen"]
+position = Vector2( 48, 226 )
+texture = ExtResource( 4 )
+region_enabled = true
+region_rect = Rect2( 0, 0, 32, 92 )
+
+[node name="misc_sink" type="Sprite" parent="Kitchen"]
+position = Vector2( -23, 136 )
+texture = ExtResource( 5 )
+
+[node name="misc_ricecooker" type="Sprite" parent="Kitchen"]
+position = Vector2( -93, 139 )
+texture = ExtResource( 6 )
+
+[node name="wall_kitchenacc" type="Sprite" parent="Kitchen"]
+position = Vector2( 18, 116 )
+texture = ExtResource( 9 )
+
+[node name="wall_kitchenacc2" type="Sprite" parent="Kitchen"]
+position = Vector2( -6, 116 )
+texture = ExtResource( 15 )
+
+[node name="furniture_shelf5" type="Sprite" parent="Kitchen"]
+position = Vector2( -111, 90 )
+texture = ExtResource( 2 )
+
+[node name="furniture_shelf6" type="Sprite" parent="Kitchen"]
+position = Vector2( -15, 90 )
+texture = ExtResource( 2 )
+flip_h = true
+
+[node name="misc_note" type="Sprite" parent="Kitchen"]
+position = Vector2( -167, 150 )
+texture = ExtResource( 8 )
+
+[node name="misc_cuttingboard" type="Sprite" parent="Kitchen"]
+position = Vector2( 62, 182 )
+texture = ExtResource( 10 )
+flip_h = true
+
+[node name="furniture_table3" type="Sprite" parent="Kitchen"]
+position = Vector2( -224, 176 )
+texture = ExtResource( 11 )
+
+[node name="misc_microwave" type="Sprite" parent="Kitchen"]
+position = Vector2( -207, 170 )
+texture = ExtResource( 12 )
+flip_h = true
+
+[node name="misc_mugs" type="Sprite" parent="Kitchen"]
+position = Vector2( 12, 141 )
+texture = ExtResource( 13 )
+
+[node name="misc_fruits" type="Sprite" parent="Kitchen"]
+position = Vector2( -62, 141 )
+texture = ExtResource( 14 )
+
+[node name="LivingRoom" type="Node2D" parent="."]
+
+[node name="BGObjects" type="Node2D" parent="."]
+
+[node name="furniture_shelf" type="Sprite" parent="BGObjects"]
+position = Vector2( -232, 418 )
+texture = ExtResource( 21 )
+script = ExtResource( 26 )
+triggerDirections = 2
+Area = Vector2( 46, 91 )
+
+[node name="furniture_shelf2" type="Sprite" parent="BGObjects"]
+position = Vector2( -184, 418 )
+texture = ExtResource( 21 )
+flip_h = true
+script = ExtResource( 26 )
+triggerDirections = 2
+Area = Vector2( 46, 91 )
+
+[node name="wall_clock" type="Sprite" parent="BGObjects"]
+position = Vector2( -40, 384 )
+texture = ExtResource( 22 )
+
+[node name="wall_frames3" type="Sprite" parent="BGObjects"]
+position = Vector2( 88, 392 )
+texture = ExtResource( 25 )
+
+[node name="wall_frames2" type="Sprite" parent="BGObjects"]
+position = Vector2( 0, 392 )
+texture = ExtResource( 23 )
+
+[node name="wall_frames" type="Sprite" parent="BGObjects"]
+position = Vector2( 48, 392 )
+texture = ExtResource( 24 )
+
+[node name="Main" type="YSort" parent="."]
+
+[node name="furniture_shelf4" type="Sprite" parent="Main"]
+position = Vector2( -43, 555 )
+texture = ExtResource( 16 )
+script = ExtResource( 26 )
+triggerDirections = 2
+Offset = Vector2( 0, -2 )
+Area = Vector2( 94, 32 )
+
+[node name="misc_tv" type="Sprite" parent="Main/furniture_shelf4"]
+position = Vector2( 0, -30 )
+texture = ExtResource( 17 )
+
+[node name="furniture_couch" type="Sprite" parent="Main"]
+position = Vector2( -75, 655 )
+texture = ExtResource( 18 )
+region_enabled = true
+region_rect = Rect2( 0, 0, 89, 36 )
+script = ExtResource( 26 )
+triggerDirections = 8
+Offset = Vector2( 31.5, -1 )
+Area = Vector2( 150, 33 )
+
+[node name="furniture_couch2" type="Sprite" parent="Main"]
+position = Vector2( 0, 655 )
+texture = ExtResource( 18 )
+region_enabled = true
+region_rect = Rect2( 31, 0, 65, 36 )
+
+[node name="furniture_couch3" type="Sprite" parent="Main"]
+position = Vector2( 48, 609 )
+texture = ExtResource( 19 )
+flip_h = true
+script = ExtResource( 26 )
+triggerDirections = 4
+Area = Vector2( 32, 50 )
+
+[node name="furniture_couch4" type="Sprite" parent="Main"]
+position = Vector2( -136, 609 )
+texture = ExtResource( 19 )
+script = ExtResource( 26 )
+triggerDirections = 1
+Area = Vector2( 32, 50 )
+
+[node name="furniture_table2" type="Sprite" parent="Main"]
+position = Vector2( -43, 608 )
+texture = ExtResource( 20 )
+script = ExtResource( 26 )
+Area = Vector2( 62, 39 )
+
+[node name="FGObjects" type="Node2D" parent="."]
+
+[node name="Sprite" type="Sprite" parent="FGObjects"]
+position = Vector2( 112, 432 )
+scale = Vector2( 0.75, 1.75 )
+texture = ExtResource( 27 )
+flip_h = true
+
+[node name="Points" type="Node2D" parent="."]
+
+[node name="entrance" type="Node2D" parent="Points"]
+position = Vector2( 128, 483 )
+script = ExtResource( 28 )
+direction = 2
+defaultSpawn = true
+
+[node name="Events" type="Node2D" parent="."]
+
+[node name="exit" type="Node2D" parent="Events"]
+position = Vector2( 153, 480 )
+script = ExtResource( 26 )
+triggerEvent = "moveTo"
+triggerArgs = "Home_1, exit_LivingRoom"
+triggerDirections = 4
+Area = Vector2( 12, 60 )
+
+[node name="Collision" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collision"]
+position = Vector2( -64, 167 )
+shape = SubResource( 1 )
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Collision"]
+position = Vector2( 48, 240.25 )
+shape = SubResource( 2 )
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="Collision"]
+position = Vector2( -224, 192 )
+shape = SubResource( 3 )

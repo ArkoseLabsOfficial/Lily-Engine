@@ -1,9 +1,19 @@
 package engine.substates;
 
+import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.FlxSubState;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
+import engine.ui.NineNode;
 import lang.LangText;
 
 class PauseMenu extends SubStateBackend {
-	var pauseMenu:SimpleVerticalMenu;
+	var pauseMenu:NineNode;
+	var chapterFrame:NineNode;
+	var bottomFrame:NineNode;
+	var chapterText:LangText;
+
 	var isAnimating:Bool = true;
 
 	public var canInput:Bool = false;
@@ -23,18 +33,26 @@ class PauseMenu extends SubStateBackend {
 		pauseBG.alpha = 0;
 		add(pauseBG);
 
-		var mainFrame = new MenuFrameNode(10, 10, 450, 600, 1);
-		add(mainFrame);
-
-		var chapterFrame = new MenuFrameNode(10, 615, 450, 135, 1);
-		chapterFrame.nodeFrame.texture = '${Flags.imageFolder}ui/frames/frame_menu_2b.png';
-		add(chapterFrame);
-
-		var bottomFrame = new MenuFrameNode(10, 755, 450, 240, 1);
-		bottomFrame.nodeFrame.texture = '${Flags.imageFolder}ui/frames/frame_menu_2b.png';
-		add(bottomFrame);
-
-		pauseMenu = new SimpleVerticalMenu();
+		var mainData:NineNodeMenuData = {
+			width: 450,
+			height: 600,
+			texture: 'ui/frames/frame_menu_2',
+			bgTexture: 'ui/frames/frame_menu_bg',
+			margin: {
+				left: 50,
+				top: 50,
+				right: 50,
+				bottom: 50
+			},
+			scaleFactor: 0.75,
+			itemWidth: 340,
+			itemHeight: 50,
+			itemFontSize: 32,
+			itemSeparation: 50,
+			itemAlignment: CENTER,
+			listAlignment: "top"
+		};
+		pauseMenu = new NineNode(10, 10, mainData);
 		pauseMenu.canInput = false;
 
 		pauseMenu.addEntry("system.menu.inventory", function() {
@@ -44,25 +62,53 @@ class PauseMenu extends SubStateBackend {
 			openSubState(new ObjectivesMenu());
 		});
 		pauseMenu.addEntry("system.menu.settings", function() {
-			openSubState(new SettingsMenu("main", true));
+			openSubState(new SettingsMenu(true));
 		});
 		pauseMenu.addEntry("system.menu.load", function() {
 			openSubState(new SaveLoadMenu(false, false));
 		});
 		pauseMenu.addEntry("system.menu.quit", function() {
-			StateBackend.switchState(new TitleMenu());
+			FlxG.switchState(new TitleMenu());
 		});
 
-		pauseMenu.itemWidth = 440;
-		pauseMenu.itemFontSize = 32;
-		pauseMenu.buildVisualList(55);
-		pauseMenu.x = 20;
-		pauseMenu.y = 60;
+		pauseMenu.buildVisualList();
 		add(pauseMenu);
 
-		var chapterText = new LangText(20, 660, 440, "system.menu.pause.text", null, 32);
+		var chapterData:NineNodeMenuData = {
+			width: 450,
+			height: 135,
+			texture: 'ui/frames/frame_menu_2b',
+			bgTexture: 'ui/frames/frame_menu_bg',
+			margin: {
+				left: 50,
+				top: 50,
+				right: 50,
+				bottom: 50
+			},
+			scaleFactor: 0.75
+		};
+		chapterFrame = new NineNode(10, 615, chapterData);
+		add(chapterFrame);
+
+		chapterText = new LangText(10, 660, 450, "system.menu.pause.text", null, 32);
 		chapterText.alignment = CENTER;
 		add(chapterText);
+
+		var bottomData:NineNodeMenuData = {
+			width: 450,
+			height: 240,
+			texture: 'ui/frames/frame_menu_2b',
+			bgTexture: 'ui/frames/frame_menu_bg',
+			margin: {
+				left: 50,
+				top: 50,
+				right: 50,
+				bottom: 50
+			},
+			scaleFactor: 0.75
+		};
+		bottomFrame = new NineNode(10, 755, bottomData);
+		add(bottomFrame);
 
 		#if FEATURE_TOUCH_CONTROLS
 		Game.mobileC.addDPad("FULL");
@@ -79,14 +125,12 @@ class PauseMenu extends SubStateBackend {
 			if (pauseMenu != null)
 				pauseMenu.canInput = true;
 		} else {
-			mainFrame.x -= slideOffset;
 			pauseMenu.x -= slideOffset;
 			chapterFrame.x -= slideOffset;
 			chapterText.x -= slideOffset;
 			bottomFrame.x -= slideOffset;
 
 			FlxTween.tween(pauseBG, {alpha: 1}, duration);
-			FlxTween.tween(mainFrame, {x: mainFrame.x + slideOffset}, duration, {ease: FlxEase.quadOut});
 			FlxTween.tween(pauseMenu, {x: pauseMenu.x + slideOffset}, duration, {ease: FlxEase.quadOut});
 			FlxTween.tween(chapterFrame, {x: chapterFrame.x + slideOffset}, duration, {ease: FlxEase.quadOut, startDelay: 0.08});
 			FlxTween.tween(chapterText, {x: chapterText.x + slideOffset}, duration, {ease: FlxEase.quadOut, startDelay: 0.08});
@@ -116,6 +160,7 @@ class PauseMenu extends SubStateBackend {
 		if (pauseMenu != null)
 			pauseMenu.canInput = true;
 		super.closeSubState();
+		Discord.updatePresence('In the pause menu', 'Mod: ${GamePrefs.currentMod}');
 	}
 
 	override public function update(elapsed:Float):Void {
@@ -124,7 +169,7 @@ class PauseMenu extends SubStateBackend {
 		if (isAnimating || !canInput)
 			return;
 
-		if (Controls.CANCEL && pauseMenu.canInput) {
+		if (Controls.BACK && pauseMenu.canInput) {
 			FlxG.sound.play(Flags.CANCEL);
 			close();
 		}

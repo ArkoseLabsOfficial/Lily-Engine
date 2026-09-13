@@ -24,35 +24,34 @@ class Controls {
 			var currentState = getActiveState();
 			if (_lastActiveState != currentState) {
 				_lastActiveState = currentState;
-				_blockTimer = 2;
+				_blockTimer = 1;
 			} else if (_blockTimer > 0) {
 				_blockTimer--;
 			}
 		});
 	}
 
-	private inline static function checkAction(action:String, justPressed:Bool):Bool {
+	public static function checkAction(action:String, status:String):Bool {
 		initSignals();
 
-		if (justPressed && _blockTimer > 0) {
+		if (_blockTimer > 0) {
 			return false;
 		}
 
-		var baseResult = checkKeyboardAndGamepad(action, justPressed);
+		var baseResult = checkKeyboardAndGamepad(action, status);
 		var mobilePressed = false;
 
 		#if FEATURE_TOUCH_CONTROLS
 		if (Game.mobileC != null) {
-			var type = justPressed ? "justPressed" : "pressed";
 			var btnName = action.toUpperCase();
-			mobilePressed = Game.mobileC.checkState(btnName, type);
+			mobilePressed = Game.mobileC.checkState(btnName, status);
 		}
 		#end
 
 		return baseResult || mobilePressed;
 	}
 
-	private inline static function checkKeyboardAndGamepad(action:String, justPressed:Bool):Bool {
+	private inline static function checkKeyboardAndGamepad(action:String, status:String):Bool {
 		var binds:Array<String> = GamePrefs.keybinds.get(action);
 		if (binds == null || binds.length < 2)
 			return false;
@@ -60,89 +59,107 @@ class Controls {
 		var kbKey:FlxKey = FlxKey.fromString(binds[0]);
 		var gpBtn:FlxGamepadInputID = FlxGamepadInputID.fromString(binds[1]);
 
-		var kbPressed:Bool = false;
+		var kbMatched:Bool = false;
 		if (kbKey != FlxKey.NONE) {
-			kbPressed = justPressed ? FlxG.keys.anyJustPressed([kbKey]) : FlxG.keys.anyPressed([kbKey]);
-		}
+            switch (status) {
+                case "justPressed":
+                    kbMatched = FlxG.keys.anyJustPressed([kbKey]);
+                case "pressed":
+                    kbMatched = FlxG.keys.anyPressed([kbKey]);
+                case "justReleased":
+                    kbMatched = FlxG.keys.anyJustReleased([kbKey]);
+                case "released":
+                    kbMatched = FlxG.keys.checkStatus(kbKey, RELEASED);
+            }
+        }
 
-		var gpPressed:Bool = false;
-		if (gpBtn != FlxGamepadInputID.NONE) {
-			var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
-			if (gamepad != null) {
-				gpPressed = justPressed ? gamepad.anyJustPressed([gpBtn]) : gamepad.anyPressed([gpBtn]);
-			}
-		}
+		var gpMatched:Bool = false;
+        if (gpBtn != FlxGamepadInputID.NONE) {
+            var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
+            if (gamepad != null) {
+                switch (status) {
+                    case "justPressed":
+                        gpMatched = gamepad.anyJustPressed([gpBtn]);
+                    case "pressed":
+                        gpMatched = gamepad.anyPressed([gpBtn]);
+                    case "justReleased":
+                        gpMatched = gamepad.anyJustReleased([gpBtn]);
+                    case "released":
+                        gpMatched = gamepad.checkStatus(gpBtn, RELEASED);
+                }
+            }
+        }
 
-		return kbPressed || gpPressed;
+        return kbMatched || gpMatched;
 	}
 
 	public static var UP_P(get, never):Bool;
 
 	inline static function get_UP_P()
-		return checkAction("UP", true);
+		return checkAction("UP", "justPressed");
 
 	public static var DOWN_P(get, never):Bool;
 
 	inline static function get_DOWN_P()
-		return checkAction("DOWN", true);
+		return checkAction("DOWN", "justPressed");
 
 	public static var LEFT_P(get, never):Bool;
 
 	inline static function get_LEFT_P()
-		return checkAction("LEFT", true);
+		return checkAction("LEFT", "justPressed");
 
 	public static var RIGHT_P(get, never):Bool;
 
 	inline static function get_RIGHT_P()
-		return checkAction("RIGHT", true);
+		return checkAction("RIGHT", "justPressed");
 
 	public static var ACCEPT(get, never):Bool;
 
 	inline static function get_ACCEPT()
-		return checkAction("ACCEPT", true);
+		return checkAction("ACCEPT", "justPressed");
 
-	public static var CANCEL(get, never):Bool;
+	public static var BACK(get, never):Bool;
 
-	inline static function get_CANCEL()
-		return checkAction("CANCEL", true);
+	inline static function get_BACK()
+		return checkAction("BACK", "justPressed");
 
 	public static var RUN_P(get, never):Bool;
 
 	inline static function get_RUN_P()
-		return checkAction("RUN", true);
+		return checkAction("RUN", "justPressed");
 
 	public static var MENU_P(get, never):Bool;
 
 	inline static function get_MENU_P()
-		return checkAction("MENU", true);
+		return checkAction("MENU", "justPressed");
 
 	public static var UP(get, never):Bool;
 
 	inline static function get_UP()
-		return checkAction("UP", false);
+		return checkAction("UP", "pressed");
 
 	public static var DOWN(get, never):Bool;
 
 	inline static function get_DOWN()
-		return checkAction("DOWN", false);
+		return checkAction("DOWN", "pressed");
 
 	public static var LEFT(get, never):Bool;
 
 	inline static function get_LEFT()
-		return checkAction("LEFT", false);
+		return checkAction("LEFT", "pressed");
 
 	public static var RIGHT(get, never):Bool;
 
 	inline static function get_RIGHT()
-		return checkAction("RIGHT", false);
+		return checkAction("RIGHT", "pressed");
 
 	public static var RUN(get, never):Bool;
 
 	inline static function get_RUN()
-		return checkAction("RUN", false);
+		return checkAction("RUN", "pressed");
 
 	public static var MENU(get, never):Bool;
 
 	inline static function get_MENU()
-		return checkAction("MENU", false);
+		return checkAction("MENU", "pressed");
 }

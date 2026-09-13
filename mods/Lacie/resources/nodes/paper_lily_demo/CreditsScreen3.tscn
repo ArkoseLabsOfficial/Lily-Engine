@@ -1,0 +1,175 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://script/Subgame/PaperLilyDemo/CreditsScreen3.cs" type="Script" id=1]
+[ext_resource path="res://resources/nodes/paper_lily_demo/FinalNoteScreen.tscn" type="PackedScene" id=2]
+[ext_resource path="res://resources/font/default.tres" type="DynamicFont" id=3]
+[ext_resource path="res://resources/font/default_large.tres" type="DynamicFont" id=4]
+
+[node name="CreditsScreen3" type="MarginContainer"]
+
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 640, 360 )
+script = ExtResource( 1 )
+WaitTime = 0.0
+NoSkip = true
+KeepState = true
+NextScreen = ExtResource( 2 )
+
+[node name="Bg" type="ColorRect" parent="."]
+
+margin_right = 640.0
+margin_bottom = 360.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color( 0, 0, 0, 1 )
+
+[node name="Container" type="CenterContainer" parent="."]
+
+margin_right = 640.0
+margin_bottom = 360.0
+
+[node name="Section1" type="VBoxContainer" parent="Container"]
+
+margin_left = 125.0
+margin_top = 113.0
+margin_right = 515.0
+margin_bottom = 246.0
+size_flags_horizontal = 3
+custom_constants/separation = 30
+alignment = 1
+
+[node name="Label" type="Label" parent="Container/Section1"]
+
+margin_right = 390.0
+margin_bottom = 14.0
+custom_fonts/font = ExtResource( 3 )
+text = "system.credits.specialthanks"
+align = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Container/Section1"]
+
+margin_top = 44.0
+margin_right = 390.0
+margin_bottom = 133.0
+size_flags_horizontal = 3
+custom_constants/separation = 10
+alignment = 1
+
+[node name="Label5" type="Label" parent="Container/Section1/VBoxContainer"]
+
+margin_right = 390.0
+margin_bottom = 23.0
+custom_fonts/font = ExtResource( 4 )
+text = "system.screen.paperlilych1.specialthanks.video"
+align = 1
+
+[node name="Label6" type="Label" parent="Container/Section1/VBoxContainer"]
+
+margin_top = 33.0
+margin_right = 390.0
+margin_bottom = 56.0
+custom_fonts/font = ExtResource( 4 )
+text = "system.screen.paperlilych1.specialthanks.comment"
+align = 1
+
+[node name="Label7" type="Label" parent="Container/Section1/VBoxContainer"]
+
+margin_top = 66.0
+margin_right = 390.0
+margin_bottom = 89.0
+custom_fonts/font = ExtResource( 4 )
+text = "system.screen.paperlilych1.specialthanks.family"
+align = 1
+
+[node name="Section2" type="VBoxContainer" parent="Container"]
+
+visible = false
+margin_left = 123.0
+margin_top = 97.0
+margin_right = 517.0
+margin_bottom = 263.0
+size_flags_horizontal = 3
+custom_constants/separation = 30
+alignment = 1
+
+[node name="Label" type="Label" parent="Container/Section2"]
+
+margin_right = 394.0
+margin_bottom = 14.0
+custom_fonts/font = ExtResource( 3 )
+text = "system.screen.paperlilych1.additionalthanks.title"
+align = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Container/Section2"]
+
+margin_top = 44.0
+margin_right = 394.0
+margin_bottom = 166.0
+size_flags_horizontal = 3
+custom_constants/separation = 10
+alignment = 1
+
+[node name="Label5" type="Label" parent="Container/Section2/VBoxContainer"]
+
+margin_right = 394.0
+margin_bottom = 23.0
+custom_fonts/font = ExtResource( 4 )
+text = "system.screen.paperlilych1.additionalthanks.fans"
+align = 1
+
+[node name="Label6" type="Label" parent="Container/Section2/VBoxContainer"]
+
+margin_top = 33.0
+margin_right = 394.0
+margin_bottom = 56.0
+custom_fonts/font = ExtResource( 4 )
+text = "system.screen.paperlilych1.additionalthanks.parents"
+align = 1
+
+[node name="Label7" type="Label" parent="Container/Section2/VBoxContainer"]
+
+margin_top = 66.0
+margin_right = 394.0
+margin_bottom = 89.0
+custom_fonts/font = ExtResource( 4 )
+text = "system.screen.paperlilych1.additionalthanks.email"
+align = 1
+
+[node name="Label8" type="Label" parent="Container/Section2/VBoxContainer"]
+
+margin_top = 99.0
+margin_right = 394.0
+margin_bottom = 122.0
+custom_fonts/font = ExtResource( 4 )
+text = "system.screen.paperlilych1.additionalthanks.you"
+align = 1
+
+[node name="Section3" type="VBoxContainer" parent="Container"]
+
+visible = false
+margin_left = 231.0
+margin_top = 142.0
+margin_right = 408.0
+margin_bottom = 218.0
+size_flags_horizontal = 3
+custom_constants/separation = 30
+alignment = 1
+
+[node name="Label9" type="Label" parent="Container/Section3"]
+
+margin_right = 177.0
+margin_bottom = 23.0
+custom_fonts/font = ExtResource( 4 )
+text = "system.screen.paperlilych1.additionalthanks.thankyou"
+align = 1
+
+[node name="SeeYou" type="Label" parent="Container/Section3"]
+
+modulate = Color( 1, 1, 1, 0 )
+margin_top = 53.0
+margin_right = 177.0
+margin_bottom = 76.0
+custom_fonts/font = ExtResource( 4 )
+text = "system.screen.paperlilych1.additionalthanks.seeyou"
+align = 1

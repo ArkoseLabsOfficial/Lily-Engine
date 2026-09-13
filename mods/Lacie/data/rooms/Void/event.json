@@ -1,0 +1,1081 @@
+{
+  "Id": "Global.ch1_intro",
+  "Name": "ch1_intro",
+  "Path": "res://definitions/events/Global/ch1_intro.lsf",
+  "Room": "Global",
+  "ShouldTrackRepeats": false,
+  "AffectsPersistent": false,
+  "Dialogue": [
+    {
+      "Label": "START",
+      "Event": null,
+      "Index": 0,
+      "RawCommand": "label START",
+      "IndentLv": 0
+    },
+    {
+      "Operation": 6,
+      "Character": null,
+      "Position": null,
+      "Mood": null,
+      "NewName": null,
+      "OldMood": null,
+      "NewMood": null,
+      "Point": null,
+      "Event": null,
+      "Index": 1,
+      "RawCommand": "chara lock",
+      "IndentLv": 1
+    },
+    {
+      "Text": "The first item in a to-do list is always the hardest one to cross off.",
+      "Who": null,
+      "Mood": null,
+      "Font": null,
+      "Color": null,
+      "Time": null,
+      "Formats": null,
+      "Speed": 0,
+      "Position": 0,
+      "Background": 1,
+      "Event": null,
+      "Index": 2,
+      "RawCommand": "\"The first item in a to-do list is always the hardest one to cross off.\" background none",
+      "IndentLv": 1
+    },
+    {
+      "Text": "If we could just get one item done, the rest would surely follow. We just need to start.",
+      "Who": null,
+      "Mood": null,
+      "Font": null,
+      "Color": null,
+      "Time": null,
+      "Formats": null,
+      "Speed": 0,
+      "Position": 0,
+      "Background": 1,
+      "Event": null,
+      "Index": 3,
+      "RawCommand": "\"If we could just get one item done, the rest would surely follow. We just need to start.\" background none",
+      "IndentLv": 1
+    },
+    {
+      "Text": "That's why some people find the easiest item first, and start from there.",
+      "Who": null,
+      "Mood": null,
+      "Font": null,
+      "Color": null,
+      "Time": null,
+      "Formats": null,
+      "Speed": 0,
+      "Position": 0,
+      "Background": 1,
+      "Event": null,
+      "Index": 4,
+      "RawCommand": "\"That's why some people find the easiest item first, and start from there.\" background none",
+      "IndentLv": 1
+    },
+    {
+      "Text": "It gives them a better chance at getting something done.",
+      "Who": null,
+      "Mood": null,
+      "Font": null,
+      "Color": null,
+      "Time": null,
+      "Formats": null,
+      "Speed": 0,
+      "Position": 0,
+      "Background": 1,
+      "Event": null,
+      "Index": 5,
+      "RawCommand": "\"It gives them a better chance at getting something done.\" background none",
+      "IndentLv": 1
+    },
+    {
+      "Operation": 2,
+      "Value": null,
+      "Event": null,
+      "Index": 6,
+      "RawCommand": "hide ui",
+      "IndentLv": 1
+    },
+    {
+      "Type": 0,
+      "Time": 1.5,
+      "Event": null,
+      "Index": 7,
+      "RawCommand": "pause 1.5",
+      "IndentLv": 1
+    },
+    {
+      "Text": "This is because setting things in motion is difficult.",
+      "Who": null,
+      "Mood": null,
+      "Font": null,
+      "Color": null,
+      "Time": null,
+      "Formats": null,
+      "Speed": 0,
+      "Position": 0,
+      "Background": 1,
+      "Event": null,
+      "Index": 8,
+      "RawCommand": "\"This is because setting things in motion is difficult.\" background none",
+      "IndentLv": 1
+    },
+    {
+      "Text": "Choosing to do homework is difficult. Choosing to clean your room is difficult. Choosing to get out of bed is difficult.",
+      "Who": null,
+      "Mood": null,
+      "Font": null,
+      "Color": null,
+      "Time": null,
+      "Formats": null,
+      "Speed": 0,
+      "Position": 0,
+      "Background": 1,
+      "Event": null,
+      "Index": 9,
+      "RawCommand": "\"Choosing to do homework is difficult. Choosing to clean your room is difficult. Choosing to get out of bed is difficult.\" background none",
+      "IndentLv": 1
+    },
+    {
+      "Text": "Change is uncomfortable. It's always easier to leave things the way they are. To let the flow carry you.",
+      "Who": null,
+      "Mood": null,
+      "Font": null,
+      "Color": null,
+      "Time": null,
+      "Formats": null,
+      "Speed": 0,
+      "Position": 0,
+      "Background": 1,
+      "Event": null,
+      "Index": 10,
+      "RawCommand": "\"Change is uncomfortable. It's always easier to leave things the way they are. To let the flow carry you.\" background none",
+      "IndentLv": 1
+    },
+    {
+      "Operation": 2,
+      "Value": null,
+      "Event": null,
+      "Index": 11,
+      "RawCommand": "hide ui",
+      "IndentLv": 1
+    },
+    {
+      "Type": 0,
+      "Time": 0.5,
+      "Event": null,
+      "Index": 12,
+      "RawCommand": "pause 0.5",
+      "IndentLv": 1
+    },
+    {
+      "Text": "Until you reach a point where doing nothing does more damage than doing anything.",
+      "Who": null,
+      "Mood": null,
+      "Font": null,
+      "Color": null,
+      "Time": null,
+      "Formats": null,
+      "Speed": 0,
+      "Position": 0,
+      "Background": 1,
+      "Event": null,
+      "Index": 13,
+      "RawCommand": "\"Until you reach a point where doing nothing does more damage than doing anything.\" background none",
+      "IndentLv": 1
+    },
+    {
+      "Text": "When this happens, change is no longer a choice. It's a consequence.",
+      "Who": null,
+      "Mood": null,
+      "Font": null,
+      "Color": null,
+      "Time": null,
+      "Formats": null,
+      "Speed": 0,
+      "Position": 0,
+      "Background": 1,
+      "Event": null,
+      "Index": 14,
+      "RawCommand": "\"When this happens, change is no longer a choice. It's a consequence.\" background none",
+      "IndentLv": 1
+    },
+    {
+      "Text": "Is that also a choice? The choice to do nothing?",
+      "Who": null,
+      "Mood": null,
+      "Font": null,
+      "Color": null,
+      "Time": null,
+      "Formats": null,
+      "Speed": 0,
+      "Position": 0,
+      "Background": 1,
+      "Event": null,
+      "Index": 15,
+      "RawCommand": "\"Is that also a choice? The choice to do nothing?\" background none",
+      "IndentLv": 1
+    },
+    {
+      "Operation": 2,
+      "Value": null,
+      "Event": null,
+      "Index": 16,
+      "RawCommand": "hide ui",
+      "IndentLv": 1
+    },
+    {
+      "Type": 0,
+      "Time": 1.0,
+      "Event": null,
+      "Index": 17,
+      "RawCommand": "pause 1",
+      "IndentLv": 1
+    },
+    {
+      "Text": "...For now, I'll focus on getting the first item on the list done.",
+      "Who": "lacie",
+      "Mood": null,
+      "Font": null,
+      "Color": null,
+      "Time": null,
+      "Formats": null,
+      "Speed": 0,
+      "Position": 0,
+      "Background": 0,
+      "Event": null,
+      "Index": 18,
+      "RawCommand": "lacie \"...For now, I'll focus on getting the first item on the list done.\"",
+      "IndentLv": 1
+    },
+    {
+      "Text": "All I need to do is choose...",
+      "Choices": [
+        {
+          "ChoiceText": "Coffee",
+          "GotoLine": 21,
+          "Condition": null
+        },
+        {
+          "ChoiceText": "Green Tea",
+          "GotoLine": 23,
+          "Condition": null
+        },
+        {
+          "ChoiceText": "Strawberry Milkshake",
+          "GotoLine": 25,
+          "Condition": null
+        }
+      ],
+      "Event": null,
+      "Index": 19,
+      "RawCommand": "choice \"All I need to do is choose...\"",
+      "IndentLv": 1
+    },
+    {
+      "Value": "Coffee",
+      "Condition": null,
+      "Event": null,
+      "Index": 20,
+      "RawCommand": "\"Coffee\"",
+      "IndentLv": 2
+    },
+    {
+      "Operation": 0,
+      "Variable": "ch1.favorite_drink",
+      "Value": "coffee",
+      "Not": false,
+      "Event": null,
+      "Index": 21,
+      "RawCommand": "set ch1.favorite_drink = \"coffee\"",
+      "IndentLv": 3
+    },
+    {
+      "Value": "Green Tea",
+      "Condition": null,
+      "Event": null,
+      "Index": 22,
+      "RawCommand": "\"Green Tea\"",
+      "IndentLv": 2
+    },
+    {
+      "Operation": 0,
+      "Variable": "ch1.favorite_drink",
+      "Value": "tea",
+      "Not": false,
+      "Event": null,
+      "Index": 23,
+      "RawCommand": "set ch1.favorite_drink = \"tea\"",
+      "IndentLv": 3
+    },
+    {
+      "Value": "Strawberry Milkshake",
+      "Condition": null,
+      "Event": null,
+      "Index": 24,
+      "RawCommand": "\"Strawberry Milkshake\"",
+      "IndentLv": 2
+    },
+    {
+      "Operation": 0,
+      "Variable": "ch1.favorite_drink",
+      "Value": "milkshake",
+      "Not": false,
+      "Event": null,
+      "Index": 25,
+      "RawCommand": "set ch1.favorite_drink = \"milkshake\"",
+      "IndentLv": 3
+    },
+    {
+      "Operation": 2,
+      "Value": null,
+      "Event": null,
+      "Index": 26,
+      "RawCommand": "hide ui",
+      "IndentLv": 1
+    },
+    {
+      "Type": 0,
+      "Time": 2.0,
+      "Event": null,
+      "Index": 27,
+      "RawCommand": "pause 2",
+      "IndentLv": 1
+    },
+    {
+      "Text": "...and also...",
+      "Choices": [
+        {
+          "ChoiceText": "Flan",
+          "GotoLine": 30,
+          "Condition": null
+        },
+        {
+          "ChoiceText": "Macarons",
+          "GotoLine": 32,
+          "Condition": null
+        },
+        {
+          "ChoiceText": "Chocolate Eclair",
+          "GotoLine": 34,
+          "Condition": null
+        }
+      ],
+      "Event": null,
+      "Index": 28,
+      "RawCommand": "choice \"...and also...\"",
+      "IndentLv": 1
+    },
+    {
+      "Value": "Flan",
+      "Condition": null,
+      "Event": null,
+      "Index": 29,
+      "RawCommand": "\"Flan\"",
+      "IndentLv": 2
+    },
+    {
+      "Operation": 0,
+      "Variable": "ch1.favorite_dessert",
+      "Value": "flan",
+      "Not": false,
+      "Event": null,
+      "Index": 30,
+      "RawCommand": "set ch1.favorite_dessert = \"flan\"",
+      "IndentLv": 3
+    },
+    {
+      "Value": "Macarons",
+      "Condition": null,
+      "Event": null,
+      "Index": 31,
+      "RawCommand": "\"Macarons\"",
+      "IndentLv": 2
+    },
+    {
+      "Operation": 0,
+      "Variable": "ch1.favorite_dessert",
+      "Value": "macarons",
+      "Not": false,
+      "Event": null,
+      "Index": 32,
+      "RawCommand": "set ch1.favorite_dessert = \"macarons\"",
+      "IndentLv": 3
+    },
+    {
+      "Value": "Chocolate Eclair",
+      "Condition": null,
+      "Event": null,
+      "Index": 33,
+      "RawCommand": "\"Chocolate Eclair\"",
+      "IndentLv": 2
+    },
+    {
+      "Operation": 0,
+      "Variable": "ch1.favorite_dessert",
+      "Value": "eclair",
+      "Not": false,
+      "Event": null,
+      "Index": 34,
+      "RawCommand": "set ch1.favorite_dessert = \"eclair\"",
+      "IndentLv": 3
+    },
+    {
+      "Operation": 2,
+      "Value": null,
+      "Event": null,
+      "Index": 35,
+      "RawCommand": "hide ui",
+      "IndentLv": 1
+    },
+    {
+      "Operation": 14,
+      "Value": "CH1_FIRST_CHOICE",
+      "Value2": null,
+      "SaveEventLabel": null,
+      "SaveLocation": null,
+      "SaveImage": null,
+      "Event": null,
+      "Index": 36,
+      "RawCommand": "system achievement CH1_FIRST_CHOICE",
+      "IndentLv": 1
+    },
+    {
+      "Type": 0,
+      "Time": 2.0,
+      "Event": null,
+      "Index": 37,
+      "RawCommand": "pause 2",
+      "IndentLv": 1
+    },
+    {
+      "Event": null,
+      "Index": 38,
+      "RawCommand": null,
+      "IndentLv": 2147483647
+    },
+    {
+      "Type": 0,
+      "Operator": 0,
+      "Negate": false,
+      "Variable": "ch1.favorite_drink",
+      "Value": "coffee",
+      "Item": null,
+      "Amount": 0,
+      "Jump": {
+        "Type": 3,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Else": {
+        "Type": 2,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Event": null,
+      "Index": 39,
+      "RawCommand": "if var ch1.favorite_drink == \"coffee\"",
+      "IndentLv": 1
+    },
+    {
+      "Type": 0,
+      "Operator": 0,
+      "Negate": false,
+      "Variable": "ch1.favorite_dessert",
+      "Value": "flan",
+      "Item": null,
+      "Amount": 0,
+      "Jump": {
+        "Type": 3,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Else": {
+        "Type": 2,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Event": null,
+      "Index": 40,
+      "RawCommand": "if var ch1.favorite_dessert == \"flan\"",
+      "IndentLv": 2
+    },
+    {
+      "Operation": 0,
+      "Variable": "ch1.temp_cafe_order_string",
+      "Value": "misc.strings.order_1A",
+      "Not": false,
+      "Event": null,
+      "Index": 41,
+      "RawCommand": "set ch1.temp_cafe_order_string = \"misc.strings.order_1A\"",
+      "IndentLv": 3
+    },
+    {
+      "Type": 0,
+      "Operator": 0,
+      "Negate": false,
+      "Variable": "ch1.favorite_dessert",
+      "Value": "macarons",
+      "Item": null,
+      "Amount": 0,
+      "Jump": {
+        "Type": 3,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Else": {
+        "Type": 2,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Event": null,
+      "Index": 42,
+      "RawCommand": "if var ch1.favorite_dessert == \"macarons\"",
+      "IndentLv": 2
+    },
+    {
+      "Operation": 0,
+      "Variable": "ch1.temp_cafe_order_string",
+      "Value": "misc.strings.order_1B",
+      "Not": false,
+      "Event": null,
+      "Index": 43,
+      "RawCommand": "set ch1.temp_cafe_order_string = \"misc.strings.order_1B\"",
+      "IndentLv": 3
+    },
+    {
+      "Type": 0,
+      "Operator": 0,
+      "Negate": false,
+      "Variable": "ch1.favorite_dessert",
+      "Value": "eclair",
+      "Item": null,
+      "Amount": 0,
+      "Jump": {
+        "Type": 3,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Else": {
+        "Type": 2,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Event": null,
+      "Index": 44,
+      "RawCommand": "if var ch1.favorite_dessert == \"eclair\"",
+      "IndentLv": 2
+    },
+    {
+      "Operation": 0,
+      "Variable": "ch1.temp_cafe_order_string",
+      "Value": "misc.strings.order_1C",
+      "Not": false,
+      "Event": null,
+      "Index": 45,
+      "RawCommand": "set ch1.temp_cafe_order_string = \"misc.strings.order_1C\"",
+      "IndentLv": 3
+    },
+    {
+      "Type": 0,
+      "Operator": 0,
+      "Negate": false,
+      "Variable": "ch1.favorite_drink",
+      "Value": "tea",
+      "Item": null,
+      "Amount": 0,
+      "Jump": {
+        "Type": 3,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Else": {
+        "Type": 2,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Event": null,
+      "Index": 46,
+      "RawCommand": "if var ch1.favorite_drink == \"tea\"",
+      "IndentLv": 1
+    },
+    {
+      "Type": 0,
+      "Operator": 0,
+      "Negate": false,
+      "Variable": "ch1.favorite_dessert",
+      "Value": "flan",
+      "Item": null,
+      "Amount": 0,
+      "Jump": {
+        "Type": 3,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Else": {
+        "Type": 2,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Event": null,
+      "Index": 47,
+      "RawCommand": "if var ch1.favorite_dessert == \"flan\"",
+      "IndentLv": 2
+    },
+    {
+      "Operation": 0,
+      "Variable": "ch1.temp_cafe_order_string",
+      "Value": "misc.strings.order_2A",
+      "Not": false,
+      "Event": null,
+      "Index": 48,
+      "RawCommand": "set ch1.temp_cafe_order_string = \"misc.strings.order_2A\"",
+      "IndentLv": 3
+    },
+    {
+      "Type": 0,
+      "Operator": 0,
+      "Negate": false,
+      "Variable": "ch1.favorite_dessert",
+      "Value": "macarons",
+      "Item": null,
+      "Amount": 0,
+      "Jump": {
+        "Type": 3,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Else": {
+        "Type": 2,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Event": null,
+      "Index": 49,
+      "RawCommand": "if var ch1.favorite_dessert == \"macarons\"",
+      "IndentLv": 2
+    },
+    {
+      "Operation": 0,
+      "Variable": "ch1.temp_cafe_order_string",
+      "Value": "misc.strings.order_2B",
+      "Not": false,
+      "Event": null,
+      "Index": 50,
+      "RawCommand": "set ch1.temp_cafe_order_string = \"misc.strings.order_2B\"",
+      "IndentLv": 3
+    },
+    {
+      "Type": 0,
+      "Operator": 0,
+      "Negate": false,
+      "Variable": "ch1.favorite_dessert",
+      "Value": "eclair",
+      "Item": null,
+      "Amount": 0,
+      "Jump": {
+        "Type": 3,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Else": {
+        "Type": 2,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Event": null,
+      "Index": 51,
+      "RawCommand": "if var ch1.favorite_dessert == \"eclair\"",
+      "IndentLv": 2
+    },
+    {
+      "Operation": 0,
+      "Variable": "ch1.temp_cafe_order_string",
+      "Value": "misc.strings.order_2C",
+      "Not": false,
+      "Event": null,
+      "Index": 52,
+      "RawCommand": "set ch1.temp_cafe_order_string = \"misc.strings.order_2C\"",
+      "IndentLv": 3
+    },
+    {
+      "Type": 0,
+      "Operator": 0,
+      "Negate": false,
+      "Variable": "ch1.favorite_drink",
+      "Value": "milkshake",
+      "Item": null,
+      "Amount": 0,
+      "Jump": {
+        "Type": 3,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Else": {
+        "Type": 2,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Event": null,
+      "Index": 53,
+      "RawCommand": "if var ch1.favorite_drink == \"milkshake\"",
+      "IndentLv": 1
+    },
+    {
+      "Type": 0,
+      "Operator": 0,
+      "Negate": false,
+      "Variable": "ch1.favorite_dessert",
+      "Value": "flan",
+      "Item": null,
+      "Amount": 0,
+      "Jump": {
+        "Type": 3,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Else": {
+        "Type": 2,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Event": null,
+      "Index": 54,
+      "RawCommand": "if var ch1.favorite_dessert == \"flan\"",
+      "IndentLv": 2
+    },
+    {
+      "Operation": 0,
+      "Variable": "ch1.temp_cafe_order_string",
+      "Value": "misc.strings.order_3A",
+      "Not": false,
+      "Event": null,
+      "Index": 55,
+      "RawCommand": "set ch1.temp_cafe_order_string = \"misc.strings.order_3A\"",
+      "IndentLv": 3
+    },
+    {
+      "Type": 0,
+      "Operator": 0,
+      "Negate": false,
+      "Variable": "ch1.favorite_dessert",
+      "Value": "macarons",
+      "Item": null,
+      "Amount": 0,
+      "Jump": {
+        "Type": 3,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Else": {
+        "Type": 2,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Event": null,
+      "Index": 56,
+      "RawCommand": "if var ch1.favorite_dessert == \"macarons\"",
+      "IndentLv": 2
+    },
+    {
+      "Operation": 0,
+      "Variable": "ch1.temp_cafe_order_string",
+      "Value": "misc.strings.order_3B",
+      "Not": false,
+      "Event": null,
+      "Index": 57,
+      "RawCommand": "set ch1.temp_cafe_order_string = \"misc.strings.order_3B\"",
+      "IndentLv": 3
+    },
+    {
+      "Type": 0,
+      "Operator": 0,
+      "Negate": false,
+      "Variable": "ch1.favorite_dessert",
+      "Value": "eclair",
+      "Item": null,
+      "Amount": 0,
+      "Jump": {
+        "Type": 3,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Else": {
+        "Type": 2,
+        "Label": null,
+        "Line": 0,
+        "Event": null,
+        "Index": 0,
+        "RawCommand": null,
+        "IndentLv": -1
+      },
+      "Event": null,
+      "Index": 58,
+      "RawCommand": "if var ch1.favorite_dessert == \"eclair\"",
+      "IndentLv": 2
+    },
+    {
+      "Operation": 0,
+      "Variable": "ch1.temp_cafe_order_string",
+      "Value": "misc.strings.order_3C",
+      "Not": false,
+      "Event": null,
+      "Index": 59,
+      "RawCommand": "set ch1.temp_cafe_order_string = \"misc.strings.order_3C\"",
+      "IndentLv": 3
+    },
+    {
+      "Event": null,
+      "Index": 60,
+      "RawCommand": null,
+      "IndentLv": 2147483647
+    },
+    {
+      "Text": "${var:ch1.temp_cafe_order_string}...",
+      "Who": "lacie",
+      "Mood": null,
+      "Font": null,
+      "Color": null,
+      "Time": null,
+      "Formats": null,
+      "Speed": 0,
+      "Position": 0,
+      "Background": 0,
+      "Event": null,
+      "Index": 61,
+      "RawCommand": "lacie \"${var:ch1.temp_cafe_order_string}...\"",
+      "IndentLv": 1
+    },
+    {
+      "Text": "${var:ch1.temp_cafe_order_string}...",
+      "Who": "lacie",
+      "Mood": null,
+      "Font": null,
+      "Color": null,
+      "Time": null,
+      "Formats": null,
+      "Speed": 0,
+      "Position": 0,
+      "Background": 0,
+      "Event": null,
+      "Index": 62,
+      "RawCommand": "lacie \"${var:ch1.temp_cafe_order_string}...\"",
+      "IndentLv": 1
+    },
+    {
+      "Text": "${var:ch1.temp_cafe_order_string}.....",
+      "Who": "lacie",
+      "Mood": null,
+      "Font": null,
+      "Color": null,
+      "Time": null,
+      "Formats": null,
+      "Speed": 0,
+      "Position": 0,
+      "Background": 0,
+      "Event": null,
+      "Index": 63,
+      "RawCommand": "lacie \"${var:ch1.temp_cafe_order_string}.....\"",
+      "IndentLv": 1
+    },
+    {
+      "Operation": 2,
+      "Value": null,
+      "Event": null,
+      "Index": 64,
+      "RawCommand": "hide ui",
+      "IndentLv": 1
+    },
+    {
+      "Type": 0,
+      "Time": 1.0,
+      "Event": null,
+      "Index": 65,
+      "RawCommand": "pause 1",
+      "IndentLv": 1
+    },
+    {
+      "Text": "Okay.",
+      "Who": "lacie",
+      "Mood": null,
+      "Font": null,
+      "Color": null,
+      "Time": null,
+      "Formats": null,
+      "Speed": 0,
+      "Position": 0,
+      "Background": 0,
+      "Event": null,
+      "Index": 66,
+      "RawCommand": "lacie \"Okay.\"",
+      "IndentLv": 1
+    },
+    {
+      "Text": "I got this.",
+      "Who": "lacie",
+      "Mood": null,
+      "Font": null,
+      "Color": null,
+      "Time": null,
+      "Formats": null,
+      "Speed": 0,
+      "Position": 0,
+      "Background": 0,
+      "Event": null,
+      "Index": 67,
+      "RawCommand": "lacie \"I got this.\"",
+      "IndentLv": 1
+    },
+    {
+      "Operation": 2,
+      "Value": null,
+      "Event": null,
+      "Index": 68,
+      "RawCommand": "hide ui",
+      "IndentLv": 1
+    },
+    {
+      "Type": 0,
+      "Time": 1.0,
+      "Event": null,
+      "Index": 69,
+      "RawCommand": "pause 1",
+      "IndentLv": 1
+    },
+    {
+      "Text": "${var:ch1.temp_cafe_order_string}.",
+      "Who": "lacie",
+      "Mood": null,
+      "Font": null,
+      "Color": null,
+      "Time": null,
+      "Formats": null,
+      "Speed": 0,
+      "Position": 0,
+      "Background": 0,
+      "Event": null,
+      "Index": 70,
+      "RawCommand": "lacie \"${var:ch1.temp_cafe_order_string}.\"",
+      "IndentLv": 1
+    },
+    {
+      "Event": null,
+      "Index": 71,
+      "RawCommand": null,
+      "IndentLv": 2147483647
+    },
+    {
+      "Type": 1,
+      "Time": 0.0,
+      "Color": null,
+      "ContinueImmediately": false,
+      "Event": null,
+      "Index": 72,
+      "RawCommand": "fade out time 0",
+      "IndentLv": 1
+    },
+    {
+      "Type": 0,
+      "Time": 1.0,
+      "Event": null,
+      "Index": 73,
+      "RawCommand": "pause 1",
+      "IndentLv": 1
+    }
+  ]
+}

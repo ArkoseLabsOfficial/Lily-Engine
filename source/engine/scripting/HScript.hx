@@ -16,6 +16,7 @@ import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 import flixel.util.FlxStringUtil;
 import engine.scripting.events.CancellableEvent;
 import hscript.IHScriptCustomAccessBehaviour;
+import debug.DebugMenu;
 
 using StringTools;
 
@@ -26,16 +27,15 @@ class HScript extends Script {
 	public var sscript:SScript;
 	public var code:String = null;
 	public var baseName:String;
+	public var instance(get, set):Dynamic;
 
-	public var constructorArgs(get, set):Array<Dynamic>;
+	private function get_instance():Dynamic {
+		return sscript.instance;
+	}
 
-	inline function get_constructorArgs()
-		return sscript != null ? sscript.constructorArgs : null;
-
-	inline function set_constructorArgs(v) {
-		if (sscript != null)
-			sscript.constructorArgs = v;
-		return v;
+	private function set_instance(value:SScript):Dynamic {
+		sscript.instance = value;
+		return value;
 	}
 
 	public override function onCreate(path:String) {
@@ -45,21 +45,23 @@ class HScript extends Script {
 		sscript.parser.allowJSON = true;
 		sscript.parser.preprocessorValues = Script.getDefaultPreprocessors();
 
-		try {
-			if (Assets.exists(rawPath))
-				code = Assets.getText(rawPath);
-		} catch (e) {
-			FlxG.stage.window.alert('Error while reading $path: ${Std.string(e)}', "HScript");
+		if (path != null) {
+			try {
+				if (Assets.exists(rawPath))
+					code = Assets.getText(rawPath);
+			} catch (e) {
+				FlxG.stage.window.alert('Error while reading $path: ${Std.string(e)}', "HScript");
+			}
 		}
 
 		sscript.interp.errorHandler = _errorHandler;
 		sscript.interp.warnHandler = _warnHandler;
 
 		/* get name from File. */
-		var cleaned = sourcePath.replace(Flags.scriptFolder, '').split('/').pop();
+		var cleaned = sourcePath.replace('${Flags.scriptFolder}/', '').split('/').pop();
 		var lastDot = cleaned.lastIndexOf(".");
 		baseName = lastDot != -1 ? cleaned.substring(0, lastDot) : cleaned;
-		sscript.baseName = baseName;
+		// sscript.baseName = baseName;
 
 		var statics:Map<String, Dynamic> = HScript.classStatics.get(baseName);
 		if (statics == null) {
@@ -72,8 +74,46 @@ class HScript extends Script {
 		sscript.interp.allowStaticVariables = true;
 		sscript.interp.allowPublicVariables = true;
 
-		sscript.set("importScript", function(path:String):Dynamic {
-			return importScriptFile(path);
+		sscript.interp.variables.set("importScript", function(path:String) {
+			var importedScript:Script = Script.create('scripts/$path.hx');
+			if (importedScript != null && !(importedScript is DummyScript)) {
+				var hscriptInstance:HScript = Std.isOfType(importedScript, HScript) ? cast importedScript : null;
+				if (hscriptInstance != null && hscriptInstance.sscript != null && hscriptInstance.sscript.interp != null) {
+					if (hscriptInstance.code != null && hscriptInstance.code.trim() != "") {
+						hscriptInstance.sscript.parser.allowJSON = true;
+						hscriptInstance.sscript.parser.preprocessorValues = Script.getDefaultPreprocessors();
+
+						for (k => e in Script.getDefaultVariables(hscriptInstance)) {
+							hscriptInstance.sscript.set(k, e);
+						}
+
+						var expr = hscriptInstance.sscript.parser.parseString(hscriptInstance.code, hscriptInstance.fileName);
+						hscriptInstance.sscript.interp.execute(expr);
+						HScript.syncCustomClassStatics(hscriptInstance.sscript.interp);
+					}
+
+					for (k => v in hscriptInstance.sscript.interp.customClasses) {
+						for (varKey => varVal in sscript.interp.variables) {
+							try {
+								@:privateAccess {
+									if (v.__interp != null && v.__interp.variables != null) {
+										v.__interp.variables.set(varKey, varVal);
+									}
+								}
+							} catch (e:Dynamic) {}
+						}
+
+						sscript.interp.customClasses.set(k, v);
+					}
+					for (k => v in hscriptInstance.sscript.interp.variables) {
+						if (!sscript.interp.variables.exists(k)) {
+							sscript.interp.variables.set(k, v);
+						}
+					}
+				}
+			} else {
+				_trace("WARN: importScript failed to find or load: " + 'scripts/$path.hx');
+			}
 		});
 
 		#if GLOBAL_SCRIPT
@@ -106,15 +146,44 @@ class HScript extends Script {
 		return fn + err;
 	}
 
-	private function _errorHandler(error:Error)
-		trace("ERROR Caused in " + _formatError(error));
+	private function _errorHandler(error:Error) {
+		DebugMenu.addTextToDebug("ERROR:" + _formatError(error), FlxColor.RED);
+		_trace("ERROR Caused in " + _formatError(error));
+	}
 
-	private function _warnHandler(error:Error)
-		trace("WARN Caused in " + _formatError(error));
+	private function _warnHandler(error:Error) {
+		DebugMenu.addTextToDebug("WARN:" + _formatError(error), FlxColor.ORANGE);
+		_trace("WARN Caused in " + _formatError(error));
+	}
 
 	public override function setParent(parent:Dynamic) {
-		if (sscript != null)
-			sscript.interp.scriptObject = parent;
+		if (sscript != null) {
+			var hasCustomClassInstance = false;
+			if (sscript.instance != null && sscript.instance != {}) {
+				if (Std.isOfType(sscript.instance, CustomClass)) {
+					hasCustomClassInstance = true;
+					try {
+						var cc = cast(sscript.instance, CustomClass);
+						@:privateAccess
+						if (cc.__superClass == null) {
+							hasCustomClassInstance = false;
+						}
+					} catch (e:Dynamic) {}
+				}
+			}
+
+			if (!hasCustomClassInstance) {
+				sscript.interp.scriptObject = parent;
+
+				if (sscript.instance != null && sscript.instance != {}) {
+					if (Std.isOfType(sscript.instance, CustomClass)) {
+						try {
+							cast(sscript.instance, CustomClass).__interp.scriptObject = parent;
+						} catch (e:Dynamic) {}
+					}
+				}
+			}
+		}
 	}
 
 	public override function onLoad() {
@@ -122,8 +191,17 @@ class HScript extends Script {
 			sscript.doString(code, fileName);
 
 			if (sscript.parsingException != null) {
-				trace("Failed to execute script: " + sscript.parsingException.toString());
+				DebugMenu.addTextToDebug("Failed to execute script: " + sscript.parsingException.toString(), FlxColor.RED);
+				_trace("Failed to execute script: " + sscript.parsingException.toString());
 				return;
+			}
+		}
+
+		if (sscript != null && sscript.interp != null) {
+			HScript.syncCustomClassStatics(sscript.interp);
+
+			if (sscript.interp.scriptObject != null) {
+				setParent(sscript.interp.scriptObject);
 			}
 		}
 
@@ -180,14 +258,10 @@ class HScript extends Script {
 	}
 
 	public override function get(val:String):Dynamic {
-		if (sscript == null)
-			return null;
 		return sscript.get(val);
 	}
 
 	public override function set(val:String, value:Dynamic) {
-		if (sscript == null)
-			return;
 		sscript.set(val, value);
 	}
 
@@ -205,11 +279,12 @@ class HScript extends Script {
 			return null;
 
 		var seperatedPath = path.split('.');
-		var script:Script = Script.create(Flags.scriptFolder + seperatedPath[0] + '.hx');
+		var script:Script = Script.create('${Flags.scriptFolder}/' + seperatedPath[0] + '.hx');
 		script.active = false;
 
 		if (script is DummyScript) {
-			trace("WARN: Script at '" + path + "' does not exist.");
+			DebugMenu.addTextToDebug("WARN: Script at '" + path + "' does not exist.", FlxColor.ORANGE);
+			_trace("WARN: Script at '" + path + "' does not exist.");
 			return null;
 		}
 
@@ -221,6 +296,34 @@ class HScript extends Script {
 	}
 
 	public static var classStatics:Map<String, Map<String, Dynamic>> = [];
+	public static var globalCustomClassStatics:Map<String, Map<String, Dynamic>> = [];
+
+	public static function syncCustomClassStatics(interp:hscript.Interp) {
+		if (interp == null || interp.customClasses == null)
+			return;
+
+		for (className => classHandler in interp.customClasses) {
+			try {
+				@:privateAccess {
+					if (classHandler.__interp != null) {
+						if (!globalCustomClassStatics.exists(className)) {
+							globalCustomClassStatics.set(className, classHandler.__interp.variables);
+						} else {
+							var globalVars = globalCustomClassStatics.get(className);
+							for (key => val in classHandler.__interp.variables) {
+								if (Reflect.isFunction(val)) {
+									globalVars.set(key, val);
+								} else if (!globalVars.exists(key)) {
+									globalVars.set(key, val);
+								}
+							}
+							classHandler.__interp.variables = globalVars;
+						}
+					}
+				}
+			} catch (e:Dynamic) {}
+		}
+	}
 }
 
 class Script extends FlxBasic implements IFlxDestroyable {
@@ -266,24 +369,22 @@ class Script extends FlxBasic implements IFlxDestroyable {
 			"BaseRoom" => BaseRoom,
 			"MainState" => MainState,
 			"TitleMenu" => TitleMenu,
-			"Inventory" => InventoryMenu,
-			"Language" => LanguageMenu,
-			"ModSelector" => ModSelectorMenu,
+			"InventoryMenu" => InventoryMenu,
+			"LanguageMenu" => LanguageMenu,
+			"ModSelectorMenu" => ModSelectorMenu,
 			"ObjectivesMenu" => ObjectivesMenu,
-			"Pause" => PauseMenu,
-			"SaveLoad" => SaveLoadMenu,
-			"Settings" => SettingsMenu,
+			"PauseMenu" => PauseMenu,
+			"SaveLoadMenu" => SaveLoadMenu,
+			"SettingsMenu" => SettingsMenu,
 			"DialogBox" => DialogBox,
 			"DialogSelection" => DialogSelection,
-			"MenuFrameNode" => MenuFrameNode,
-			"SimpleVerticalMenu" => SimpleVerticalMenu,
-			"SpecialNinePatch" => SpecialNinePatch,
+			"ImprovedNinePatch" => ImprovedNinePatch,
 			#if sys
-			"File" => sys.io.File,
-			"FileSystem" => sys.FileSystem,
+			"File" => sys.io.File, "FileSystem" => sys.FileSystem,
 			#end
 			"Lang" => Lang,
 			"LangText" => LangText,
+			"LangSprite" => LangSprite,
 			"Main" => Main,
 
 			// Flixel
@@ -300,16 +401,75 @@ class Script extends FlxBasic implements IFlxDestroyable {
 			"FlxTypedGroup" => FlxTypedGroup,
 			"FlxKey" => getMacroAbstractClass("flixel.input.keyboard.FlxKey"),
 			"FlxTextBorderStyle" => flixel.text.FlxTextBorderStyle,
+			"FlxBasic" => FlxBasic,
+			"FlxObject" => FlxObject,
+			"FlxState" => FlxState,
+			"FlxSubState" => FlxSubState,
+			"FlxMath" => flixel.math.FlxMath,
+			"FlxPoint" => getMacroAbstractClass("flixel.math.FlxPoint"),
+			"FlxRect" => flixel.math.FlxRect,
+			"FlxVelocity" => flixel.math.FlxVelocity,
+			"FlxAngle" => flixel.math.FlxAngle,
+			"FlxTimer" => flixel.util.FlxTimer,
+			"FlxSave" => flixel.util.FlxSave,
+			"FlxSort" => flixel.util.FlxSort,
+			"FlxStringUtil" => flixel.util.FlxStringUtil,
+			"FlxAxes" => getMacroAbstractClass("flixel.util.FlxAxes"),
+			"FlxDirectionFlags" => getMacroAbstractClass("flixel.util.FlxDirectionFlags"),
+			"FlxGraphic" => flixel.graphics.FlxGraphic,
+			"FlxAtlasFrames" => flixel.graphics.frames.FlxAtlasFrames,
+			"FlxFrame" => flixel.graphics.frames.FlxFrame,
+			"FlxAnimationController" => flixel.animation.FlxAnimationController,
+			"FlxSound" => flixel.sound.FlxSound,
+			"FlxSoundGroup" => flixel.sound.FlxSoundGroup,
+			"FlxKeyboard" => flixel.input.keyboard.FlxKeyboard,
+			"FlxMouse" => flixel.input.mouse.FlxMouse,
+			"FlxBar" => flixel.ui.FlxBar,
+			"FlxBarFillDirection" => flixel.ui.FlxBar.FlxBarFillDirection,
+			"FlxButton" => flixel.ui.FlxButton,
+			"FlxEmitter" => flixel.effects.particles.FlxEmitter,
+			"FlxParticle" => flixel.effects.particles.FlxParticle,
+			"FlxTrail" => flixel.addons.effects.FlxTrail,
+			"FlxTilemap" => flixel.tile.FlxTilemap,
+			"FlxBaseTilemap" => flixel.tile.FlxBaseTilemap,
+			"FlxShader" => flixel.system.FlxShader,
 
 			// OpenFL
 			"Assets" => Assets, // use the Assets class for accessing anything necessary.
+			"Shader" => openfl.display.Shader,
+			"ShaderFilter" => openfl.filters.ShaderFilter,
+
+			// hxFileManager
+			"FileDialog" => hxfilemanager.FileDialog,
+			"DialogKind" => hxfilemanager.Model.DialogKind,
+
+			// Godot (Yeah Godot, it's weird to see right?)
+			"AnimatedSprite" => AnimatedSprite,
+			"AnimationPlayer" => AnimationPlayer,
+			"Area2D" => Area2D,
+			"CenterContainer" => CenterContainer,
+			"CollisionPolygon2D" => CollisionPolygon2D,
+			"CollisionShape2D" => CollisionShape2D,
+			"ColorRect" => ColorRect,
+			"Control" => Control,
+			"Curve2D" => Curve2D,
+			"Label" => Label,
+			"Light2D" => Light2D,
+			"MarginContainer" => MarginContainer,
+			"Node" => Node,
+			"Node2D" => Node2D,
+			"Path2D" => Path2D,
+			"PathFollow2D" => PathFollow2D,
+			"Sprite" => Sprite,
+			"TextureRect" => TextureRect,
+			"TileMap" => TileMap,
 
 			"Math" => Math,
 			"Std" => Std,
 			"StringTools" => StringTools,
-			
+
 			"Json" => haxe.Json,
-			"Map" => getMacroAbstractClass("haxe.ds.Map"),
+			"Map" => getMacroAbstractClass("haxe.ds.CustomMap"), // Normal Map Doesn't work some reason.
 			"ObjectMap" => haxe.ds.ObjectMap,
 			"IntMap" => haxe.ds.IntMap,
 			"StringMap" => haxe.ds.StringMap
@@ -363,7 +523,7 @@ class Script extends FlxBasic implements IFlxDestroyable {
 	static function safeWithoutDirectory(path:String) {
 		try {
 			return Path.withoutDirectory(path);
-		} catch(e:Dynamic) {
+		} catch (e:Dynamic) {
 			return null;
 		}
 	}
@@ -371,7 +531,7 @@ class Script extends FlxBasic implements IFlxDestroyable {
 	static function safeExtension(path:String) {
 		try {
 			return Path.extension(path);
-		} catch(e:Dynamic) {
+		} catch (e:Dynamic) {
 			return null;
 		}
 	}
@@ -409,9 +569,20 @@ class Script extends FlxBasic implements IFlxDestroyable {
 
 	public function reload() {}
 
-	public function trace(v:Dynamic) {
+	public function _trace(v:Dynamic) {
 		var fn = remappedNames.exists(fileName) ? remappedNames.get(fileName) : fileName;
-		trace('$fn: ' + Std.string(v));
+		DebugMenu.addTextToDebug('$fn: ' + Std.string(v));
+		var str = '$fn: ' + Std.string(v);
+		#if js
+		if (js.Syntax.typeof(untyped console) != "undefined" && (untyped console).log != null)
+			(untyped console).log(str);
+		#elseif lua
+		untyped __define_feature__("use._hx_print", _hx_print(str));
+		#elseif sys
+		Sys.println(str);
+		#else
+		// Fallback if target is unsupported
+		#end
 	}
 
 	public function call(func:String, ?parameters:Array<Dynamic>):Dynamic {
@@ -436,7 +607,8 @@ class Script extends FlxBasic implements IFlxDestroyable {
 
 	public function error(text:String, ?additionalInfo:Dynamic):Void {
 		var fn = remappedNames.exists(fileName) ? remappedNames.get(fileName) : fileName;
-		trace(fn + text);
+		DebugMenu.addTextToDebug(fn + text, FlxColor.RED);
+		_trace(fn + text);
 	}
 
 	override public function toString():String {
@@ -632,7 +804,7 @@ class GlobalScript {
 		destroy();
 		scripts = new ScriptPack("GlobalScript");
 
-		var path = '${Flags.scriptFolder}Global.hx';
+		var path = '${Flags.scriptFolder}/Global.hx';
 		var script = Script.create(path);
 		if (!(script is DummyScript)) {
 			script.remappedNames.set(script.fileName, '${script.fileName}');

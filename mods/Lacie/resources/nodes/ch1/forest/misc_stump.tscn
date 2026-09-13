@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://assets/sprite/ch1/forest/common/misc_stump.png" type="Texture" id=1]
+
+[node name="misc_stump" type="Node2D"]
+
+[node name="MiscStump" type="Sprite" parent="."]
+
+position = Vector2( 1, -7 )
+texture = ExtResource( 1 )

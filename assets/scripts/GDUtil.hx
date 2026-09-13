@@ -3,9 +3,9 @@ import lime.math.Vector2;
 import flixel.util.FlxColor;
 
 class GDUtil {
-	public static function MakeCollisionRect(size:Vector2, offset:Vector2) {
+	public static function makeCollisionRect(size:Vector2, offset:Vector2) {
 		var shape = new CollisionShape2D();
-		shape.nodeName = "CollisionShape";
+		shape.name = "CollisionShape";
 		shape.shapeType = "RectangleShape2D";
 		shape.extents = new Vector2(size.x / 2.0, size.y / 2.0);
 		shape.width = size.x;
@@ -14,9 +14,9 @@ class GDUtil {
 		return shape;
 	}
 
-	function MakeCollisionCircle(radius:Float, offset:Vector2) {
+	function makeCollisionCircle(radius:Float, offset:Vector2) {
 		var shape = new CollisionShape2D();
-		shape.nodeName = "CollisionShape";
+		shape.name = "CollisionShape";
 		shape.shapeType = "CircleShape2D";
 		shape.radius = radius;
 		shape.width = radius * 2.0;
@@ -25,9 +25,9 @@ class GDUtil {
 		return shape;
 	}
 
-	function MakeCollisionCapsule(size:Vector2, offset:Vector2) {
+	function makeCollisionCapsule(size:Vector2, offset:Vector2) {
 		var shape = new CollisionShape2D();
-		shape.nodeName = "CollisionShape";
+		shape.name = "CollisionShape";
 		shape.shapeType = "CapsuleShape2D";
 
 		if (size.x > size.y) {
@@ -44,7 +44,7 @@ class GDUtil {
 		return shape;
 	}
 
-	function StringToColor(colorStr:String) {
+	function stringToColor(colorStr:String) {
 		if (colorStr == null || colorStr == "")
 			return FlxColor.WHITE;
 		if (StringTools.startsWith(colorStr, "#"))
@@ -61,7 +61,7 @@ class GDUtil {
 		return FlxColor.fromRGB(r, g, b, a);
 	}
 
-	function StringToVector2(str:String) {
+	function stringToVector2(str:String) {
 		if (str == null || str == "")
 			return new Vector2(0, 0);
 

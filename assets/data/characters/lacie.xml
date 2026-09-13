@@ -33,10 +33,15 @@
     <anim name="sitRIGHT" anim="sit_right" y="60" fps="1" loop="true"/>
     <anim name="sitDOWN" anim="sit_down" y="60" fps="1" loop="true"/>
 
-    <anim name="shadowUP" anim="shadow_up" fps="3" loop="true"/>
-    <anim name="shadowLEFT" anim="shadow_left" fps="3" loop="true"/>
-    <anim name="shadowRIGHT" anim="shadow_right" fps="3" loop="true"/>
-    <anim name="shadowDOWN" anim="shadow_down" fps="3" loop="true"/>
+    <anim name="shadowIdleUP" anim="shadow_up1" fps="1" loop="false"/>
+    <anim name="shadowIdleLEFT" anim="shadow_left1" fps="1" loop="false"/>
+    <anim name="shadowIdleRIGHT" anim="shadow_right1" fps="1" loop="false"/>
+    <anim name="shadowIdleDOWN" anim="shadow_down1" fps="1" loop="false"/>
+
+    <anim name="shadowUP" anim="shadow_up" fps="4" loop="true"/>
+    <anim name="shadowLEFT" anim="shadow_left" fps="4" loop="true"/>
+    <anim name="shadowRIGHT" anim="shadow_right" fps="4" loop="true"/>
+    <anim name="shadowDOWN" anim="shadow_down" fps="4" loop="true"/>
 
     <anim name="limpUP" anim="limp_up" fps="4" loop="true"/>
     <anim name="limpLEFT" anim="limp_left" fps="4" loop="true"/>

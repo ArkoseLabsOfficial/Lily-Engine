@@ -1,4 +1,8 @@
 {
+  "fonts": {
+    "NotoSans": "NotoSans-Regular.ttf",
+    "AlegreyaSC": "AlegreyaSC-Regular.ttf"
+  },
   "name": "Türkçe ArkoseLabs Tarafından",
   "system.settings.language": {
     "select": "Dil Seç",
@@ -12,7 +16,7 @@
     "controls.move_left": "Sol",
     "controls.move_right": "Sağ",
     "controls.accept": "Kabul",
-    "controls.cancel": "İptal",
+    "controls.back": "Geri",
     "controls.run": "Koş",
     "controls.menu": "Menü",
     "graphics.fpscap": "FPS Cap",

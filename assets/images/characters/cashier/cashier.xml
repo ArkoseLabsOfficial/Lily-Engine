@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="cashier.png">
+	<SubTexture name="walk_down0000" x="2" y="2" width="48" height="50" frameX="0" frameY="0" frameWidth="48" frameHeight="50" />
+	<SubTexture name="walk_down1000" x="52" y="2" width="48" height="50" frameX="0" frameY="0" frameWidth="48" frameHeight="50" />
+	<SubTexture name="walk_down2000" x="2" y="54" width="48" height="50" frameX="0" frameY="0" frameWidth="48" frameHeight="50" />
+	<SubTexture name="walk_left0000" x="52" y="54" width="48" height="50" frameX="0" frameY="0" frameWidth="48" frameHeight="50" />
+	<SubTexture name="walk_left1000" x="2" y="106" width="48" height="50" frameX="0" frameY="0" frameWidth="48" frameHeight="50" />
+	<SubTexture name="walk_left2000" x="52" y="106" width="48" height="50" frameX="0" frameY="0" frameWidth="48" frameHeight="50" />
+	<SubTexture name="idle_up0000" x="102" y="106" width="32" height="50" frameX="0" frameY="0" frameWidth="32" frameHeight="50" />
+	<SubTexture name="idle_up1000" x="2" y="158" width="32" height="50" frameX="0" frameY="0" frameWidth="32" frameHeight="50" />
+</TextureAtlas>

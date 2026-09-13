@@ -1,7 +1,6 @@
 package engine.substates;
 
 class ModSelectorMenu extends SubStateBackend {
-	var menuFrame:MenuFrameNode;
 	var onSelect:Void->Void;
 
 	public function new(onSelect:Void->Void) {
@@ -12,16 +11,32 @@ class ModSelectorMenu extends SubStateBackend {
 	override public function create():Void {
 		super.create();
 
-		var frameW:Float = 600;
-		var frameH:Float = 600;
-		menuFrame = new MenuFrameNode(0, 0, frameW, frameH, 2);
-		menuFrame.setTitle("system.mods.ui.title");
-		menuFrame.screenCenter();
-		add(menuFrame);
+		menu = new NineNode(0, 0, {
+			texture: 'ui/new/border',
+			bgTexture: 'ui/frames/frame_default_bg',
 
-		simpleMenu = new SimpleVerticalMenu();
-		simpleMenu.itemWidth = 500;
-		simpleMenu.itemFontSize = 36;
+			scaleFactor: 3,
+			width: 900,
+			heightOffset: 36,
+
+			margin: {
+				left: 10,
+				top: 10,
+				right: 10,
+				bottom: 10
+			},
+
+			itemWidth: 792,
+			itemHeight: 62,
+			itemFontSize: 36,
+			itemSeparation: 62,
+			itemAlignment: CENTER,
+			listAlignment: "center",
+			maxBeforeScroll: 8,
+
+			title: "system.mods.ui.title",
+		});
+		add(menu);		
 
 		if (Assets.exists("mods/")) {
 			var folders = Assets.readDirectory("mods/");
@@ -29,7 +44,7 @@ class ModSelectorMenu extends SubStateBackend {
 			for (folder in folders) {
 				trace(folder);
 				if (Assets.isDirectory("mods/" + folder) && !Flags.ignoredModFolders.contains(folder)) {
-					simpleMenu.addEntry(folder, function() {
+					menu.addEntry(folder, function() {
 						GamePrefs.currentMod = folder;
 						applySelection();
 					});
@@ -37,15 +52,22 @@ class ModSelectorMenu extends SubStateBackend {
 			}
 		}
 
-		simpleMenu.addEntry("system.mods.ui.disable", function() {
+		menu.addEntry("system.mods.ui.disable", function() {
 			GamePrefs.currentMod = "";
 			applySelection();
 		});
 
-		simpleMenu.buildVisualList(60);
-		simpleMenu.x = menuFrame.x + 50;
-		simpleMenu.y = menuFrame.y + 130;
-		add(simpleMenu);
+		menu.buildVisualList();
+		for (i in 0...menu.entries.length) {
+            var visualGroup = menu.visualItems[i];
+            var labelText:LangText = cast visualGroup.members[1];
+			if (labelText.text == GamePrefs.currentMod) {
+				labelText.color = FlxColor.GREEN;
+			}
+		}
+		menu.screenCenter();
+		menu.y += 50;
+		add(menu);
 	}
 
 	function applySelection():Void {
@@ -58,18 +80,7 @@ class ModSelectorMenu extends SubStateBackend {
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		for (i in 0...simpleMenu.visualItems.length) {
-			var entry = simpleMenu.entries[i];
-			var vis = simpleMenu.visualItems[i];
-
-			if (entry.caption == GamePrefs.currentMod && GamePrefs.currentMod != "") {
-				vis.label.color = FlxColor.GREEN;
-			} else {
-				vis.label.color = FlxColor.WHITE;
-			}
-		}
-
-		if (Controls.CANCEL) {
+		if (Controls.BACK) {
 			FlxG.sound.play(Flags.CANCEL);
 			close();
 		}
