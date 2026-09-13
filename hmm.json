@@ -47,6 +47,13 @@
       "url": "https://github.com/ArkoseLabsOfficial/LilyScript"
     },
     {
+      "name": "hxFileManager",
+      "type":"git",
+      "dir": null,
+      "ref": null,
+      "url": "https://github.com/ArkoseLabsOfficial/hxFileManager"
+    },
+    {
       "name": "GodotSceneLoader",
       "type":"git",
       "dir": null,
